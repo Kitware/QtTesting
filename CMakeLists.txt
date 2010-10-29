@@ -192,4 +192,4 @@ INSTALL(TARGETS QtTesting
   LIBRARY DESTINATION ${QtTesting_INSTALL_LIB_DIR} COMPONENT Runtime
   ARCHIVE DESTINATION ${QtTesting_INSTALL_LIB_DIR} COMPONENT Development)
 
-
+add_subdirectory(Examples)
