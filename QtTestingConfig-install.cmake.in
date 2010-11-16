@@ -1,0 +1,2 @@
+set(QtTesting_INCLUDE_DIRS "@QtTesting_SOURCE_DIR@;@QtTesting_BINARY_DIR@")
+set(QtTesting_LIBRARY_DIR "@QtTesting_INSTALL_LIB_DIR@")

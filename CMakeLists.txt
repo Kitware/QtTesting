@@ -193,3 +193,23 @@ INSTALL(TARGETS QtTesting
   ARCHIVE DESTINATION ${QtTesting_INSTALL_LIB_DIR} COMPONENT Development)
 
 add_subdirectory(Examples)
+
+# Set up the build export configuration
+set( QtTesting_EXPORT_FILE "${QtTesting_BINARY_DIR}/QtTestingConfig.cmake" )
+configure_file(
+  "${QtTesting_SOURCE_DIR}/QtTestingConfig.cmake.in"
+  "${QtTesting_EXPORT_FILE}"
+)
+
+# Set up the install export
+set( QtTesting_EXPORT_INSTALL_FILE "${QtTesting_BINARY_DIR}/CMakeFiles/QtTestingConfig.cmake" )
+configure_file(
+  "${QtTesting_SOURCE_DIR}/QtTestingConfig-install.cmake.in"
+  "${QtTesting_EXPORT_INSTALL_FILE}"
+  @ONLY
+)
+
+# Configure the CMake EXPORT file during installation
+install( FILES ${QtTesting_BINARY_DIR}/CMakeFiles/QtTestingConfig.cmake
+  DESTINATION lib/cmake
+)
