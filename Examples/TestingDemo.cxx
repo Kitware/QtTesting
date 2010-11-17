@@ -107,7 +107,7 @@ protected:
       qDebug() << "Invalid xml" << endl;
       }
     }
-  int XMLEventSource::getNextEvent(QString& widget, QString& command, QString&
+  int getNextEvent(QString& widget, QString& command, QString&
     arguments)
     {
     if (this->XMLStream->atEnd())
