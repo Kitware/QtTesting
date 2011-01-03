@@ -222,7 +222,7 @@ void pqEventDispatcher::playEvent(int indent)
   //QCoreApplication::flush();
   if (print_debug) { cout << "       -- pre-processEventsAndWait: " <<
     local_counter <<endl;}
-  this->processEventsAndWait(100); // let what's going to happen after the
+  this->processEventsAndWait(QT_TESTING_EVENT_PLAYBACK_DELAY); // let what's going to happen after the
                                    // playback, happen.
   if (print_debug) { cout << "       -- post-processEventsAndWait: " <<
     local_counter <<endl;}
