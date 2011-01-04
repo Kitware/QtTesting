@@ -93,6 +93,12 @@ bool pqBasicWidgetEventPlayer::playEvent(QObject* Object,
         type = Command == "mouseMove" ? QEvent::MouseMove : type;
         type = Command == "mouseRelease" ? QEvent::MouseButtonRelease : type;
         type = Command == "mouseDblClick" ? QEvent::MouseButtonDblClick : type;
+	if (type == QEvent::MouseMove)
+          {
+          // We have not been setting mouse move correctly.
+          buttons = button;
+          button = Qt::NoButton;
+          }
         QMouseEvent e(type, pt, button, buttons, keym);
         QCoreApplication::sendEvent(widget, &e);
         return true;
