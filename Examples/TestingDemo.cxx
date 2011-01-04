@@ -21,11 +21,13 @@ class XMLEventObserver : public pqEventObserver
 {
   QXmlStreamWriter* XMLStream;
   QString XMLString;
+
 public:
   XMLEventObserver(QObject* p) : pqEventObserver(p)
   {
   this->XMLStream = NULL;
   }
+
   ~XMLEventObserver()
     {
     delete this->XMLStream;
@@ -55,6 +57,7 @@ protected:
       this->XMLStream->writeStartElement("events");
       }
     }
+
   virtual void onRecordEvent(const QString& widget, const QString& command,
     const QString& arguments)
     {
@@ -73,6 +76,7 @@ class XMLEventSource : public pqEventSource
 {
   typedef pqEventSource Superclass;
   QXmlStreamReader *XMLStream;
+
 public:
   XMLEventSource(QObject* p): Superclass(p) { this->XMLStream = NULL;}
   ~XMLEventSource() { delete this->XMLStream; }
@@ -91,6 +95,10 @@ protected:
       }
     QByteArray data = xml.readAll();
     this->XMLStream = new QXmlStreamReader(data);
+    /* This checked for valid event objects, but also caused the first event
+     * to get dropped. Commenting this out in the example. If you wish to report
+     * empty XML test files a flag indicating whether valid events were found is
+     * probably the best way to go.
     while (!this->XMLStream->atEnd())
       {
       QXmlStreamReader::TokenType token = this->XMLStream->readNext();
@@ -101,12 +109,13 @@ protected:
           break;
           }
         }
-      }
+      } */
     if (this->XMLStream->atEnd())
       {
       qDebug() << "Invalid xml" << endl;
       }
     }
+
   int getNextEvent(QString& widget, QString& command, QString&
     arguments)
     {
