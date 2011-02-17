@@ -8,6 +8,8 @@ IF(NOT QT_FOUND)
   INCLUDE( ${QT_USE_FILE} )
 ENDIF()
 
+OPTION(QT_TESTING_INSTALL_DEVELOPMENT "Install Qt Testing development files." OFF)
+
 IF(NOT DEFINED QT_TESTING_WITH_PYTHON)
   OPTION(QT_TESTING_WITH_PYTHON "Enable Qt Testing with Python" OFF)
 ENDIF()
@@ -20,9 +22,8 @@ IF(NOT DEFINED QtTesting_INSTALL_LIB_DIR)
   SET(QtTesting_INSTALL_LIB_DIR lib)
 ENDIF()
 
-IF(NOT DEFINED QT_TESTING_EVENT_PLAYBACK_DELAY)
-  SET(QT_TESTING_EVENT_PLAYBACK_DELAY "100" CACHE STRING "Delay between invocation of each testing event." FORCE)
-  MARK_AS_ADVANCED(QT_TESTING_EVENT_PLAYBACK_DELAY)
+IF(NOT DEFINED QtTesting_INSTALL_CMAKE_DIR)
+  SET(QtTesting_INSTALL_CMAKE_DIR lib/CMake)
 ENDIF()
 
 IF(QT_TESTING_WITH_PYTHON)
@@ -213,7 +214,9 @@ configure_file(
   @ONLY
 )
 
-# Configure the CMake EXPORT file during installation
-install( FILES ${QtTesting_BINARY_DIR}/CMakeFiles/QtTestingConfig.cmake
-  DESTINATION lib/cmake
-)
+IF(QT_TESTING_INSTALL_DEVELOPMENT)
+  # Configure the CMake EXPORT file during installation
+  install( FILES ${QtTesting_BINARY_DIR}/CMakeFiles/QtTestingConfig.cmake
+    DESTINATION ${QtTesting_INSTALL_CMAKE_DIR}
+  )
+ENDIF()
