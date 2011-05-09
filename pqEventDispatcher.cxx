@@ -128,7 +128,6 @@ bool pqEventDispatcher::playEvents(pqEventSource& source, pqEventPlayer& player)
   //   playback loop, and it continues.
   this->PlayBackStatus = true; // success.
   this->PlayBackFinished = false;
-  this->PlaybackStartTime = QTime::currentTime();
   while (!this->PlayBackFinished)
     {
     this->playEvent();
@@ -207,7 +206,8 @@ void pqEventDispatcher::playEvent(int indent)
 #endif
   if (print_debug)
     {
-    cout << QTime::currentTime().secsTo(this->PlaybackStartTime) << " : "
+    cout <<  QTime::currentTime().toString("hh:mm:ss").toStdString().c_str()
+         << " : "
          << QString().fill(' ', 4*indent).toStdString().c_str()
          << local_counter << ": Test (" << indent << "): "
          << pretty_name.toStdString().c_str() << ": "
@@ -220,16 +220,21 @@ void pqEventDispatcher::playEvent(int indent)
   this->BlockTimer.stop();
   //QCoreApplication::sendPostedEvents();
   //QCoreApplication::flush();
-  if (print_debug) { cout << "       -- pre-processEventsAndWait: " <<
-    local_counter <<endl;}
-  this->processEventsAndWait(QT_TESTING_EVENT_PLAYBACK_DELAY); // let what's going to happen after the
-                                   // playback, happen.
-  if (print_debug) { cout << "       -- post-processEventsAndWait: " <<
-    local_counter <<endl;}
+  if (print_debug)
+    {
+    cout << "       -- pre-processEventsAndWait: " << local_counter <<endl;
+    }
+  // let what's going to happen after the playback, happen.
+  this->processEventsAndWait(QT_TESTING_EVENT_PLAYBACK_DELAY);
+  if (print_debug)
+    {
+    cout << "       -- post-processEventsAndWait: " << local_counter <<endl;
+    }
   this->BlockTimer.stop();
   if (print_debug)
     {
-    cout << QTime::currentTime().secsTo(this->PlaybackStartTime) << " : "
+    cout << QTime::currentTime().toString("hh:mm:ss").toStdString().c_str()
+         << " : "
          << QString().fill(' ', 4*indent).toStdString().c_str()
          << local_counter << ": Done" << endl;
     }

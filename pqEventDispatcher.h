@@ -84,7 +84,6 @@ protected:
   pqEventSource* ActiveSource;
   pqEventPlayer* ActivePlayer;
   QTimer BlockTimer;
-  QTime PlaybackStartTime;
 };
 
 #endif // !_pqEventDispatcher_h
