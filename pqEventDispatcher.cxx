@@ -261,3 +261,12 @@ void pqEventDispatcher::processEventsAndWait(int ms)
   QApplication::processEvents();
   pqEventDispatcher::DeferMenuTimeouts = prev;
 }
+
+//-----------------------------------------------------------------------------
+void pqEventDispatcher::processEvents(QEventLoop::ProcessEventsFlags flags)
+{
+  bool prev = pqEventDispatcher::DeferMenuTimeouts;
+  pqEventDispatcher::DeferMenuTimeouts = true;
+  QApplication::processEvents(flags);
+  pqEventDispatcher::DeferMenuTimeouts = prev;
+}

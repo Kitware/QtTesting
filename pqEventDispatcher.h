@@ -38,6 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QObject>
 #include <QTimer>
 #include <QTime>
+#include <QEventLoop>
 
 class pqEventPlayer;
 class pqEventSource;
@@ -63,6 +64,10 @@ public:
   /** Wait function provided for players that need to wait for the GUI
       to perform a certain action */
   static void processEventsAndWait(int ms);
+
+    /** proccessEvents method for widgets and paraview to use instead of
+    calling Qt version, since that will break test playback*/
+  static void processEvents(QEventLoop::ProcessEventsFlags flags = QEventLoop::AllEvents);
 
 protected slots:
   /// Plays a single event. this->PlayBackFinished and this->PlayBackStatus are
