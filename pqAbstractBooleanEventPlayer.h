@@ -40,7 +40,7 @@ Concrete implementation of pqWidgetEventPlayer that translates high-level ParaVi
 
 \sa pqEventPlayer
 */
-class pqAbstractBooleanEventPlayer :
+class QTTESTING_EXPORT pqAbstractBooleanEventPlayer :
   public pqWidgetEventPlayer
 {
 public:

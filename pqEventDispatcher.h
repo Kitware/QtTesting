@@ -69,6 +69,14 @@ public:
     calling Qt version, since that will break test playback*/
   static void processEvents(QEventLoop::ProcessEventsFlags flags = QEventLoop::AllEvents);
 
+signals:
+
+  /// signal when playback starts
+  void started();
+
+  /// signal when playback stops
+  void stopped();
+
 protected slots:
   /// Plays a single event. this->PlayBackFinished and this->PlayBackStatus are
   /// updated by this method.

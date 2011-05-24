@@ -38,6 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QSet>
 #include <QTextStream>
 #include <QFile>
+#include <QDir>
 #include <QStringList>
 
 #include "QtTestingExport.h"
@@ -94,6 +95,18 @@ public:
   /// start the recording of tests to a file
   void recordTests(const QString& filename);
 
+  /// add a directory for recording/playback of file dialogs
+  void addDataDirectory(const QString& label, const QDir& path);
+
+  /// remove a directory for recording/playback of file dialogs
+  void removeDataDirectory(const QString& label);
+
+  /// given filename convert to one of the data directories
+  QString convertToDataDirectory(const QString& file);
+
+  /// give a filename convert from one of the data directories
+  QString convertFromDataDirectory(const QString& file);
+
 protected:
   pqEventDispatcher Dispatcher;
   pqEventPlayer Player;
@@ -102,6 +115,9 @@ protected:
 
   QMap<QString, pqEventSource*> EventSources;
   QMap<QString, pqEventObserver*> EventObservers;
+
+  QMap<QString, QDir> DataDirectories;
+
 };
 
 #endif // !_pqTestUtility_h

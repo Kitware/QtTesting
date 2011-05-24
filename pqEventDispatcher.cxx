@@ -104,6 +104,8 @@ bool pqEventDispatcher::playEvents(pqEventSource& source, pqEventPlayer& player)
     return false;
     }
 
+  emit this->started();
+
   this->ActiveSource = &source;
   this->ActivePlayer = &player;
 
@@ -139,6 +141,8 @@ bool pqEventDispatcher::playEvents(pqEventSource& source, pqEventPlayer& player)
                    this, SLOT(aboutToBlock()));
   QObject::disconnect(QAbstractEventDispatcher::instance(), SIGNAL(awake()),
                    this, SLOT(awake()));
+
+  emit this->stopped();
 
   return this->PlayBackStatus;
 }

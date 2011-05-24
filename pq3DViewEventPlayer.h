@@ -1,13 +1,13 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pqAbstractDoubleEventPlayer.h
+   Module:    pq3DViewEventPlayer.h
 
    Copyright (c) 2005-2008 Sandia Corporation, Kitware Inc.
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -30,29 +30,32 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
 
-#ifndef _pqAbstractDoubleEventPlayer_h
-#define _pqAbstractDoubleEventPlayer_h
+#ifndef _pq3DViewEventPlayer_h
+#define _pq3DViewEventPlayer_h
 
 #include "pqWidgetEventPlayer.h"
 
 /**
-Concrete implementation of pqWidgetEventPlayer that translates high-level ParaView events into low-level Qt events.
+Concrete implementation of pqWidgetEventPlayer that handles playback of "activate" events for 3d views.
+It is not registered by default, and user can register with their own 3d view type.
 
 \sa pqEventPlayer
 */
-
-class QTTESTING_EXPORT pqAbstractDoubleEventPlayer :
+class QTTESTING_EXPORT pq3DViewEventPlayer :
   public pqWidgetEventPlayer
 {
 public:
-  pqAbstractDoubleEventPlayer(QObject* p=0);
+  pq3DViewEventPlayer(const QByteArray& classname, QObject* p = 0);
 
   bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error);
 
+protected:
+  QByteArray mClassType;
+
 private:
-  pqAbstractDoubleEventPlayer(const pqAbstractDoubleEventPlayer&);
-  pqAbstractDoubleEventPlayer& operator=(const pqAbstractDoubleEventPlayer&);
+
+  pq3DViewEventPlayer(const pq3DViewEventPlayer&);
+  pq3DViewEventPlayer& operator=(const pq3DViewEventPlayer&);
 };
 
-#endif // !_pqAbstractDoubleEventPlayer_h
-
+#endif // !_pq3DViewEventPlayer_h

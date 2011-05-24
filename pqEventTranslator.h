@@ -37,6 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QObject>
 
 class pqWidgetEventTranslator;
+class pqTestUtility;
 
 /**
 Manages serialization of user interaction for test-cases, demos, tutorials, etc.
@@ -62,7 +63,7 @@ public:
   Adds the default set of widget translators to the working set.  Translators are executed in order, so you may call
   addWidgetEventTranslator() with your own custom translators before calling this method, to "override" the default translators.
   */
-  void addDefaultWidgetEventTranslators();
+  void addDefaultWidgetEventTranslators(pqTestUtility* util);
   /// Adds a new translator to the current working set of widget translators.  pqEventTranslator assumes control of the lifetime of the supplied object.
   void addWidgetEventTranslator(pqWidgetEventTranslator*);
 
@@ -78,6 +79,12 @@ public:
 signals:
   /// This signal will be emitted every time a translator generates a high-level ParaView event.  Observers should connect to this signal to serialize high-level events.
   void recordEvent(const QString& Object, const QString& Command, const QString& Arguments);
+
+  /// this signals when recording starts
+  void started();
+
+  /// this signals when recording stops
+  void stopped();
 
 private slots:
   void onRecordEvent(QObject* Object, const QString& Command, const QString& Arguments);

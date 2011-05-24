@@ -44,6 +44,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqSpinBoxEventTranslator.h"
 #include "pqTabBarEventTranslator.h"
 #include "pqTreeViewEventTranslator.h"
+#include "pqNativeFileDialogEventTranslator.h"
+#include "pq3DViewEventTranslator.h"
 
 #include <QCoreApplication>
 #include <QtDebug>
@@ -87,14 +89,16 @@ pqEventTranslator::~pqEventTranslator()
 void pqEventTranslator::start()
 {
   QCoreApplication::instance()->installEventFilter(this);
+  emit this->started();
 }
 
 void pqEventTranslator::stop()
 {
+  emit this->stopped();
   QCoreApplication::instance()->removeEventFilter(this);
 }
 
-void pqEventTranslator::addDefaultWidgetEventTranslators()
+void pqEventTranslator::addDefaultWidgetEventTranslators(pqTestUtility* util)
 {
   addWidgetEventTranslator(new pqBasicWidgetEventTranslator());
   addWidgetEventTranslator(new pqAbstractButtonEventTranslator());
@@ -107,6 +111,8 @@ void pqEventTranslator::addDefaultWidgetEventTranslators()
   addWidgetEventTranslator(new pqSpinBoxEventTranslator());
   addWidgetEventTranslator(new pqTabBarEventTranslator());
   addWidgetEventTranslator(new pqTreeViewEventTranslator());
+  addWidgetEventTranslator(new pq3DViewEventTranslator("QGLWidget"));
+  addWidgetEventTranslator(new pqNativeFileDialogEventTranslator(util));
 }
 
 void pqEventTranslator::addWidgetEventTranslator(pqWidgetEventTranslator* Translator)

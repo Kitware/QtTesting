@@ -40,6 +40,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QList>
 
 class pqWidgetEventPlayer;
+class pqTestUtility;
 
 /**
 Manages playback of test-cases, demos, tutorials, etc.
@@ -80,7 +81,7 @@ public:
   /** Adds the default set of widget players to the current working set.  
   Players are executed in-order, so you can call addWidgetEventPlayer() 
   before this function to override default players. */
-  void addDefaultWidgetEventPlayers();
+  void addDefaultWidgetEventPlayers(pqTestUtility* util);
   /** Adds a new player to the current working set of widget players.  
   pqEventPlayer assumes control of the lifetime of the supplied object. */
   void addWidgetEventPlayer(pqWidgetEventPlayer*);

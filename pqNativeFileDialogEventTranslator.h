@@ -1,13 +1,13 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pqAbstractDoubleEventPlayer.h
+   Module:    pqNativeFileDialogEventTranslator.h
 
    Copyright (c) 2005-2008 Sandia Corporation, Kitware Inc.
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -30,29 +30,44 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
 
-#ifndef _pqAbstractDoubleEventPlayer_h
-#define _pqAbstractDoubleEventPlayer_h
+#ifndef _pqNativeFileDialogEventTranslator_h
+#define _pqNativeFileDialogEventTranslator_h
 
-#include "pqWidgetEventPlayer.h"
+#include "pqWidgetEventTranslator.h"
+#include <QMouseEvent>
+
+class pqTestUtility;
 
 /**
-Concrete implementation of pqWidgetEventPlayer that translates high-level ParaView events into low-level Qt events.
+Records usage of native file dialogs in test cases.
 
-\sa pqEventPlayer
+\sa pqEventTranslator
 */
 
-class QTTESTING_EXPORT pqAbstractDoubleEventPlayer :
-  public pqWidgetEventPlayer
+class pqNativeFileDialogEventTranslator :
+  public pqWidgetEventTranslator
 {
-public:
-  pqAbstractDoubleEventPlayer(QObject* p=0);
+  Q_OBJECT
 
-  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error);
+public:
+  pqNativeFileDialogEventTranslator(pqTestUtility* util, QObject* p=0);
+  ~pqNativeFileDialogEventTranslator();
+
+  virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
+
+  void record(const QString& command, const QString& args);
+
+protected slots:
+  void start();
+  void stop();
+
+protected:
+
+  pqTestUtility* mUtil;
 
 private:
-  pqAbstractDoubleEventPlayer(const pqAbstractDoubleEventPlayer&);
-  pqAbstractDoubleEventPlayer& operator=(const pqAbstractDoubleEventPlayer&);
+  pqNativeFileDialogEventTranslator(const pqNativeFileDialogEventTranslator&);
+  pqNativeFileDialogEventTranslator& operator=(const pqNativeFileDialogEventTranslator&);
 };
 
-#endif // !_pqAbstractDoubleEventPlayer_h
-
+#endif // !_pqNativeFileDialogEventTranslator_h

@@ -78,6 +78,7 @@ GET_DIRECTORY_PROPERTY(include_dirs_tmp INCLUDE_DIRECTORIES)
 SET_DIRECTORY_PROPERTIES(PROPERTIES INCLUDE_DIRECTORIES "${MOC_INCLUDE_DIRS}")
 
 QT4_WRAP_CPP(MOC_BUILT_SOURCES
+  pq3DViewEventTranslator.h
   pqAbstractButtonEventTranslator.h
   pqAbstractItemViewEventTranslator.h
   pqAbstractSliderEventTranslator.h
@@ -91,6 +92,8 @@ QT4_WRAP_CPP(MOC_BUILT_SOURCES
   pqEventTranslator.h
   pqLineEditEventTranslator.h
   pqMenuEventTranslator.h
+  pqNativeFileDialogEventTranslator.h
+  pqNativeFileDialogEventPlayer.h
   pqRecordEventsDialog.h
   pqSpinBoxEventTranslator.h
   pqStdoutEventObserver.h
@@ -111,6 +114,10 @@ QT4_WRAP_UI(UI_BUILT_SOURCES
 
 ADD_LIBRARY(QtTesting
   QtTestingExport.h
+  pq3DViewEventPlayer.cxx
+  pq3DViewEventPlayer.h
+  pq3DViewEventTranslator.cxx
+  pq3DViewEventTranslator.h
   pqAbstractActivateEventPlayer.cxx
   pqAbstractActivateEventPlayer.h
   pqAbstractBooleanEventPlayer.cxx
@@ -150,6 +157,10 @@ ADD_LIBRARY(QtTesting
   pqEventSource.h
   pqLineEditEventTranslator.cxx
   pqLineEditEventTranslator.h
+  pqNativeFileDialogEventPlayer.cxx
+  pqNativeFileDialogEventPlayer.h
+  pqNativeFileDialogEventTranslator.cxx
+  pqNativeFileDialogEventTranslator.h
   pqMenuEventTranslator.cxx
   pqMenuEventTranslator.h
   pqObjectNaming.cxx

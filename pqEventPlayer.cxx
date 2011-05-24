@@ -43,6 +43,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqObjectNaming.h"
 #include "pqTabBarEventPlayer.h"
 #include "pqTreeViewEventPlayer.h"
+#include "pqNativeFileDialogEventPlayer.h"
+#include "pq3DViewEventPlayer.h"
 
 #include <QApplication>
 #include <QWidget>
@@ -56,7 +58,7 @@ pqEventPlayer::~pqEventPlayer()
 {
 }
 
-void pqEventPlayer::addDefaultWidgetEventPlayers()
+void pqEventPlayer::addDefaultWidgetEventPlayers(pqTestUtility* util)
 {
   addWidgetEventPlayer(new pqBasicWidgetEventPlayer());
   addWidgetEventPlayer(new pqAbstractActivateEventPlayer());
@@ -68,6 +70,8 @@ void pqEventPlayer::addDefaultWidgetEventPlayers()
   addWidgetEventPlayer(new pqTabBarEventPlayer());
   addWidgetEventPlayer(new pqTreeViewEventPlayer());
   addWidgetEventPlayer(new pqAbstractMiscellaneousEventPlayer());
+  addWidgetEventPlayer(new pq3DViewEventPlayer("QGLWidget"));
+  addWidgetEventPlayer(new pqNativeFileDialogEventPlayer(util));
 }
 
 void pqEventPlayer::addWidgetEventPlayer(pqWidgetEventPlayer* Player)

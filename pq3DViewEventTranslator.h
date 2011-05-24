@@ -1,13 +1,13 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pqAbstractDoubleEventPlayer.h
+   Module:    pq3DViewEventTranslator.h
 
    Copyright (c) 2005-2008 Sandia Corporation, Kitware Inc.
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -30,29 +30,37 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
 
-#ifndef _pqAbstractDoubleEventPlayer_h
-#define _pqAbstractDoubleEventPlayer_h
+#ifndef _pq3DViewEventTranslator_h
+#define _pq3DViewEventTranslator_h
 
-#include "pqWidgetEventPlayer.h"
+#include "pqWidgetEventTranslator.h"
+#include <QMouseEvent>
 
 /**
-Concrete implementation of pqWidgetEventPlayer that translates high-level ParaView events into low-level Qt events.
+Translates low-level Qt events into high-level ParaView events that can be recorded as test cases.
 
-\sa pqEventPlayer
+\sa pqEventTranslator
 */
 
-class QTTESTING_EXPORT pqAbstractDoubleEventPlayer :
-  public pqWidgetEventPlayer
+class QTTESTING_EXPORT pq3DViewEventTranslator :
+  public pqWidgetEventTranslator
 {
-public:
-  pqAbstractDoubleEventPlayer(QObject* p=0);
+  Q_OBJECT
 
-  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error);
+public:
+  pq3DViewEventTranslator(const QByteArray& classname, QObject* p=0);
+  ~pq3DViewEventTranslator();
+
+  virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
+
+protected:
+  QByteArray mClassType;
+  QMouseEvent lastMoveEvent;
 
 private:
-  pqAbstractDoubleEventPlayer(const pqAbstractDoubleEventPlayer&);
-  pqAbstractDoubleEventPlayer& operator=(const pqAbstractDoubleEventPlayer&);
+  pq3DViewEventTranslator(const pq3DViewEventTranslator&);
+  pq3DViewEventTranslator& operator=(const pq3DViewEventTranslator&);
+
 };
 
-#endif // !_pqAbstractDoubleEventPlayer_h
-
+#endif // !_pq3DViewEventTranslator_h

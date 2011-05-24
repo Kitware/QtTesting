@@ -137,6 +137,11 @@ static const QString InternalGetName(QObject& Object)
     result = InternalGetNameAsUnnamed(Object);
     }
 
+  if(qobject_cast<QApplication*>(&Object))
+  {
+      result.append("-app");
+  }
+
   result.replace("/", "|");
   return result;
 }
@@ -180,7 +185,14 @@ QObject* pqObjectNaming::GetObject(const QString& Name)
   const QStringList names = Name.split("/");
   if(names.empty())
     return 0;
-  
+
+  // see if QApplication is the requested object
+  QString app_name = InternalGetName(*QApplication::instance());
+  if( app_name == Name)
+  {
+      return QApplication::instance();
+  }
+
   const QWidgetList top_level_widgets = QApplication::topLevelWidgets();
   for(int i = 0; i != top_level_widgets.size(); ++i)
     {

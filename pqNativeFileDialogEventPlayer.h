@@ -1,13 +1,13 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pqAbstractDoubleEventPlayer.h
+   Module:    pqNativeFileDialogEventPlayer.h
 
    Copyright (c) 2005-2008 Sandia Corporation, Kitware Inc.
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -30,29 +30,41 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
 
-#ifndef _pqAbstractDoubleEventPlayer_h
-#define _pqAbstractDoubleEventPlayer_h
+#ifndef _pqNativeFileDialogEventPlayer_h
+#define _pqNativeFileDialogEventPlayer_h
 
 #include "pqWidgetEventPlayer.h"
+#include <QMouseEvent>
+
+class pqTestUtility;
 
 /**
-Concrete implementation of pqWidgetEventPlayer that translates high-level ParaView events into low-level Qt events.
+Records usage of native file dialogs in test cases.
 
 \sa pqEventPlayer
 */
 
-class QTTESTING_EXPORT pqAbstractDoubleEventPlayer :
+class pqNativeFileDialogEventPlayer :
   public pqWidgetEventPlayer
 {
+  Q_OBJECT
+
 public:
-  pqAbstractDoubleEventPlayer(QObject* p=0);
+  pqNativeFileDialogEventPlayer(pqTestUtility* util, QObject* p=0);
+  ~pqNativeFileDialogEventPlayer();
 
   bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error);
 
+protected slots:
+  void start();
+  void stop();
+
+protected:
+  pqTestUtility* mUtil;
+
 private:
-  pqAbstractDoubleEventPlayer(const pqAbstractDoubleEventPlayer&);
-  pqAbstractDoubleEventPlayer& operator=(const pqAbstractDoubleEventPlayer&);
+  pqNativeFileDialogEventPlayer(const pqNativeFileDialogEventPlayer&);
+  pqNativeFileDialogEventPlayer& operator=(const pqNativeFileDialogEventPlayer&);
 };
 
-#endif // !_pqAbstractDoubleEventPlayer_h
-
+#endif // !_pqNativeFileDialogEventPlayer_h

@@ -43,7 +43,7 @@ Translates low-level Qt events into high-level ParaView events that can be recor
 \sa pqEventTranslator
 */
 
-class pqAbstractButtonEventTranslator :
+class QTTESTING_EXPORT pqAbstractButtonEventTranslator :
   public pqWidgetEventTranslator
 {
   Q_OBJECT
