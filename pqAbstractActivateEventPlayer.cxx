@@ -57,52 +57,21 @@ bool pqAbstractActivateEventPlayer::playEvent(QObject* Object,
 
   if (QMenuBar* const menu_bar  = qobject_cast<QMenuBar*>(Object))
     {
-    QMenu* sub_menu = menu_bar->findChild<QMenu*>(Arguments);
-    if (sub_menu)
+    QAction* action = findAction(menu_bar, Arguments);
+    if (action)
       {
-      QAction* action = 0;
-      foreach (QAction* cur_action, menu_bar->actions())
-        {
-        if (cur_action->menu() == sub_menu)
-          {
-          action = cur_action;
-          break;
-          }
-        }
-      if (action)
-        {
-        menu_bar->setActiveAction(action);
-        return true;
-        }
+      menu_bar->setActiveAction(action);
+      return true;
       }
+
+    qCritical() << "couldn't find action " << Arguments;
     Error = true;
     return true;
     }
 
   if(QMenu* const object = qobject_cast<QMenu*>(Object))
     {
-
-    QAction* action = NULL;
-    QList<QAction*> actions = object->actions();
-    for(int j = 0; j != actions.size() && !action; ++j)
-      {
-      if(actions[j]->objectName() == Arguments)
-        {
-        action = actions[j];
-        }
-      }
-
-    // fall back to the text of the action
-    if(!action)
-      {
-      for(int j = 0; j != actions.size() && !action; ++j)
-        {
-        if(actions[j]->text() == Arguments)
-          {
-          action = actions[j];
-          }
-        }
-      }
+    QAction* action = findAction(object, Arguments);
 
     if(!action)
       {
@@ -181,4 +150,60 @@ bool pqAbstractActivateEventPlayer::playEvent(QObject* Object,
   qCritical() << "calling activate on unhandled type " << Object;
   Error = true;
   return true;
+}
+
+QAction* pqAbstractActivateEventPlayer::findAction(QMenuBar* p, const QString& name)
+{
+  QList<QAction*> actions = p->actions();
+  QAction* action = NULL;
+  foreach(QAction* a, actions)
+    {
+    if(a->menu()->objectName() == name)
+      {
+      action = a;
+      break;
+      }
+    }
+
+  if(!action)
+    {
+    foreach(QAction* a, actions)
+      {
+      if(a->text() == name)
+        {
+        action = a;
+        break;
+        }
+      }
+    }
+
+  return action;
+}
+
+QAction* pqAbstractActivateEventPlayer::findAction(QMenu* p, const QString& name)
+{
+  QList<QAction*> actions = p->actions();
+  QAction* action = NULL;
+  foreach(QAction* a, actions)
+    {
+    if(a->objectName() == name)
+      {
+      action = a;
+      break;
+      }
+    }
+
+  if(!action)
+    {
+    foreach(QAction* a, actions)
+      {
+      if(a->text() == name)
+        {
+        action = a;
+        break;
+        }
+      }
+    }
+
+  return action;
 }

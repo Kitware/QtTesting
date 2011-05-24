@@ -34,13 +34,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _pqAbstractActivateEventPlayer_h
 
 #include "pqWidgetEventPlayer.h"
+class QAction;
+class QMenuBar;
+class QMenu;
 
 /**
 Concrete implementation of pqWidgetEventPlayer that handles playback of "activate" events for buttons and menus.
 
 \sa pqEventPlayer
 */
-class pqAbstractActivateEventPlayer :
+class QTTESTING_EXPORT pqAbstractActivateEventPlayer :
   public pqWidgetEventPlayer
 {
 public:
@@ -49,6 +52,10 @@ public:
   bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error);
 
 private:
+
+  QAction* findAction(QMenu* p, const QString& name);
+  QAction* findAction(QMenuBar* p, const QString& name);
+
   pqAbstractActivateEventPlayer(const pqAbstractActivateEventPlayer&);
   pqAbstractActivateEventPlayer& operator=(const pqAbstractActivateEventPlayer&);
 };

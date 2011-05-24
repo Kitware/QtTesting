@@ -66,6 +66,10 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event,
       if (action && action->menu())
         {
         QString which = action->menu()->objectName();
+        if(which.isEmpty())
+          {
+          which = action->text();
+          }
         emit recordEvent(menubar, "activate", which);
         }
       }
