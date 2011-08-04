@@ -62,7 +62,9 @@ public:
   bool playEvents(pqEventSource& source, pqEventPlayer& player);
 
   /** Wait function provided for players that need to wait for the GUI
-      to perform a certain action */
+      to perform a certain action.
+      Note: the minimum wait time is 100ms. This is set to avoid timiing issues
+      on slow processors that hang tests.*/
   static void processEventsAndWait(int ms);
 
     /** proccessEvents method for widgets and paraview to use instead of

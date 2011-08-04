@@ -257,6 +257,7 @@ void pqEventDispatcher::processEventsAndWait(int ms)
   pqEventDispatcher::DeferMenuTimeouts = true;
   if (ms > 0)
     {
+    ms = (ms < 100) ? 100 : ms;
     QApplication::processEvents();
     QEventLoop loop;
     QTimer::singleShot(ms, &loop, SLOT(quit()));
