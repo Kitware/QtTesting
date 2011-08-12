@@ -59,7 +59,7 @@ namespace
     _qt_filedialog_open_filenames_hook old_open_filenames_hook;
     _qt_filedialog_save_filename_hook old_save_filename_hook;
 
-    QEventLoop loop;
+    QEventLoop *loop = 0;
     QString filename;
     QStringList filenames;
 
@@ -67,7 +67,7 @@ namespace
                      QFileDialog::Options options)
     {
         // wait for next event played to give us a filename
-        loop.exec();
+        loop->exec();
         return filename;
     }
 
@@ -76,7 +76,7 @@ namespace
                                QFileDialog::Options options)
     {
         // wait for next event played to give us a filename
-        loop.exec();
+        loop->exec();
         return filename;
     }
 
@@ -85,7 +85,7 @@ namespace
                                QFileDialog::Options options)
     {
         // wait for next event played to give us a filename
-        loop.exec();
+        loop->exec();
         return filenames;
     }
 
@@ -96,12 +96,22 @@ namespace
 pqNativeFileDialogEventPlayer::pqNativeFileDialogEventPlayer(pqTestUtility* util, QObject* p)
     : pqWidgetEventPlayer(p), mUtil(util)
 {
+  if(!loop)
+    {
+    loop = new QEventLoop();
+    }
+
     QObject::connect(mUtil->dispatcher(), SIGNAL(started()), this, SLOT(start()));
     QObject::connect(mUtil->dispatcher(), SIGNAL(stopped()), this, SLOT(stop()));
 }
 
 pqNativeFileDialogEventPlayer::~pqNativeFileDialogEventPlayer()
 {
+  if(loop)
+    {
+    delete loop;
+    loop = NULL;
+    }
 }
 
 void pqNativeFileDialogEventPlayer::start()
@@ -153,13 +163,13 @@ bool pqNativeFileDialogEventPlayer::playEvent(QObject* Object, const QString& Co
     if(Command == "FileOpen" || Command == "DirOpen" || Command == "FileSave")
     {
         filename = files.join(";");
-        loop.quit();
+        loop->quit();
         return true;
     }
     else if(Command == "FilesOpen")
     {
         filenames = files;
-        loop.quit();
+        loop->quit();
         return true;
     }
 
