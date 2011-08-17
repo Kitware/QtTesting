@@ -39,5 +39,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #define QT_TESTING_EVENT_PLAYBACK_DELAY @QT_TESTING_EVENT_PLAYBACK_DELAY@
 
+//
+// This macro is used to quiet compiler warnings about unused parameters
+// to methods. Only use it when the parameter really shouldn't be used.
+// Don't use it as a way to shut up the compiler while you take your
+// sweet time getting around to implementing the method.
+//
+#define pqNotUsed(x)
+
 #endif // _QtTestingConfigure_h
 

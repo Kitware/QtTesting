@@ -63,26 +63,26 @@ namespace
     QString filename;
     QStringList filenames;
 
-    QString dir_hook(QWidget* parent, const QString& caption, const QString& dir,
-                     QFileDialog::Options options)
+    QString dir_hook(QWidget* pqNotUsed(parent), const QString& pqNotUsed(caption), const QString& pqNotUsed(dir),
+                     QFileDialog::Options pqNotUsed(options))
     {
         // wait for next event played to give us a filename
         loop->exec();
         return filename;
     }
 
-    QString filename_hook(QWidget* parent, const QString& caption, const QString& dir,
-                               const QString& filter, QString *selectedFilter,
-                               QFileDialog::Options options)
+    QString filename_hook(QWidget* pqNotUsed(parent), const QString& pqNotUsed(caption), const QString& pqNotUsed(dir),
+			  const QString& pqNotUsed(filter), QString * pqNotUsed(selectedFilter),
+			  QFileDialog::Options pqNotUsed(options))
     {
         // wait for next event played to give us a filename
         loop->exec();
         return filename;
     }
 
-    QStringList filenames_hook(QWidget* parent, const QString& caption, const QString& dir,
-                               const QString& filter, QString *selectedFilter,
-                               QFileDialog::Options options)
+  QStringList filenames_hook(QWidget* pqNotUsed(parent), const QString& pqNotUsed(caption), const QString& pqNotUsed(dir),
+			     const QString& pqNotUsed(filter), QString *pqNotUsed(selectedFilter),
+			     QFileDialog::Options pqNotUsed(options))
     {
         // wait for next event played to give us a filename
         loop->exec();
@@ -144,7 +144,7 @@ void pqNativeFileDialogEventPlayer::stop()
     qt_filedialog_save_filename_hook = old_save_filename_hook;
 }
 
-bool pqNativeFileDialogEventPlayer::playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
+bool pqNativeFileDialogEventPlayer::playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& pqNotUsed(Error))
 {
 
     if(!qobject_cast<QApplication*>(Object))

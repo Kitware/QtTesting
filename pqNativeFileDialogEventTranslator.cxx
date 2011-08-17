@@ -153,8 +153,8 @@ void pqNativeFileDialogEventTranslator::stop()
     qt_filedialog_save_filename_hook = old_save_filename_hook;
 }
 
-bool pqNativeFileDialogEventTranslator::translateEvent(QObject* Object, QEvent* Event,
-                                           bool& /*Error*/)
+bool pqNativeFileDialogEventTranslator::translateEvent(QObject* Object, QEvent* pqNotUsed(Event),
+						       bool& pqNotUsed(Error))
 {
     // capture events under a filedialog and consume them
     QObject* tmp = Object;
