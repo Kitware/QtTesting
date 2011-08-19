@@ -227,6 +227,13 @@ configure_file(
 )
 
 # Set up the install export
+IF(IS_ABSOLUTE QtTesting_INSTALL_LIB_DIR)
+  set(QtTesting_INSTALL_LIB_FULL_DIR "${QtTesting_INSTALL_LIB_DIR}")
+ELSE()
+  set(QtTesting_INSTALL_LIB_FULL_DIR "${CMAKE_INSTALL_PREFIX}/${QtTesting_INSTALL_LIB_DIR}")
+  get_filename_component(QtTesting_INSTALL_LIB_FULL_DIR "${QtTesting_INSTALL_LIB_FULL_DIR}" ABSOLUTE)
+ENDIF()
+
 set( QtTesting_EXPORT_INSTALL_FILE "${QtTesting_BINARY_DIR}/CMakeFiles/QtTestingConfig.cmake" )
 configure_file(
   "${QtTesting_SOURCE_DIR}/QtTestingConfig-install.cmake.in"
