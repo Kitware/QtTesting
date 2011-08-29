@@ -205,45 +205,45 @@ void pqTestUtility::recordTests(const QString& filename)
 //-----------------------------------------------------------------------------
 void pqTestUtility::addDataDirectory(const QString& label, const QDir& path)
 {
-    this->DataDirectories[label] = path;
+  this->DataDirectories[label] = path;
 }
 
 //-----------------------------------------------------------------------------
 void pqTestUtility::removeDataDirectory(const QString& label)
 {
-    this->DataDirectories.remove(label);
+  this->DataDirectories.remove(label);
 }
 
 //-----------------------------------------------------------------------------
 QString pqTestUtility::convertToDataDirectory(const QString& file)
 {
-    QString normalized_file = file;
-    QMap<QString, QDir>::iterator iter;
-    for(iter = this->DataDirectories.begin(); iter != this->DataDirectories.end(); ++iter)
+  QString normalized_file = file;
+  QMap<QString, QDir>::iterator iter;
+  for(iter = this->DataDirectories.begin(); iter != this->DataDirectories.end(); ++iter)
     {
-        QString rel_file = iter.value().relativeFilePath(file);
-        if(!rel_file.contains(".."))
-        {
-            normalized_file = QString("${%1}/%2").arg(iter.key()).arg(rel_file);
-            break;
-        }
+    QString rel_file = iter.value().relativeFilePath(file);
+    if(!rel_file.contains(".."))
+      {
+      normalized_file = QString("${%1}/%2").arg(iter.key()).arg(rel_file);
+      break;
+      }
     }
-    return normalized_file;
+  return normalized_file;
 }
 
 //-----------------------------------------------------------------------------
 QString pqTestUtility::convertFromDataDirectory(const QString& file)
 {
-    QString filename = file;
-    QMap<QString, QDir>::iterator iter;
-    for(iter = this->DataDirectories.begin(); iter != this->DataDirectories.end(); ++iter)
+  QString filename = file;
+  QMap<QString, QDir>::iterator iter;
+  for(iter = this->DataDirectories.begin(); iter != this->DataDirectories.end(); ++iter)
     {
-        QString label = QString("${%1}").arg(iter.key());
-        if(filename.contains(label))
-        {
-            filename.replace(label, iter.value().absolutePath());
-            break;
-        }
+    QString label = QString("${%1}").arg(iter.key());
+    if(filename.contains(label))
+      {
+      filename.replace(label, iter.value().absolutePath());
+      break;
+      }
     }
-    return filename;
+  return filename;
 }
