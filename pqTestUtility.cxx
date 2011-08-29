@@ -202,16 +202,19 @@ void pqTestUtility::recordTests(const QString& filename)
   dialog->show();
 }
 
+//-----------------------------------------------------------------------------
 void pqTestUtility::addDataDirectory(const QString& label, const QDir& path)
 {
     this->DataDirectories[label] = path;
 }
 
+//-----------------------------------------------------------------------------
 void pqTestUtility::removeDataDirectory(const QString& label)
 {
     this->DataDirectories.remove(label);
 }
 
+//-----------------------------------------------------------------------------
 QString pqTestUtility::convertToDataDirectory(const QString& file)
 {
     QString normalized_file = file;
@@ -228,6 +231,7 @@ QString pqTestUtility::convertToDataDirectory(const QString& file)
     return normalized_file;
 }
 
+//-----------------------------------------------------------------------------
 QString pqTestUtility::convertFromDataDirectory(const QString& file)
 {
     QString filename = file;
