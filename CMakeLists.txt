@@ -17,6 +17,10 @@ IF(NOT DEFINED QtTesting_INSTALL_BIN_DIR)
   SET(QtTesting_INSTALL_BIN_DIR bin)
 ENDIF()
 
+IF(NOT DEFINED QtTesting_INSTALL_INCLUDE_DIR)
+  SET(QtTesting_INSTALL_INCLUDE_DIR include/QtTesting)
+ENDIF()
+
 IF(NOT DEFINED QtTesting_INSTALL_LIB_DIR)
   SET(QtTesting_INSTALL_LIB_DIR lib)
 ENDIF()
@@ -112,80 +116,88 @@ QT4_WRAP_UI(UI_BUILT_SOURCES
   pqRecordEventsDialog.ui
 )
 
-ADD_LIBRARY(QtTesting
-  QtTestingExport.h
+SET(QtTesting_SOURCES
   pq3DViewEventPlayer.cxx
-  pq3DViewEventPlayer.h
   pq3DViewEventTranslator.cxx
-  pq3DViewEventTranslator.h
   pqAbstractActivateEventPlayer.cxx
-  pqAbstractActivateEventPlayer.h
   pqAbstractBooleanEventPlayer.cxx
-  pqAbstractBooleanEventPlayer.h
   pqAbstractButtonEventTranslator.cxx
-  pqAbstractButtonEventTranslator.h
   pqAbstractDoubleEventPlayer.cxx
-  pqAbstractDoubleEventPlayer.h
   pqAbstractIntEventPlayer.cxx
-  pqAbstractIntEventPlayer.h
   pqAbstractItemViewEventPlayer.cxx
-  pqAbstractItemViewEventPlayer.h
   pqAbstractItemViewEventTranslator.cxx
-  pqAbstractItemViewEventTranslator.h
   pqAbstractMiscellaneousEventPlayer.cxx
-  pqAbstractMiscellaneousEventPlayer.h
   pqAbstractSliderEventTranslator.cxx
-  pqAbstractSliderEventTranslator.h
   pqAbstractStringEventPlayer.cxx
-  pqAbstractStringEventPlayer.h
   pqBasicWidgetEventPlayer.cxx
-  pqBasicWidgetEventPlayer.h
   pqBasicWidgetEventTranslator.cxx
-  pqBasicWidgetEventTranslator.h
   pqComboBoxEventTranslator.cxx
-  pqComboBoxEventTranslator.h
   pqDoubleSpinBoxEventTranslator.cxx
-  pqDoubleSpinBoxEventTranslator.h
   pqEventDispatcher.cxx
-  pqEventDispatcher.h
   pqEventObserver.cxx
-  pqEventObserver.h
   pqEventPlayer.cxx
-  pqEventPlayer.h
   pqEventTranslator.cxx
+  pqLineEditEventTranslator.cxx
+  pqNativeFileDialogEventPlayer.cxx
+  pqNativeFileDialogEventTranslator.cxx
+  pqMenuEventTranslator.cxx
+  pqObjectNaming.cxx
+  pqRecordEventsDialog.cxx
+  pqSpinBoxEventTranslator.cxx
+  pqStdoutEventObserver.cxx
+  pqTabBarEventPlayer.cxx
+  pqTabBarEventTranslator.cxx
+  pqTestUtility.cxx
+  pqThreadedEventSource.cxx
+  pqTreeViewEventTranslator.cxx
+  pqTreeViewEventPlayer.cxx
+  pqWidgetEventPlayer.cxx
+)
+
+SET(QtTesting_DEVEL_HEADERS
+  pq3DViewEventPlayer.h
+  pq3DViewEventTranslator.h
+  pqAbstractActivateEventPlayer.h
+  pqAbstractMiscellaneousEventPlayer.h
+  pqAbstractDoubleEventPlayer.h
+  pqAbstractBooleanEventPlayer.h
+  pqAbstractButtonEventTranslator.h
+  pqAbstractIntEventPlayer.h
+  pqAbstractItemViewEventPlayer.h
+  pqAbstractItemViewEventTranslator.h
+  pqAbstractSliderEventTranslator.h
+  pqAbstractStringEventPlayer.h
+  pqBasicWidgetEventPlayer.h
+  pqBasicWidgetEventTranslator.h
+  pqComboBoxEventTranslator.h
+  pqDoubleSpinBoxEventTranslator.h
+  pqEventDispatcher.h
+  pqEventObserver.h
+  pqEventPlayer.h
   pqEventTranslator.h
   pqEventSource.h
-  pqLineEditEventTranslator.cxx
   pqLineEditEventTranslator.h
-  pqNativeFileDialogEventPlayer.cxx
   pqNativeFileDialogEventPlayer.h
-  pqNativeFileDialogEventTranslator.cxx
   pqNativeFileDialogEventTranslator.h
-  pqMenuEventTranslator.cxx
   pqMenuEventTranslator.h
-  pqObjectNaming.cxx
   pqObjectNaming.h
-  pqRecordEventsDialog.cxx
   pqRecordEventsDialog.h
-  pqSpinBoxEventTranslator.cxx
   pqSpinBoxEventTranslator.h
-  pqStdoutEventObserver.cxx
   pqStdoutEventObserver.h
-  pqTabBarEventPlayer.cxx
   pqTabBarEventPlayer.h
-  pqTabBarEventTranslator.cxx
   pqTabBarEventTranslator.h
-  pqTestUtility.cxx
   pqTestUtility.h
-  pqThreadedEventSource.cxx
   pqThreadedEventSource.h
-  pqTreeViewEventTranslator.cxx
   pqTreeViewEventTranslator.h
-  pqTreeViewEventPlayer.cxx
   pqTreeViewEventPlayer.h
-  pqWidgetEventPlayer.cxx
   pqWidgetEventPlayer.h
   pqWidgetEventTranslator.h
+  QtTestingExport.h
+  ${QtTesting_BINARY_DIR}/QtTestingConfigure.h
+)
+
+ADD_LIBRARY(QtTesting
+  ${QtTesting_SOURCES}
   ${MOC_BUILT_SOURCES}
   ${UI_BUILT_SOURCES}
   ${PYTHON_SRCS}
@@ -227,6 +239,13 @@ configure_file(
 )
 
 # Set up the install export
+IF(IS_ABSOLUTE QtTesting_INSTALL_INCLUDE_DIR)
+  set(QtTesting_INSTALL_INCLUDE_FULL_DIR "${QtTesting_INSTALL_INCLUDE_DIR}")
+ELSE()
+  set(QtTesting_INSTALL_INCLUDE_FULL_DIR "${CMAKE_INSTALL_PREFIX}/${QtTesting_INSTALL_INCLUDE_DIR}")
+  get_filename_component(QtTesting_INSTALL_INCLUDE_FULL_DIR "${QtTesting_INSTALL_INCLUDE_FULL_DIR}" ABSOLUTE)
+ENDIF()
+
 IF(IS_ABSOLUTE QtTesting_INSTALL_LIB_DIR)
   set(QtTesting_INSTALL_LIB_FULL_DIR "${QtTesting_INSTALL_LIB_DIR}")
 ELSE()
@@ -242,6 +261,10 @@ configure_file(
 )
 
 IF(QT_TESTING_INSTALL_DEVELOPMENT)
+  install( FILES ${QtTesting_DEVEL_HEADERS}
+    DESTINATION ${QtTesting_INSTALL_INCLUDE_DIR}
+  )
+
   # Configure the CMake EXPORT file during installation
   install( FILES ${QtTesting_BINARY_DIR}/CMakeFiles/QtTestingConfig.cmake
     DESTINATION ${QtTesting_INSTALL_CMAKE_DIR}
