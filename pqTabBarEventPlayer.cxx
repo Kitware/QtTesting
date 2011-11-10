@@ -41,37 +41,59 @@ pqTabBarEventPlayer::pqTabBarEventPlayer(QObject* p)
 {
 }
 
-bool pqTabBarEventPlayer::playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
+bool pqTabBarEventPlayer::playEvent(
+  QObject* target, const QString& command, const QString& arguments, bool& error_flag)
 {
-  if(Command != "set_tab")
-    return false;
-
-  const QString value = Arguments;
-    
-  if(QTabBar* const object = qobject_cast<QTabBar*>(Object))
+  if (command != "set_tab"  && command != "set_tab_with_text")
     {
+    // I don't handle this. Return false
+    return false;
+    }
+
+  const QString value = arguments;
+    
+  QTabBar* const tab_bar = qobject_cast<QTabBar*>(target);
+  if (tab_bar && command=="set_tab")
+    {
+    // "set_tab" saves tab index. This was done in the past. Newly recorded
+    // tests will use set_tab_with_text for more reliable playback.
     bool ok = false;
     int which = value.toInt(&ok);
     if(!ok)
       {
-      qCritical() << "calling set_tab with invalid argument on " << Object;
-      Error = true;
+      qCritical() << "calling set_tab with invalid argument on " << target;
+      error_flag = true;
       }
-    else if(object->count() < which)
+    else if(tab_bar->count() < which)
       {
-      qCritical() << "calling set_tab with out of bounds index on " << Object;
-      Error = true;
+      qCritical() << "calling set_tab with out of bounds index on " << target;
+      error_flag = true;
       }
     else
       {
-      object->setCurrentIndex(which);
+      tab_bar->setCurrentIndex(which);
       }
     return true;
     }
 
-  qCritical() << "calling set_tab on unhandled type " << Object;
+  if (tab_bar && command == "set_tab_with_text")
+    {
+    for (int cc=0 ; cc < tab_bar->count(); cc++)
+      {
+      if (tab_bar->tabText(cc) == value)
+        {
+        tab_bar->setCurrentIndex(cc);
+        return true;
+        }
+      }
+    qCritical() << "calling set_tab with unknown tab " << value;
+    error_flag = true;
+    return true;
+    }
 
-  Error = true;
+  qCritical() << "calling set_tab on unhandled type " << target;
+
+  error_flag = true;
   return true;
 }
 

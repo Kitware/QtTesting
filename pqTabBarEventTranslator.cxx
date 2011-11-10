@@ -70,7 +70,7 @@ bool pqTabBarEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
 
 void pqTabBarEventTranslator::indexChanged(int which)
 {
-  emit recordEvent(this->CurrentObject, "set_tab",
-                   QString("%1").arg(which));
+  emit recordEvent(this->CurrentObject, "set_tab_with_text",
+    this->CurrentObject->tabText(which));
 }
 
