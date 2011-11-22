@@ -55,6 +55,12 @@ private:
   pqSpinBoxEventTranslator(const pqSpinBoxEventTranslator&);
   pqSpinBoxEventTranslator& operator=(const pqSpinBoxEventTranslator&);
 
+  int      Value;
+  QObject* CurrentObject;
+
+private slots:
+  void onDestroyed(QObject*);
+  void onValueChanged(int number);
 };
 
 #endif // !_pqSpinBoxEventTranslator_h

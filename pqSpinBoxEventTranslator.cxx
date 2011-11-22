@@ -41,6 +41,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 pqSpinBoxEventTranslator::pqSpinBoxEventTranslator(QObject* p)
   : pqWidgetEventTranslator(p)
 {
+  this->CurrentObject = 0;
 }
 
 bool pqSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& /*Error*/)
@@ -54,49 +55,49 @@ bool pqSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, bo
     }
 
   if(!object)
-    return false;
-    
-  switch(Event->type())
+      return false;
+
+  if(Event->type() == QEvent::Enter && Object==object)
     {
-    case QEvent::MouseButtonPress:
+    if(this->CurrentObject != Object)
       {
-      QMouseEvent* me = static_cast<QMouseEvent*>(Event);
-      if(me->button() == Qt::LeftButton)
+      if(this->CurrentObject)
         {
-        QStyle* style = object->style();
-        QStyleOptionSpinBox option;
-        option.initFrom(object);
-        option.subControls = QStyle::SC_All;
-        QStyle::SubControl sub = style->hitTestComplexControl(
-          QStyle::CC_SpinBox, &option, me->pos(), object);
-        if(sub == QStyle::SC_SpinBoxUp)
-          {
-          emit recordEvent(object, "spin", "up");
-          }
-        else if(sub == QStyle::SC_SpinBoxDown)
-          {
-          emit recordEvent(object, "spin", "down");
-          }
+        disconnect(this->CurrentObject, 0, this, 0);
         }
+      this->CurrentObject = Object;
+      this->Value = object->value();
+      connect(object, SIGNAL(valueChanged(int)),this, SLOT(onValueChanged(int)));
+      connect(object, SIGNAL(destroyed(QObject*)), this, SLOT(onDestroyed(QObject*)));
       }
-      break;
-    case QEvent::KeyRelease:
-      {
-      QKeyEvent* ke = static_cast<QKeyEvent*>(Event);
-      QString keyText = ke->text();
-      if(keyText.length() && keyText.at(0).isLetterOrNumber())
-        {
-        emit recordEvent(object, "set_int", QString("%1").arg(object->value()));
-        }
-      else
-        {
-        emit recordEvent(object, "key", QString("%1").arg(ke->key()));
-        }
-      }
-    default:
-      break;
     }
-      
+
+  if(Event->type() == QEvent::KeyRelease && Object == object)
+    {
+    QKeyEvent* ke = static_cast<QKeyEvent*>(Event);
+    QString keyText = ke->text();
+    this->Value = object->value();
+    if(keyText.length() && keyText.at(0).isLetterOrNumber())
+      {
+      emit recordEvent(object, "set_int", QString("%1").arg(object->value()));
+      }
+    else
+      {
+      emit recordEvent(object, "key", QString("%1").arg(ke->key()));
+      }
+    }
   return true;
+}
+
+void pqSpinBoxEventTranslator::onDestroyed(QObject* /*Object*/)
+{
+  this->CurrentObject = 0;
+}
+
+void pqSpinBoxEventTranslator::onValueChanged(int number)
+{
+  QString sens = (number - this->Value > 0) ? "up" : "down";
+  this->Value = number;
+  emit recordEvent(this->CurrentObject, "spin", sens);
 }
 
