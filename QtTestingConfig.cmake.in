@@ -1,2 +1,8 @@
+
+if(NOT QtTesting_EXPORTS_INCLUDED)
+  include("@QtTesting_BINARY_DIR@/QtTestingExports.cmake")
+  set(QtTesting_EXPORTS_INCLUDED 1)
+endif()
+
 set(QtTesting_INCLUDE_DIRS "@QtTesting_SOURCE_DIR@;@QtTesting_BINARY_DIR@")
 set(QtTesting_LIBRARY_DIR "@QtTesting_BINARY_DIR@")

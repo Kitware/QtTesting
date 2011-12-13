@@ -234,6 +234,8 @@ INSTALL(TARGETS QtTesting
 
 add_subdirectory(Examples)
 
+export(TARGETS QtTesting FILE ${QtTesting_BINARY_DIR}/QtTestingExports.cmake)
+
 # Set up the build export configuration
 set( QtTesting_EXPORT_FILE "${QtTesting_BINARY_DIR}/QtTestingConfig.cmake" )
 configure_file(
