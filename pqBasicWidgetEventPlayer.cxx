@@ -83,12 +83,20 @@ bool pqBasicWidgetEventPlayer::playEvent(QObject* Object,
       QStringList args = Arguments.split(',');
       if(args.size() == 5)
         {
-        Qt::MouseButton button = static_cast<Qt::MouseButton>(args[0].toInt());
         Qt::MouseButtons buttons = static_cast<Qt::MouseButton>(args[1].toInt());
         Qt::KeyboardModifiers keym = static_cast<Qt::KeyboardModifier>(args[2].toInt());
         int x = args[3].toInt();
         int y = args[4].toInt();
         QPoint pt(x,y);
+        if (Command == "mouseWheel")
+          {
+  //           QEvent::Type type = QEvent::Wheel;
+          int delta = args[0].toInt();
+          QWheelEvent we(QPoint(x,y), delta, buttons, keym);
+          QCoreApplication::sendEvent(Object, &we);
+          return true;
+          }
+        Qt::MouseButton button = static_cast<Qt::MouseButton>(args[0].toInt());
         QEvent::Type type = QEvent::MouseButtonPress;
         type = Command == "mouseMove" ? QEvent::MouseMove : type;
         type = Command == "mouseRelease" ? QEvent::MouseButtonRelease : type;

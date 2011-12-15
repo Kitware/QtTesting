@@ -40,6 +40,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QtDebug>
 #include <QList>
 #include <QListWidget>
+#include <QWheelEvent>
 
 #include "pqEventDispatcher.h"
 
@@ -152,7 +153,6 @@ bool pqAbstractItemViewEventPlayer::playEvent(QObject* Object, const QString& Co
     QStringList args = Arguments.split(',');
     if(args.size() == 6)
       {
-      Qt::MouseButton button = static_cast<Qt::MouseButton>(args[0].toInt());
       Qt::MouseButtons buttons = static_cast<Qt::MouseButton>(args[1].toInt());
       Qt::KeyboardModifiers keym = static_cast<Qt::KeyboardModifier>(args[2].toInt());
       int x = args[3].toInt();
@@ -178,7 +178,15 @@ bool pqAbstractItemViewEventPlayer::playEvent(QObject* Object, const QString& Co
         QRect r = object->visualRect(idx);
         pt = r.topLeft() + QPoint(x,y);
         }
-
+      if (Command == "mouseWheel")
+        {
+//           QEvent::Type type = QEvent::Wheel;
+         int delta = args[0].toInt();
+         QWheelEvent we(QPoint(x,y), delta, buttons, keym);
+         QCoreApplication::sendEvent(Object, &we);
+         return true;
+        }
+      Qt::MouseButton button = static_cast<Qt::MouseButton>(args[0].toInt());
       QEvent::Type type = QEvent::MouseButtonPress;
       type = Command == "mouseMove" ? QEvent::MouseMove : type;
       type = Command == "mouseRelease" ? QEvent::MouseButtonRelease : type;

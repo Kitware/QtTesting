@@ -95,6 +95,22 @@ bool pqBasicWidgetEventTranslator::translateEvent(QObject* Object,
         }
       }
       break;
+    case QEvent::Wheel:
+      {
+      QWheelEvent* wheelEvent = dynamic_cast<QWheelEvent*>(Event);
+      if(wheelEvent)
+        {
+        int buttons = wheelEvent->buttons();
+        int modifiers = wheelEvent->modifiers();
+        emit emit recordEvent(Object, "mouseWheel", QString("%1,%2,%3,%4,%5")
+                              .arg(wheelEvent->delta())
+                              .arg(buttons)
+                              .arg(modifiers)
+                              .arg(wheelEvent->x())
+                              .arg(wheelEvent->y()));
+        }
+      }
+      break;
     default:
       break;
     }

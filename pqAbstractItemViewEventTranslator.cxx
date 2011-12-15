@@ -136,6 +136,34 @@ bool pqAbstractItemViewEventTranslator::translateEvent(QObject* Object, QEvent* 
         emit recordEvent(object, "mouseRelease", info);
         }
       }
+    case QEvent::Wheel:
+      {
+      if(Object == object)
+        {
+        return false;
+        }
+      QPoint relPt = QPoint(0,0);
+      QWheelEvent* wheelEvent = dynamic_cast<QWheelEvent*>(Event);
+      if(wheelEvent)
+        {
+        QString idxStr;
+        QModelIndex idx = object->indexAt(wheelEvent->pos());
+        idxStr = toIndexStr(idx);
+        QRect r = object->visualRect(idx);
+        relPt = wheelEvent->pos() - r.topLeft();
+        int numStep = wheelEvent->delta();
+        int buttons = wheelEvent->buttons();
+        int modifiers = wheelEvent->modifiers();
+        emit emit recordEvent(Object, "mouseWheel", QString("%1,%2,%3,%4,%5")
+                              .arg(numStep)
+                              .arg(buttons)
+                              .arg(modifiers)
+                              .arg(relPt.x())
+                              .arg(relPt.y())
+                              .arg(idxStr));
+        }
+      }
+      break;
     default:
       break;
     }
