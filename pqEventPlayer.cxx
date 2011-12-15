@@ -71,7 +71,7 @@ void pqEventPlayer::addDefaultWidgetEventPlayers(pqTestUtility* util)
   addWidgetEventPlayer(new pqTreeViewEventPlayer());
   addWidgetEventPlayer(new pqAbstractMiscellaneousEventPlayer());
   addWidgetEventPlayer(new pq3DViewEventPlayer("QGLWidget"));
-  addWidgetEventPlayer(new pqNativeFileDialogEventPlayer(util));
+  //addWidgetEventPlayer(new pqNativeFileDialogEventPlayer(util));
 }
 
 void pqEventPlayer::addWidgetEventPlayer(pqWidgetEventPlayer* Player)

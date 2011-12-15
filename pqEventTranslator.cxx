@@ -112,7 +112,7 @@ void pqEventTranslator::addDefaultWidgetEventTranslators(pqTestUtility* util)
   addWidgetEventTranslator(new pqTabBarEventTranslator());
   addWidgetEventTranslator(new pqTreeViewEventTranslator());
   addWidgetEventTranslator(new pq3DViewEventTranslator("QGLWidget"));
-  addWidgetEventTranslator(new pqNativeFileDialogEventTranslator(util));
+  //addWidgetEventTranslator(new pqNativeFileDialogEventTranslator(util));
 }
 
 void pqEventTranslator::addWidgetEventTranslator(pqWidgetEventTranslator* Translator)
