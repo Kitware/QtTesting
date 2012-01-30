@@ -39,6 +39,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QMenuBar>
 #include <QPushButton>
 #include <QtDebug>
+#include <QToolButton>
 
 #include "pqEventDispatcher.h"
 
@@ -52,8 +53,8 @@ bool pqAbstractActivateEventPlayer::playEvent(QObject* Object,
                                               const QString& Arguments,
                                               bool& Error)
 {
-  if(Command != "activate")
-    return false;
+    if(Command != "activate" && Command != "longActivate")
+      return false;
 
   if (QMenuBar* const menu_bar  = qobject_cast<QMenuBar*>(Object))
     {
@@ -109,7 +110,6 @@ bool pqAbstractActivateEventPlayer::playEvent(QObject* Object,
       else if(QMenu* menu = qobject_cast<QMenu*>(p))
         {
         menu->setActiveAction(next->menuAction());
-
         int max_wait = 0;
         while(!next->isVisible() && (++max_wait) <= 2)
           {
@@ -135,9 +135,21 @@ bool pqAbstractActivateEventPlayer::playEvent(QObject* Object,
 
   if(QAbstractButton* const object = qobject_cast<QAbstractButton*>(Object))
     {
-    object->click();
-    //QApplication::processEvents();
-    return true;
+    if (Command == "activate")
+      {
+      object->click();
+      //QApplication::processEvents();
+      return true;
+      }
+    if(Command == "longActivate")
+      {
+      QToolButton* tButton = qobject_cast<QToolButton*>(Object);
+      if(tButton)
+        {
+        tButton->showMenu();
+        return true;
+        }
+      }
     }
 
   if (QAction* const action = qobject_cast<QAction*>(Object))

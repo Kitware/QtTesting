@@ -32,6 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "pqAbstractButtonEventTranslator.h"
 
+#include <QDebug>
 #include <QAbstractButton>
 #include <QAction>
 #include <QKeyEvent>
@@ -51,7 +52,7 @@ bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Ev
   QAbstractButton* const object = qobject_cast<QAbstractButton*>(Object);
   if(!object)
     return false;
-    
+
   switch(Event->type())
     {
     case QEvent::KeyPress:
@@ -74,8 +75,26 @@ bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Ev
         {
         onActivate(object);
         }
+      QToolButton* toolButton = qobject_cast<QToolButton*>(object);
+      if(toolButton && 
+         e->button() == Qt::LeftButton && 
+         object->rect().contains(e->pos()) &&
+         toolButton->menu())
+        {
+        onActivate(object);
+        }
+      }  
+      break;
+    case QEvent::Timer:
+      {
+      QToolButton* tButton = qobject_cast<QToolButton*>(object);
+      if(tButton &&
+         tButton->popupMode() == QToolButton::DelayedPopup)
+        {
+        emit recordEvent(object, "longActivate", "");
+        }
       }
-    break;
+      break;
     case QEvent::MouseButtonRelease:
       {
       QMouseEvent* const e = static_cast<QMouseEvent*>(Event);
