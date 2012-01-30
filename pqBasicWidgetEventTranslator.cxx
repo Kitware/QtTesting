@@ -32,6 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "pqBasicWidgetEventTranslator.h"
 
+#include <QDialog>
 #include <QEvent>
 #include <QKeyEvent>
 #include <QWidget>
@@ -58,6 +59,15 @@ bool pqBasicWidgetEventTranslator::translateEvent(QObject* Object,
     case QEvent::ContextMenu:
       {
       emit recordEvent(Object, "contextMenu", "");
+      }
+      break;
+    case QEvent::KeyPress:
+      {
+      QKeyEvent* keyEvent = static_cast<QKeyEvent*>(Event);
+      if(qobject_cast<QDialog*>(Object))
+        {
+        emit recordEvent(object, "key", QString::number(keyEvent->key()));
+        }
       }
       break;
     case QEvent::MouseButtonPress:
