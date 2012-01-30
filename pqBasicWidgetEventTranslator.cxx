@@ -102,8 +102,9 @@ bool pqBasicWidgetEventTranslator::translateEvent(QObject* Object,
         {
         int buttons = wheelEvent->buttons();
         int modifiers = wheelEvent->modifiers();
+        int numStep = wheelEvent->delta() > 0 ? 120 : -120;
         emit emit recordEvent(Object, "mouseWheel", QString("%1,%2,%3,%4,%5")
-                              .arg(wheelEvent->delta())
+                              .arg(numStep)
                               .arg(buttons)
                               .arg(modifiers)
                               .arg(wheelEvent->x())

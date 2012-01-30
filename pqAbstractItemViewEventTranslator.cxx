@@ -151,7 +151,7 @@ bool pqAbstractItemViewEventTranslator::translateEvent(QObject* Object, QEvent* 
         idxStr = toIndexStr(idx);
         QRect r = object->visualRect(idx);
         relPt = wheelEvent->pos() - r.topLeft();
-        int numStep = wheelEvent->delta();
+        int numStep = wheelEvent->delta() > 0 ? 120 : -120;
         int buttons = wheelEvent->buttons();
         int modifiers = wheelEvent->modifiers();
         emit emit recordEvent(Object, "mouseWheel", QString("%1,%2,%3,%4,%5")
