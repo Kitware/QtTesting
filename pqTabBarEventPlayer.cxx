@@ -35,6 +35,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QComboBox>
 #include <QLineEdit>
 #include <QtDebug>
+#include <iostream>
+
+#include "pqObjectNaming.h"
 
 pqTabBarEventPlayer::pqTabBarEventPlayer(QObject* p)
   : pqWidgetEventPlayer(p)
@@ -86,7 +89,39 @@ bool pqTabBarEventPlayer::playEvent(
         return true;
         }
       }
+
+    // With Qt 4.8, we have started seeing change in the order of the
+    // tab-widgets created for docked panels. That results in the names not
+    // aligning to the ones used while recording the test. In that case, we make
+    // an attempt to locate a sibling tab-bar that has a pane with the expected
+    // name. If none is found, then alone do we give up.
+    if (tab_bar->parentWidget())
+      {
+      QObjectList siblings = tab_bar->parentWidget()->children();
+      foreach (QObject* sibling_object, siblings)
+        {
+        QTabBar* sibling_tab_bar = qobject_cast<QTabBar*>(sibling_object);
+        for (int cc=0 ; sibling_tab_bar != NULL && cc < sibling_tab_bar->count(); cc++)
+          {
+          if (sibling_tab_bar->tabText(cc) == value)
+            {
+            std::cout << "DEBUG: Could not find request tab-pane on "
+              << pqObjectNaming::GetName(*tab_bar).toAscii().data() << ". Using "
+              << pqObjectNaming::GetName(*sibling_tab_bar).toAscii().data() << " instead."
+              << endl;
+            sibling_tab_bar->setCurrentIndex(cc);
+            return true;
+            }
+          }
+        }
+      }
+
     qCritical() << "calling set_tab with unknown tab " << value;
+    qCritical() << "Available tabs are (count=" << tab_bar->count() << ")";
+    for (int cc=0 ; cc < tab_bar->count(); cc++)
+      {
+      qCritical() << "    " << tab_bar->tabText(cc);
+      }
     error_flag = true;
     return true;
     }
