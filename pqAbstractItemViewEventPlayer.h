@@ -44,6 +44,8 @@ Concrete implementation of pqWidgetEventPlayer that translates high-level ParaVi
 class pqAbstractItemViewEventPlayer :
   public pqWidgetEventPlayer
 {
+  Q_OBJECT
+
 public:
   pqAbstractItemViewEventPlayer(QObject* p=0);
 

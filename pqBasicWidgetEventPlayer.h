@@ -43,6 +43,8 @@ Concrete implementation of pqWidgetEventPlayer that handles playback of "activat
 class pqBasicWidgetEventPlayer :
   public pqWidgetEventPlayer
 {
+  Q_OBJECT
+
 public:
   pqBasicWidgetEventPlayer(QObject* p=0);
 

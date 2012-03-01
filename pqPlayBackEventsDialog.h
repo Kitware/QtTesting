@@ -1,7 +1,7 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pqObjectNaming.h
+   Module:    pqPlayBackEventsDialog.h
 
    Copyright (c) 2005-2008 Sandia Corporation, Kitware Inc.
    All rights reserved.
@@ -30,28 +30,49 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
 
-#ifndef _pqObjectNaming_h
-#define _pqObjectNaming_h
+#ifndef _pqPlayBackEventsDialog_h
+#define _pqPlayBackEventsDialog_h
 
 #include "QtTestingExport.h"
+#include <QDialog>
 
-class QObject;
-class QString;
-class QStringList;
+class pqEventPlayer;
+class pqEventDispatcher;
+class pqTestUtility;
 
-/// Provides functionality to ensuring that Qt objects can be uniquely identified for recording and playback of regression tests
-class QTTESTING_EXPORT pqObjectNaming
+/// Provides a standard dialog that will PlayBack user input to an XML file as long as the dialog remains open
+class QTTESTING_EXPORT pqPlayBackEventsDialog : public QDialog
 {
-public:
-  /// Returns a unique identifier for the given object that can be serialized for later regression test playback
-  static const QString GetName(QObject& Object);
-  /// Given a unique identifier returned by GetName(), returns the corresponding object, or NULL
-  static QObject* GetObject(const QString& Name, QString& Message);
+  Q_OBJECT
   
-  /** Dumps the widget hierarchy to a string */
-  static void DumpHierarchy(QStringList& results);
-  /** Dumps a subtree of the widget hierarchy to a string */
-  static void DumpHierarchy(QObject& Object, QStringList& results);
+public:
+  /**
+  Creates the dialog and begins translating user input with the supplied translator.
+  */
+  pqPlayBackEventsDialog(pqEventPlayer& Player,pqEventDispatcher& Source,
+                         pqTestUtility* TestUtility, QWidget* Parent);
+  ~pqPlayBackEventsDialog();
+
+private slots:
+  void onEventAboutToBePlayed(const QString&,const QString&,const QString&);
+  void onLoadFiles();
+  void onPlayOrPause(bool);
+  void onStarted(const QString&);
+
+public slots:
+  virtual void done(const int&);
+  void updateUi();
+
+private:
+  void loadFiles(const QStringList& filenames);
+  QStringList fileNamesSelected();
+
+  pqPlayBackEventsDialog(const pqPlayBackEventsDialog&);            // Not Implemented
+  pqPlayBackEventsDialog& operator=(const pqPlayBackEventsDialog&); // Not Implemented
+
+  struct pqImplementation;
+  pqImplementation* const Implementation;
 };
 
-#endif // !_pqObjectNaming_h
+#endif // !_pqPlayBackEventsDialog_h
+

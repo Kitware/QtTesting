@@ -46,6 +46,8 @@ Concrete implementation of pqWidgetEventPlayer that handles playback of "activat
 class QTTESTING_EXPORT pqAbstractActivateEventPlayer :
   public pqWidgetEventPlayer
 {
+  Q_OBJECT
+
 public:
   pqAbstractActivateEventPlayer(QObject* p = 0);
 

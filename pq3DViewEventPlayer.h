@@ -44,6 +44,8 @@ It is not registered by default, and user can register with their own 3d view ty
 class QTTESTING_EXPORT pq3DViewEventPlayer :
   public pqWidgetEventPlayer
 {
+  Q_OBJECT
+
 public:
   pq3DViewEventPlayer(const QByteArray& classname, QObject* p = 0);
 

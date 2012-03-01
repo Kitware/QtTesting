@@ -44,6 +44,8 @@ Concrete implementation of pqWidgetEventPlayer that translates high-level ParaVi
 class pqTabBarEventPlayer :
   public pqWidgetEventPlayer
 {
+  Q_OBJECT
+
 public:
   pqTabBarEventPlayer(QObject* p=0);
 

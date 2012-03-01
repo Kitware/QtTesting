@@ -73,7 +73,7 @@ class QTTESTING_EXPORT pqEventPlayer :
   public QObject
 {
   Q_OBJECT
-  
+
 public:
   pqEventPlayer();
   ~pqEventPlayer();
@@ -85,25 +85,38 @@ public:
   /** Adds a new player to the current working set of widget players.  
   pqEventPlayer assumes control of the lifetime of the supplied object. */
   void addWidgetEventPlayer(pqWidgetEventPlayer*);
-  
-  /** This method is called with each high-level ParaView event, which 
+  /** Method to get a specific player */
+  bool removeWidgetEventPlayer(const QString& className);
+  /** Method to get a specific player */
+  pqWidgetEventPlayer* getWidgetEventPlayer(const QString& className);
+
+  /** This method is called with each high-level ParaView event, which
   will invoke the corresponding low-level Qt functionality in-turn.  
   If there was an error playing the event, Error argument will be set
   to "true".  Note: Currently there is no guarantee that playEvent()
   will return immediately, since the functionality it invokes may enter
   a separate event loop (a modal dialog or context menu, for example). */
-  void playEvent(
-    const QString& Object,
-    const QString& Command,
-    const QString& Arguments,
-    bool& Error);
+void playEvent(const QString& Object,
+               const QString& Command,
+               const QString& Arguments,
+               bool& Error);
+
+signals:
+  void eventAboutToBePlayed(const QString& Object,
+                            const QString& Command,
+                            const QString& Arguments);
+  void eventPlayed(const QString& Object,
+                   const QString& Command,
+                   const QString& Arguments);
+  void errorMessage(const QString&);
 
 private:
+  int getWidgetEventPlayerIndex(const QString& className);
+
   pqEventPlayer(const pqEventPlayer&);
   pqEventPlayer& operator=(const pqEventPlayer&);
-  
 
-  /// Stores the working set of widget players  
+  /// Stores the working set of widget players
   QList<pqWidgetEventPlayer*> Players;
 };
 

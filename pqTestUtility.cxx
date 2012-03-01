@@ -33,10 +33,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqTestUtility.h"
 
 #include <QFileInfo>
+#include <QDebug>
 #include <QApplication>
 
 #include "pqEventSource.h"
 #include "pqEventObserver.h"
+#include "pqPlayBackEventsDialog.h"
 #include "pqRecordEventsDialog.h"
 #include "QtTestingConfigure.h"
 
@@ -121,11 +123,28 @@ void pqTestUtility::addEventObserver(const QString& fileExtension,
 }
 
 //-----------------------------------------------------------------------------
-bool pqTestUtility::playTests(const QString& filename)
+void pqTestUtility::openPlayerDialog()
+{
+  pqPlayBackEventsDialog* dialog = new pqPlayBackEventsDialog(this->Player,
+                                                              this->Dispatcher,
+                                                              this,
+                                                              QApplication::activeWindow());
+  dialog->exec();
+}
+
+//-----------------------------------------------------------------------------
+void pqTestUtility::stopTests()
+{
+  this->PlayingTest = false;
+  this->Dispatcher.stop();
+}
+
+//-----------------------------------------------------------------------------
+void pqTestUtility::playTests(const QString& filename)
 {
   QStringList files;
   files << filename;
-  return this->playTests(files);
+  this->playTests(files);
 }
 
 //-----------------------------------------------------------------------------
@@ -137,12 +156,19 @@ bool pqTestUtility::playTests(const QStringList& filenames)
     return false;
     }
 
+  emit this->started();
+
   this->PlayingTest = true;
 
   bool success = true;
   foreach (QString filename, filenames)
     {
+    if(!this->playingTest())
+      {
+      break;
+      }
     QFileInfo info(filename);
+    emit this->started(filename);
     QString suffix = info.completeSuffix();
     QMap<QString, pqEventSource*>::iterator iter;
     iter = this->EventSources.find(suffix);
@@ -154,11 +180,16 @@ bool pqTestUtility::playTests(const QStringList& filenames)
         // dispatcher returned failure, don't continue with rest of the tests
         // and flag error.
         success = false;
+        emit this->stopped(info.fileName(), success);
         break;
         }
+      emit this->stopped(info.fileName(), success);
       }
     }
   this->PlayingTest = false;
+
+  qDebug() << "About to stop TestUtility";
+  emit this->stopped();
   return success;
 }
 

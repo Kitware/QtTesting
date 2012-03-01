@@ -178,7 +178,7 @@ const QString pqObjectNaming::GetName(QObject& Object)
   return name;
 }
 
-QObject* pqObjectNaming::GetObject(const QString& Name)
+QObject* pqObjectNaming::GetObject(const QString& Name, QString& messageError)
 {
   QObject* result = 0;
   QObject* lastObject = 0;
@@ -241,23 +241,22 @@ QObject* pqObjectNaming::GetObject(const QString& Name)
   if(result)
     return result;
   
-  qCritical() << "Couldn't find object " << Name;
+  messageError = QString("Couldn't find object %1\n").arg(Name);
   if(lastObject)
     {
-    qCritical() << "Found up to " << pqObjectNaming::GetName(*lastObject);
+    messageError += QString("Found up to %1\n").arg(
+                      pqObjectNaming::GetName(*lastObject));
     }
-
-
   if(lastObject)
     {
     QObjectList matches =
       lastObject->findChildren<QObject*>(names[names.size()-1]);
     foreach(QObject* o, matches)
       {
-      qCritical() << "\tPossible match: " << pqObjectNaming::GetName(*o) << "\n";
+      messageError += QString("\tPossible match: %1\n").arg(pqObjectNaming::GetName(*o));
       }
     }
-
+  qCritical() << messageError;
   return 0;
 }
 

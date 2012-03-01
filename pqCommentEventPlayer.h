@@ -1,13 +1,13 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pqObjectNaming.h
+   Module:    pqNativeFileDialogEventPlayer.h
 
    Copyright (c) 2005-2008 Sandia Corporation, Kitware Inc.
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -30,28 +30,37 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
 
-#ifndef _pqObjectNaming_h
-#define _pqObjectNaming_h
+#ifndef __pqCommentEventPlayer_h
+#define __pqCommentEventPlayer_h
 
-#include "QtTestingExport.h"
+// QtTesting includes
+#include "pqWidgetEventPlayer.h"
 
-class QObject;
-class QString;
-class QStringList;
+/// This class is a comment class.
+/// Do no action on Object.
+/// Emit comment wrote in the xml, which can be catch by someone else.
 
-/// Provides functionality to ensuring that Qt objects can be uniquely identified for recording and playback of regression tests
-class QTTESTING_EXPORT pqObjectNaming
+class pqCommentEventPlayer : public pqWidgetEventPlayer
 {
+  Q_OBJECT
+
 public:
-  /// Returns a unique identifier for the given object that can be serialized for later regression test playback
-  static const QString GetName(QObject& Object);
-  /// Given a unique identifier returned by GetName(), returns the corresponding object, or NULL
-  static QObject* GetObject(const QString& Name, QString& Message);
-  
-  /** Dumps the widget hierarchy to a string */
-  static void DumpHierarchy(QStringList& results);
-  /** Dumps a subtree of the widget hierarchy to a string */
-  static void DumpHierarchy(QObject& Object, QStringList& results);
+  pqCommentEventPlayer(QObject* p =0);
+  ~pqCommentEventPlayer();
+
+  bool playEvent(QObject* Object, const QString &Command, const QString &Arguments, bool &Error);
+
+  void setCommentEnabled(bool value);
+  bool isCommentEnabled() const;
+
+signals:
+  void comment(const QString&);
+
+private:
+  pqCommentEventPlayer(const pqCommentEventPlayer&); // Not implemented
+  pqCommentEventPlayer& operator=(const pqCommentEventPlayer&); // Not implemented
+
+  bool CommentEnabled;
 };
 
-#endif // !_pqObjectNaming_h
+#endif // __pqCommentEventPlayer_h

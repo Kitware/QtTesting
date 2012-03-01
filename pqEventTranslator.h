@@ -59,13 +59,18 @@ public:
   pqEventTranslator(QObject* p=0);
   ~pqEventTranslator();
 
-  /**
-  Adds the default set of widget translators to the working set.  Translators are executed in order, so you may call
-  addWidgetEventTranslator() with your own custom translators before calling this method, to "override" the default translators.
-  */
+  /** Adds the default set of widget translators to the working set.
+  Translators are executed in order, so you may call addWidgetEventTranslator()
+  with your own custom translators before calling this method,
+  to "override" the default translators. */
   void addDefaultWidgetEventTranslators(pqTestUtility* util);
-  /// Adds a new translator to the current working set of widget translators.  pqEventTranslator assumes control of the lifetime of the supplied object.
+  /** Adds a new translator to the current working set of widget translators.
+  pqEventTranslator assumes control of the lifetime of the supplied object.*/
   void addWidgetEventTranslator(pqWidgetEventTranslator*);
+  /** Method to get a specific player */
+  bool removeWidgetEventTranslator(const QString& className);
+  /** Method to get a specific player */
+  pqWidgetEventTranslator* getWidgetEventTranslator(const QString& className);
 
   /// Adds a Qt object to a list of objects that should be ignored when translating events (useful to prevent recording UI events from being captured as part of the recording)
   void ignoreObject(QObject* Object);
@@ -94,6 +99,7 @@ private:
   pqEventTranslator& operator=(const pqEventTranslator&);
 
   bool eventFilter(QObject* Object, QEvent* Event);
+  int getWidgetEventTranslatorIndex(const QString& className);
 
   struct pqImplementation;
   pqImplementation* const Implementation;

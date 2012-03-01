@@ -83,11 +83,21 @@ SET_DIRECTORY_PROPERTIES(PROPERTIES INCLUDE_DIRECTORIES "${MOC_INCLUDE_DIRS}")
 
 QT4_WRAP_CPP(MOC_BUILT_SOURCES
   pq3DViewEventTranslator.h
+  pq3DViewEventPlayer.h
+  pqAbstractActivateEventPlayer.h
   pqAbstractButtonEventTranslator.h
+  pqAbstractBooleanEventPlayer.h
+  pqAbstractDoubleEventPlayer.h
+  pqAbstractIntEventPlayer.h
+  pqAbstractItemViewEventPlayer.h
   pqAbstractItemViewEventTranslator.h
+  pqAbstractMiscellaneousEventPlayer.h
   pqAbstractSliderEventTranslator.h
+  pqAbstractStringEventPlayer.h
   pqBasicWidgetEventTranslator.h
+  pqBasicWidgetEventPlayer.h
   pqComboBoxEventTranslator.h
+  pqCommentEventPlayer.h
   pqDoubleSpinBoxEventTranslator.h
   pqEventDispatcher.h
   pqEventObserver.h
@@ -98,9 +108,11 @@ QT4_WRAP_CPP(MOC_BUILT_SOURCES
   pqMenuEventTranslator.h
   pqNativeFileDialogEventPlayer.h
   pqNativeFileDialogEventTranslator.h
+  pqPlayBackEventsDialog.h
   pqRecordEventsDialog.h
   pqSpinBoxEventTranslator.h
   pqStdoutEventObserver.h
+  pqTabBarEventPlayer.h
   pqTabBarEventTranslator.h
   pqTestUtility.h
   pqThreadedEventSource.h
@@ -108,13 +120,19 @@ QT4_WRAP_CPP(MOC_BUILT_SOURCES
   pqTreeViewEventPlayer.h
   pqTreeViewEventTranslator.h
   pqWidgetEventTranslator.h
+  pqWidgetEventPlayer.h
   ${PYTHON_MOCS}
 )
 
 SET_DIRECTORY_PROPERTIES(PROPERTIES INCLUDE_DIRECTORIES "${include_dirs_tmp}")
 
 QT4_WRAP_UI(UI_BUILT_SOURCES
+  pqPlayBackEventsDialog.ui
   pqRecordEventsDialog.ui
+)
+
+QT4_ADD_RESOURCES(QRC_BUILT_SOURCES
+  Resources/QtTesting.qrc
 )
 
 SET(QtTesting_SOURCES
@@ -133,6 +151,7 @@ SET(QtTesting_SOURCES
   pqBasicWidgetEventPlayer.cxx
   pqBasicWidgetEventTranslator.cxx
   pqComboBoxEventTranslator.cxx
+  pqCommentEventPlayer.cxx
   pqDoubleSpinBoxEventTranslator.cxx
   pqEventDispatcher.cxx
   pqEventObserver.cxx
@@ -143,6 +162,7 @@ SET(QtTesting_SOURCES
   pqNativeFileDialogEventPlayer.cxx
   pqNativeFileDialogEventTranslator.cxx
   pqObjectNaming.cxx
+  pqPlayBackEventsDialog.cxx
   pqRecordEventsDialog.cxx
   pqSpinBoxEventTranslator.cxx
   pqStdoutEventObserver.cxx
@@ -172,6 +192,7 @@ SET(QtTesting_DEVEL_HEADERS
   pqBasicWidgetEventPlayer.h
   pqBasicWidgetEventTranslator.h
   pqComboBoxEventTranslator.h
+  pqCommentEventPlayer.h
   pqDoubleSpinBoxEventTranslator.h
   pqEventDispatcher.h
   pqEventObserver.h
@@ -183,6 +204,7 @@ SET(QtTesting_DEVEL_HEADERS
   pqNativeFileDialogEventPlayer.h
   pqNativeFileDialogEventTranslator.h
   pqObjectNaming.h
+  pqPlayBackEventsDialog.h
   pqRecordEventsDialog.h
   pqSpinBoxEventTranslator.h
   pqStdoutEventObserver.h
@@ -203,6 +225,7 @@ ADD_LIBRARY(QtTesting
   ${QtTesting_SOURCES}
   ${MOC_BUILT_SOURCES}
   ${UI_BUILT_SOURCES}
+  ${QRC_BUILT_SOURCES}
   ${PYTHON_SRCS}
 )
 

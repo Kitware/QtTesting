@@ -74,30 +74,35 @@ struct pqEventTranslator::pqImplementation
 ////////////////////////////////////////////////////////////////////////////////
 // pqEventTranslator
 
+// ----------------------------------------------------------------------------
 pqEventTranslator::pqEventTranslator(QObject* p)
  : QObject(p),
   Implementation(new pqImplementation())
 {
 }
 
+// ----------------------------------------------------------------------------
 pqEventTranslator::~pqEventTranslator()
 {
   this->stop();
   delete Implementation;
 }
 
+// ----------------------------------------------------------------------------
 void pqEventTranslator::start()
 {
   QCoreApplication::instance()->installEventFilter(this);
   emit this->started();
 }
 
+// ----------------------------------------------------------------------------
 void pqEventTranslator::stop()
 {
   emit this->stopped();
   QCoreApplication::instance()->removeEventFilter(this);
 }
 
+// ----------------------------------------------------------------------------
 void pqEventTranslator::addDefaultWidgetEventTranslators(pqTestUtility* util)
 {
   addWidgetEventTranslator(new pqBasicWidgetEventTranslator());
@@ -115,6 +120,7 @@ void pqEventTranslator::addDefaultWidgetEventTranslators(pqTestUtility* util)
   //addWidgetEventTranslator(new pqNativeFileDialogEventTranslator(util));
 }
 
+// ----------------------------------------------------------------------------
 void pqEventTranslator::addWidgetEventTranslator(pqWidgetEventTranslator* Translator)
 {
   if(Translator)
@@ -130,11 +136,54 @@ void pqEventTranslator::addWidgetEventTranslator(pqWidgetEventTranslator* Transl
     }
 }
 
+// ----------------------------------------------------------------------------
+bool pqEventTranslator::removeWidgetEventTranslator(const QString& className)
+{
+  int index = this->getWidgetEventTranslatorIndex(className);
+  if (index == -1)
+    {
+    return false;
+    }
+
+  this->Implementation->Translators.remove(index);
+  qDebug() << "Translator : " << this->Implementation->Translators;
+  return true;
+}
+
+// ----------------------------------------------------------------------------
+pqWidgetEventTranslator* pqEventTranslator::getWidgetEventTranslator(
+    const QString& className)
+{
+  int index = this->getWidgetEventTranslatorIndex(className);
+  if (index == -1)
+    {
+    return 0;
+    }
+
+  return this->Implementation->Translators.at(index);
+}
+
+// ----------------------------------------------------------------------------
+int pqEventTranslator::getWidgetEventTranslatorIndex(const QString& className)
+{
+  for (int i = 0 ; i < this->Implementation->Translators.count() ; ++i)
+    {
+    if (this->Implementation->Translators.at(i)->metaObject()->className() ==
+        className)
+      {
+      return i;
+      }
+    }
+  return -1;
+}
+
+// ----------------------------------------------------------------------------
 void pqEventTranslator::ignoreObject(QObject* Object)
 {
   this->Implementation->IgnoredObjects.insert(Object);
 }
 
+// ----------------------------------------------------------------------------
 bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
 {
 
@@ -183,6 +232,7 @@ bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
   return false;
 }
 
+// ----------------------------------------------------------------------------
 void pqEventTranslator::onRecordEvent(QObject* Object, const QString& Command, const QString& Arguments)
 {
   if(this->Implementation->IgnoredObjects.contains(Object))

@@ -44,6 +44,8 @@ Concrete implementation of pqWidgetEventPlayer that translates high-level ParaVi
 class QTTESTING_EXPORT pqAbstractDoubleEventPlayer :
   public pqWidgetEventPlayer
 {
+  Q_OBJECT
+
 public:
   pqAbstractDoubleEventPlayer(QObject* p=0);
 

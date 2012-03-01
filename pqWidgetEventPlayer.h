@@ -48,6 +48,8 @@ for test-cases, demos, tutorials, etc.
 
 class QTTESTING_EXPORT pqWidgetEventPlayer : public QObject
 {
+  Q_OBJECT
+
 public:
   pqWidgetEventPlayer(QObject* p);
   virtual ~pqWidgetEventPlayer();

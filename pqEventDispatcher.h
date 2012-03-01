@@ -99,12 +99,18 @@ public:
   /// event dispatch.
   static void registerTimer(QTimer* timer);
 
-signals:
-  /// signal when playback starts
-  void started();
+  /// Return if the Dispatcher is not playing events
+  bool isPaused() const;
 
-  /// signal when playback stops
-  void stopped();
+  /// Return Dispatcher's status
+  bool status() const;
+
+signals:
+
+  /// signal when playback starts
+  void restarted();
+  /// signal when playback pauses
+  void paused();
 
 protected slots:
   /// Plays a single event. this->PlayBackFinished and this->PlayBackStatus are
@@ -118,10 +124,24 @@ protected slots:
   /// Called when the mainThread wakes up.
   void awake();
 
+public slots:
+  /// Change the TimeStep
+  void setTimeStep(int value);
+  /// Method to be able to stop/pause/play the current playback script
+  void pause();
+  void restart();
+  void stop();
+  void oneStep();
+
 protected:
+  bool PlayingBlockingEvent;
   bool PlayBackFinished;
+  bool PlayBackPaused;
   bool PlayBackStatus;
+  bool PlayBackOneStep;
+  bool PlayBackStoped;
   static bool DeferMenuTimeouts;
+  int TimeStep;
 
   pqEventSource* ActiveSource;
   pqEventPlayer* ActivePlayer;
