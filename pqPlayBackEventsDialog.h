@@ -55,17 +55,20 @@ public:
 
 private slots:
   void onEventAboutToBePlayed(const QString&,const QString&,const QString&);
-  void onLoadFiles();
+  void loadFiles();
+  void insertFiles();
+  void removeFiles();
   void onPlayOrPause(bool);
   void onStarted(const QString&);
 
 public slots:
-  virtual void done(const int&);
+  virtual void done(int);
   void updateUi();
 
 private:
   void loadFiles(const QStringList& filenames);
-  QStringList fileNamesSelected();
+  void addFile(const QString& filename);
+  QStringList selectedFileNames() const;
 
   pqPlayBackEventsDialog(const pqPlayBackEventsDialog&);            // Not Implemented
   pqPlayBackEventsDialog& operator=(const pqPlayBackEventsDialog&); // Not Implemented

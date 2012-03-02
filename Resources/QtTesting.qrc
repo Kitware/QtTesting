@@ -7,5 +7,7 @@
         <file>Icons/stop.png</file>
         <file>Icons/clear.svg</file>
         <file>Icons/info.png</file>
+        <file>Icons/minus.png</file>
+        <file>Icons/plus.png</file>
     </qresource>
 </RCC>

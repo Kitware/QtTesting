@@ -93,7 +93,6 @@ void pqEventPlayer::addWidgetEventPlayer(pqWidgetEventPlayer* Player)
 bool pqEventPlayer::removeWidgetEventPlayer(const QString& className)
 {
   int index = this->getWidgetEventPlayerIndex(className);
-  qDebug() << "Index : " << index << this->Players.at(index)->metaObject()->className();
   if (index == -1)
     {
     return false;

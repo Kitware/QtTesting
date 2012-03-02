@@ -146,7 +146,6 @@ bool pqEventTranslator::removeWidgetEventTranslator(const QString& className)
     }
 
   this->Implementation->Translators.remove(index);
-  qDebug() << "Translator : " << this->Implementation->Translators;
   return true;
 }
 
