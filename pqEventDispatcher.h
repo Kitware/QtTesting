@@ -47,6 +47,22 @@ class pqEventSource;
 /// then "playing" it using the player. The dispatcher is the critical component
 /// of this playback since it decides when it's time to dispatch the next
 /// "event" from the test.
+/// After an event is posted, there are two options:
+/// \li the default option is to simply wait for a small amount of time before
+/// processing the next event. The hope is that within that time any pending
+/// requests such as timers, slots connected using Qt::QueuedConnection etc.
+/// will be handled and all will work well. This however it fraught with
+/// problems resulting is large number of random test failures especially in
+/// large and complex applications such as ParaView. In such cases the better
+/// option is the second option.
+/// \li we only process already posted events (using a call to
+/// QApplication::processEvents() and then rely on timers being registered using
+/// registerTimer(). All these timers are explicitly timed-out, if active, before
+/// processing the next event.
+///
+/// To enable the second mode simply set the eventPlaybackDelay to 0.
+/// In either mode, all timers registered using registerTimer() will be
+/// timed-out before dispatching next event.
 class QTTESTING_EXPORT pqEventDispatcher : public QObject
 {
   Q_OBJECT
@@ -61,6 +77,11 @@ public:
   /// true if playback was successful.
   bool playEvents(pqEventSource& source, pqEventPlayer& player);
 
+  /// Set the delay between dispatching successive events. Default is set using
+  /// CMake variable QT_TESTING_EVENT_PLAYBACK_DELAY.
+  static void setEventPlaybackDelay(int milliseconds);
+  static int eventPlaybackDelay();
+
   /** Wait function provided for players that need to wait for the GUI
       to perform a certain action.
       Note: the minimum wait time is 100ms. This is set to avoid timiing issues
@@ -71,8 +92,11 @@ public:
     calling Qt version, since that will break test playback*/
   static void processEvents(QEventLoop::ProcessEventsFlags flags = QEventLoop::AllEvents);
 
-signals:
+  /// register a timer that needs to be ensured to have timed-out after every
+  /// event dispatch.
+  static void registerTimer(QTimer* timer);
 
+signals:
   /// signal when playback starts
   void started();
 

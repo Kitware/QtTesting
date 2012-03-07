@@ -42,9 +42,33 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QThread>
 #include <QDialog>
 #include <QMainWindow>
+#include <QList>
+#include <QPointer>
+#include <QTimer>
 
 #include <iostream>
 using namespace std;
+
+namespace
+{
+  static QList<QPointer<QTimer> > RegisteredTimers;
+  
+  void processTimers()
+    {
+    foreach (QTimer* timer, RegisteredTimers)
+      {
+      if (timer && timer->isActive())
+        {
+        QTimerEvent event(timer->timerId());
+        qApp->notify(timer, &event);
+        processTimers();
+        break;
+        }
+      }
+    }
+
+  static int EventPlaybackDelay = QT_TESTING_EVENT_PLAYBACK_DELAY;
+};
 
 bool pqEventDispatcher::DeferMenuTimeouts = false;
 //-----------------------------------------------------------------------------
@@ -69,6 +93,28 @@ pqEventDispatcher::pqEventDispatcher(QObject* parentObject) :
 //-----------------------------------------------------------------------------
 pqEventDispatcher::~pqEventDispatcher()
 {
+}
+
+
+//-----------------------------------------------------------------------------
+void pqEventDispatcher::setEventPlaybackDelay(int milliseconds)
+{
+  EventPlaybackDelay = (milliseconds <= 0)? 0 : milliseconds;
+}
+
+//-----------------------------------------------------------------------------
+int pqEventDispatcher::eventPlaybackDelay()
+{
+  return EventPlaybackDelay;
+}
+
+//-----------------------------------------------------------------------------
+void pqEventDispatcher::registerTimer(QTimer* timer)
+{
+  if (timer)
+    {
+    RegisteredTimers.push_back(timer);
+    }
 }
 
 //-----------------------------------------------------------------------------
@@ -222,19 +268,16 @@ void pqEventDispatcher::playEvent(int indent)
   bool error = false;
   this->ActivePlayer->playEvent(object, command, arguments, error);
   this->BlockTimer.stop();
-  //QCoreApplication::sendPostedEvents();
-  //QCoreApplication::flush();
-  if (print_debug)
-    {
-    cout << "       -- pre-processEventsAndWait: " << local_counter <<endl;
-    }
-  // let what's going to happen after the playback, happen.
-  this->processEventsAndWait(QT_TESTING_EVENT_PLAYBACK_DELAY);
-  if (print_debug)
-    {
-    cout << "       -- post-processEventsAndWait: " << local_counter <<endl;
-    }
+
+  // process any posted events. We call processEvents() so that any slots
+  // connected using QueuedConnection also get handled.
+  this->processEventsAndWait(EventPlaybackDelay);
+
+  // We explicitly timeout timers that have been registered with us.
+  processTimers();
+
   this->BlockTimer.stop();
+
   if (print_debug)
     {
     cout << QTime::currentTime().toString("hh:mm:ss").toStdString().c_str()
