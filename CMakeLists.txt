@@ -96,16 +96,17 @@ QT4_WRAP_CPP(MOC_BUILT_SOURCES
   pqEventTranslator.h
   pqLineEditEventTranslator.h
   pqMenuEventTranslator.h
-  pqNativeFileDialogEventTranslator.h
   pqNativeFileDialogEventPlayer.h
+  pqNativeFileDialogEventTranslator.h
   pqRecordEventsDialog.h
   pqSpinBoxEventTranslator.h
   pqStdoutEventObserver.h
+  pqTabBarEventTranslator.h
   pqTestUtility.h
   pqThreadedEventSource.h
-  pqTabBarEventTranslator.h
-  pqTreeViewEventTranslator.h
+  pqTimer.h
   pqTreeViewEventPlayer.h
+  pqTreeViewEventTranslator.h
   pqWidgetEventTranslator.h
   ${PYTHON_MOCS}
 )
@@ -138,9 +139,9 @@ SET(QtTesting_SOURCES
   pqEventPlayer.cxx
   pqEventTranslator.cxx
   pqLineEditEventTranslator.cxx
+  pqMenuEventTranslator.cxx
   pqNativeFileDialogEventPlayer.cxx
   pqNativeFileDialogEventTranslator.cxx
-  pqMenuEventTranslator.cxx
   pqObjectNaming.cxx
   pqRecordEventsDialog.cxx
   pqSpinBoxEventTranslator.cxx
@@ -149,8 +150,9 @@ SET(QtTesting_SOURCES
   pqTabBarEventTranslator.cxx
   pqTestUtility.cxx
   pqThreadedEventSource.cxx
-  pqTreeViewEventTranslator.cxx
+  pqTimer.cxx
   pqTreeViewEventPlayer.cxx
+  pqTreeViewEventTranslator.cxx
   pqWidgetEventPlayer.cxx
 )
 
@@ -174,12 +176,12 @@ SET(QtTesting_DEVEL_HEADERS
   pqEventDispatcher.h
   pqEventObserver.h
   pqEventPlayer.h
-  pqEventTranslator.h
   pqEventSource.h
+  pqEventTranslator.h
   pqLineEditEventTranslator.h
+  pqMenuEventTranslator.h
   pqNativeFileDialogEventPlayer.h
   pqNativeFileDialogEventTranslator.h
-  pqMenuEventTranslator.h
   pqObjectNaming.h
   pqRecordEventsDialog.h
   pqSpinBoxEventTranslator.h
@@ -188,8 +190,9 @@ SET(QtTesting_DEVEL_HEADERS
   pqTabBarEventTranslator.h
   pqTestUtility.h
   pqThreadedEventSource.h
-  pqTreeViewEventTranslator.h
+  pqTimer.h
   pqTreeViewEventPlayer.h
+  pqTreeViewEventTranslator.h
   pqWidgetEventPlayer.h
   pqWidgetEventTranslator.h
   QtTestingExport.h

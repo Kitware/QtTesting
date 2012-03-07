@@ -63,6 +63,9 @@ class pqEventSource;
 /// To enable the second mode simply set the eventPlaybackDelay to 0.
 /// In either mode, all timers registered using registerTimer() will be
 /// timed-out before dispatching next event.
+///
+/// To make it easier to register timers, one can directly use pqTimer instead
+/// of QTimer.
 class QTTESTING_EXPORT pqEventDispatcher : public QObject
 {
   Q_OBJECT
