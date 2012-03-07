@@ -61,8 +61,6 @@ namespace
         {
         QTimerEvent event(timer->timerId());
         qApp->notify(timer, &event);
-        processTimers();
-        break;
         }
       }
     }
