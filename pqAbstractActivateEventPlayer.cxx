@@ -101,7 +101,7 @@ bool pqAbstractActivateEventPlayer::playEvent(QObject* Object,
         {
         menu_bar->setActiveAction(next->menuAction());
         int max_wait = 0;
-        while(!next->isVisible() && (++max_wait) <= 10)
+        while(!next->isVisible() && (++max_wait) <= 2)
           {
           pqEventDispatcher::processEventsAndWait(100);
           }
@@ -111,7 +111,7 @@ bool pqAbstractActivateEventPlayer::playEvent(QObject* Object,
         menu->setActiveAction(next->menuAction());
 
         int max_wait = 0;
-        while(!next->isVisible() && (++max_wait) <= 10)
+        while(!next->isVisible() && (++max_wait) <= 2)
           {
           pqEventDispatcher::processEventsAndWait(100);
           }
@@ -126,8 +126,8 @@ bool pqAbstractActivateEventPlayer::playEvent(QObject* Object,
     QKeyEvent keyDown(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
     QKeyEvent keyUp(QEvent::KeyRelease, Qt::Key_Enter, Qt::NoModifier);
 
-    QApplication::sendEvent(object, &keyDown);
-    QApplication::sendEvent(object, &keyUp);
+    qApp->notify(object, &keyDown);
+    qApp->notify(object, &keyUp);
 
     //QApplication::processEvents();
     return true;

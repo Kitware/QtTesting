@@ -55,15 +55,15 @@ bool pqBasicWidgetEventPlayer::playEvent(QObject* Object,
       QPoint pt(widget->x(), widget->y());
       QPoint globalPt = widget->mapToGlobal(pt);
       QContextMenuEvent e(QContextMenuEvent::Other, pt, globalPt);
-      QCoreApplication::sendEvent(widget, &e);
+      qApp->notify(widget, &e);
       return true;
       }
     else if(Command == "key")
       {
       QKeyEvent kd(QEvent::KeyPress, Arguments.toInt(), Qt::NoModifier);
       QKeyEvent ku(QEvent::KeyRelease, Arguments.toInt(), Qt::NoModifier);
-      QCoreApplication::sendEvent(widget, &kd);
-      QCoreApplication::sendEvent(widget, &ku);
+      qApp->notify(widget, &kd);
+      qApp->notify(widget, &ku);
       return true;
       }
     else if(Command == "keyEvent")
@@ -75,7 +75,7 @@ bool pqBasicWidgetEventPlayer::playEvent(QObject* Object,
                    data[3],
                    !!data[4].toInt(),
                    data[5].toInt());
-      QCoreApplication::sendEvent(widget, &ke);
+      qApp->notify(widget, &ke);
       return true;
       }
     else if(Command.startsWith("mouse"))
@@ -100,7 +100,7 @@ bool pqBasicWidgetEventPlayer::playEvent(QObject* Object,
           button = Qt::NoButton;
           }
         QMouseEvent e(type, pt, button, buttons, keym);
-        QCoreApplication::sendEvent(widget, &e);
+        qApp->notify(widget, &e);
         return true;
         }
       }

@@ -143,7 +143,7 @@ bool pqAbstractItemViewEventPlayer::playEvent(QObject* Object, const QString& Co
                    data[3],
                    !!data[4].toInt(),
                    data[5].toInt());
-      QCoreApplication::sendEvent(object, &ke);
+      qApp->notify(object, &ke);
       return true;
       }
     }
@@ -178,12 +178,13 @@ bool pqAbstractItemViewEventPlayer::playEvent(QObject* Object, const QString& Co
         QRect r = object->visualRect(idx);
         pt = r.topLeft() + QPoint(x,y);
         }
+
       QEvent::Type type = QEvent::MouseButtonPress;
       type = Command == "mouseMove" ? QEvent::MouseMove : type;
       type = Command == "mouseRelease" ? QEvent::MouseButtonRelease : type;
       type = Command == "mouseDblClick" ? QEvent::MouseButtonDblClick : type;
       QMouseEvent e(type, pt, button, buttons, keym);
-      QCoreApplication::sendEvent(object->viewport(), &e);
+      qApp->notify(object->viewport(), &e);
       return true;
       }
     }
