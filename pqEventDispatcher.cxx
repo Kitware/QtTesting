@@ -305,6 +305,8 @@ void pqEventDispatcher::processEventsAndWait(int ms)
     loop.exec();
     }
   QApplication::processEvents();
+  QApplication::sendPostedEvents();
+  QApplication::processEvents();
   pqEventDispatcher::DeferMenuTimeouts = prev;
 }
 
