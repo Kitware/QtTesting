@@ -44,7 +44,7 @@ Records usage of native file dialogs in test cases.
 \sa pqEventPlayer
 */
 
-class pqNativeFileDialogEventPlayer :
+class QTTESTING_EXPORT pqNativeFileDialogEventPlayer :
   public pqWidgetEventPlayer
 {
   Q_OBJECT
