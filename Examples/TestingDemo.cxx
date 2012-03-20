@@ -82,7 +82,7 @@ public:
   ~XMLEventSource() { delete this->XMLStream; }
 
 protected:
-  virtual void setContent(const QString& xmlfilename)
+  virtual bool setContent(const QString& xmlfilename)
     {
     delete this->XMLStream;
     this->XMLStream = NULL;
@@ -91,7 +91,7 @@ protected:
     if (!xml.open(QIODevice::ReadOnly))
       {
       qDebug() << "Failed to load " << xmlfilename;
-      return;
+      return false;
       }
     QByteArray data = xml.readAll();
     this->XMLStream = new QXmlStreamReader(data);
@@ -114,6 +114,7 @@ protected:
       {
       qDebug() << "Invalid xml" << endl;
       }
+    return true;
     }
 
   int getNextEvent(QString& widget, QString& command, QString&

@@ -93,6 +93,10 @@ public:
   /// start the recording of tests to a file
   Q_INVOKABLE void recordTests(const QString& filename);
 
+  /// Add custom object properties, which will be saved during the recording
+  /// and restored before the playback
+  void addObjectStateProperty(QObject* object, const QString& property);
+  QMap<QObject*, QString> objectStateProperty() const;
   /// add a directory for recording/playback of file dialogs
   void addDataDirectory(const QString& label, const QDir& path);
 
@@ -125,7 +129,8 @@ protected:
   QMap<QString, pqEventSource*> EventSources;
   QMap<QString, pqEventObserver*> EventObservers;
 
-  QMap<QString, QDir> DataDirectories;
+  QMap<QString, QDir>      DataDirectories;
+  QMap<QObject*, QString>  ObjectStateProperty;
 
 };
 
