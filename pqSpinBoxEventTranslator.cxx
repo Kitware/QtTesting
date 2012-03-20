@@ -54,22 +54,28 @@ bool pqSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, bo
     return true;
     }
 
-  if(!object)
+ if(!object)
       return false;
 
   if(Event->type() == QEvent::Enter && Object==object)
     {
     if(this->CurrentObject != Object)
       {
-      if(this->CurrentObject)
-        {
-        disconnect(this->CurrentObject, 0, this, 0);
-        }
+//      if(this->CurrentObject)
+//        {
+//        disconnect(this->CurrentObject, 0, this, 0);
+//        }
       this->CurrentObject = Object;
       this->Value = object->value();
       connect(object, SIGNAL(valueChanged(int)),this, SLOT(onValueChanged(int)));
       connect(object, SIGNAL(destroyed(QObject*)), this, SLOT(onDestroyed(QObject*)));
       }
+    }
+
+  if (Event->type() == QEvent::Leave && Object==object)
+    {
+    disconnect(this->CurrentObject, 0, this, 0);
+    this->CurrentObject = 0;
     }
 
   if(Event->type() == QEvent::KeyRelease && Object == object)
