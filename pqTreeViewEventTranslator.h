@@ -53,7 +53,9 @@ public:
   virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
  
 private slots:
-  void onItemChanged(const QModelIndex&);
+  void onClicked(const QModelIndex&);
+  void onActivated(const QModelIndex&);
+  void onDoubleClicked(const QModelIndex&);
   void onExpanded(const QModelIndex&);
   void onCollapsed(const QModelIndex&);
   void onCurrentChanged(const QModelIndex&);

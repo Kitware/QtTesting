@@ -32,6 +32,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqTreeViewEventPlayer.h"
 #include "pqEventDispatcher.h"
 
+#include <QCoreApplication>
+#include <QEvent>
+#include <QKeyEvent>
 #include <QTreeWidget>
 #include <QDebug>
 
@@ -74,6 +77,11 @@ bool pqTreeViewEventPlayer::playEvent(
 {
   QTreeView* treeView= qobject_cast<QTreeView*>(object);
   if (!treeView)
+    {
+    return false;
+    }
+
+  if (command == "key")
     {
     return false;
     }
@@ -136,6 +144,33 @@ bool pqTreeViewEventPlayer::playEvent(
       }
     return true;
     }
+  else if(command == "edit")
+    {
+    QString str_index = arguments;
+    QModelIndex index = ::pqTreeViewEventPlayerGetIndex(str_index, treeView, error);
+    if (error)
+      {
+      return true;
+      }
+    treeView->edit(index);
+    return true;
+    }
+  else if (command == "editCancel")
+    {
+    QString str_index = arguments;
+    QModelIndex index = ::pqTreeViewEventPlayerGetIndex(str_index, treeView, error);
+    treeView->closePersistentEditor(index);
+    return true;
+    }
+  else if (command == "editAccepted")
+    {
+    QStringList list = arguments.split(',');
+    QModelIndex index = ::pqTreeViewEventPlayerGetIndex(list.at(0), treeView, error);
+    QVariant value = QVariant(list.at(1));
+    treeView->model()->setData(index, value);
+    treeView->closePersistentEditor(index);
+    return true;
+    }
   else if (command == "expand" || command == "collapse")
     {
     QString str_index = arguments;
@@ -147,7 +182,7 @@ bool pqTreeViewEventPlayer::playEvent(
     treeView->setExpanded(index, (command=="expand"));
     return true;
     }
-  else if (command == "setCurrent")
+  else if (command == "setCurrent" || command == "activate")
     {
     QString str_index = arguments;
     QModelIndex index = ::pqTreeViewEventPlayerGetIndex(str_index, treeView, error);
@@ -156,6 +191,13 @@ bool pqTreeViewEventPlayer::playEvent(
       return true;
       }
     treeView->setCurrentIndex(index);
+    if (command == "activate")
+      {
+      QKeyEvent kd(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
+      QKeyEvent ku(QEvent::KeyRelease, Qt::Key_Enter, Qt::NoModifier);
+      QCoreApplication::sendEvent(treeView, &kd);
+      QCoreApplication::sendEvent(treeView, &ku);
+      }
     return true;
     }
   return false;

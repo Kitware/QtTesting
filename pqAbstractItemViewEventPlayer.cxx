@@ -114,6 +114,12 @@ bool pqAbstractItemViewEventPlayer::playEvent(QObject* Object, const QString& Co
     {
     return false;
     }
+
+  if (Command == "key" || Command == "editCancel" || Command == "editAccepted")
+    {
+    // We let the pqBasicWidgetEventPlayer do it ...
+    return false;
+    }
     
   if(Command == "currentChanged")  // left to support old recordings
     {

@@ -31,8 +31,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ========================================================================*/
 #include "pqTreeViewEventTranslator.h"
 
-#include <QTreeView>
+#include <QDebug>
 #include <QEvent>
+#include <QKeyEvent>
+#include <QTreeView>
+#include <QVariant>
 
 //-----------------------------------------------------------------------------
 pqTreeViewEventTranslator::pqTreeViewEventTranslator(QObject* parentObject)
@@ -60,6 +63,28 @@ bool pqTreeViewEventTranslator::translateEvent(
     return false;
     }
 
+  if (tr_event->type() == QEvent::KeyRelease)
+    {
+    QKeyEvent* ke = static_cast<QKeyEvent*>(tr_event);
+    QModelIndex index = treeWidget->currentIndex();
+    QString str_index = this->getIndexAsString(index);
+    if (ke->key() == Qt::Key_Enter || ke->key() == Qt::Key_Return)
+      {
+      QVariant value = treeWidget->model()->data(index);
+      qDebug() << value << str_index;
+      emit this->recordEvent(treeWidget, "editAccepted",
+                             QString("%1,%2").arg(str_index, value.toString()));
+      }
+    if (ke->key() == Qt::Key_Escape)
+      {
+      emit this->recordEvent(treeWidget, "editCancel", str_index);
+      }
+    if (ke->key() == Qt::Key_F2)
+      {
+      emit this->recordEvent(treeWidget, "edit", str_index);
+      }
+    }
+
   if (tr_event->type() == QEvent::FocusIn)
     {
     if(this->TreeView)
@@ -67,9 +92,12 @@ bool pqTreeViewEventTranslator::translateEvent(
       QObject::disconnect(this->TreeView, 0, this, 0);
       QObject::disconnect(this->TreeView->selectionModel(), 0, this, 0);
       }
-
     QObject::connect(treeWidget, SIGNAL(clicked(const QModelIndex&)),
-      this, SLOT(onItemChanged(const QModelIndex&)));
+      this, SLOT(onClicked(const QModelIndex&)));
+    QObject::connect(treeWidget, SIGNAL(activated(const QModelIndex&)),
+      this, SLOT(onActivated(const QModelIndex&)));
+    QObject::connect(treeWidget, SIGNAL(doubleClicked(const QModelIndex&)),
+      this, SLOT(onDoubleClicked(const QModelIndex&)));
     QObject::connect(treeWidget, SIGNAL(expanded(const QModelIndex&)),
       this, SLOT(onExpanded(const QModelIndex&)));
     QObject::connect(treeWidget, SIGNAL(collapsed(const QModelIndex&)),
@@ -83,9 +111,10 @@ bool pqTreeViewEventTranslator::translateEvent(
 }
 
 //-----------------------------------------------------------------------------
-void pqTreeViewEventTranslator::onItemChanged(
+void pqTreeViewEventTranslator::onClicked(
   const QModelIndex& index)
 {
+  static QModelIndex oldIndex;
   QTreeView* treeWidget = qobject_cast<QTreeView*>(this->sender());
   QString str_index = this->getIndexAsString(index);
   if ( (index.model()->flags(index) & Qt::ItemIsUserCheckable) != 0)
@@ -94,6 +123,34 @@ void pqTreeViewEventTranslator::onItemChanged(
     emit this->recordEvent( treeWidget, "setCheckState",
       QString("%1,%3").arg(str_index).arg(
         index.model()->data(index,Qt::CheckStateRole).toInt()));
+    }
+  if ((treeWidget->editTriggers() & QAbstractItemView::SelectedClicked)
+        == QAbstractItemView::SelectedClicked &&
+      index == oldIndex)
+    {
+    emit this->recordEvent(treeWidget, "edit", str_index);
+    }
+  oldIndex = index;
+}
+
+//-----------------------------------------------------------------------------
+void pqTreeViewEventTranslator::onActivated(const QModelIndex & index)
+{
+  QTreeView* treeWidget = qobject_cast<QTreeView*>(this->sender());
+  QString str_index = this->getIndexAsString(index);
+  emit this->recordEvent(treeWidget, "activate", str_index);
+}
+
+//-----------------------------------------------------------------------------
+void pqTreeViewEventTranslator::onDoubleClicked(const QModelIndex& index)
+{
+  QTreeView* treeWidget = qobject_cast<QTreeView*>(this->sender());
+  QString str_index = this->getIndexAsString(index);
+  // record the check state change if the item is user-checkable.
+  if ((treeWidget->editTriggers() & QAbstractItemView::DoubleClicked)
+      == QAbstractItemView::DoubleClicked)
+    {
+    emit this->recordEvent(treeWidget, "edit", str_index);
     }
 }
 
