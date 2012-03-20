@@ -137,6 +137,14 @@ void pqEventPlayer::playEvent(const QString& Object,
   // If we can't find an object with the right name, we're done ...
   QString messageError;
   QObject* const object = pqObjectNaming::GetObject(Object, messageError);
+
+  if(!object && Object.contains(QString("QScrollBar")))
+    {
+    emit this->eventPlayed(Object, Command, Arguments);
+    Error = false;
+    return;
+    }
+
   if(!object && Command != "comment")
     {
     emit this->errorMessage(messageError);
