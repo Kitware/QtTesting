@@ -59,7 +59,10 @@ private slots:
   void insertFiles();
   void removeFiles();
   void onPlayOrPause(bool);
+  void onOneStep();
+  void onStarted();
   void onStarted(const QString&);
+  void onStopped();
 
 public slots:
   virtual void done(int);

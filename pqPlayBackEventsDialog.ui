@@ -9,8 +9,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>378</width>
-    <height>376</height>
+    <width>392</width>
+    <height>319</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -281,23 +281,15 @@
           </spacer>
          </item>
          <item>
-          <widget class="QPushButton" name="minusButton">
-           <property name="text">
-            <string/>
-           </property>
-           <property name="icon">
-            <iconset>
-             <normaloff>:/Icons/minus.png</normaloff>:/Icons/minus.png</iconset>
-           </property>
-          </widget>
-         </item>
-         <item>
           <widget class="QPushButton" name="plusButton">
+           <property name="toolTip">
+            <string>Add scripts to the list</string>
+           </property>
            <property name="text">
             <string/>
            </property>
            <property name="icon">
-            <iconset>
+            <iconset resource="Resources/QtTesting.qrc">
              <normaloff>:/Icons/plus.png</normaloff>:/Icons/plus.png</iconset>
            </property>
            <property name="iconSize">
@@ -312,12 +304,29 @@
           </widget>
          </item>
          <item>
+          <widget class="QPushButton" name="minusButton">
+           <property name="toolTip">
+            <string>Remove checked scripts</string>
+           </property>
+           <property name="text">
+            <string/>
+           </property>
+           <property name="icon">
+            <iconset resource="Resources/QtTesting.qrc">
+             <normaloff>:/Icons/minus.png</normaloff>:/Icons/minus.png</iconset>
+           </property>
+          </widget>
+         </item>
+         <item>
           <widget class="QPushButton" name="loadFileButton">
            <property name="sizePolicy">
             <sizepolicy hsizetype="Minimum" vsizetype="Fixed">
              <horstretch>0</horstretch>
              <verstretch>0</verstretch>
             </sizepolicy>
+           </property>
+           <property name="toolTip">
+            <string>Open scripts</string>
            </property>
            <property name="text">
             <string>Open Scripts</string>
@@ -329,6 +338,9 @@
       </layout>
      </widget>
      <widget class="QWidget" name="Info">
+      <property name="toolTip">
+       <string>Information about the current event</string>
+      </property>
       <attribute name="icon">
        <iconset resource="Resources/QtTesting.qrc">
         <normaloff>:/Icons/info.png</normaloff>:/Icons/info.png</iconset>
@@ -578,6 +590,9 @@
        <property name="enabled">
         <bool>false</bool>
        </property>
+       <property name="toolTip">
+        <string>Play/Pause</string>
+       </property>
        <property name="text">
         <string/>
        </property>
@@ -604,6 +619,9 @@
       <widget class="QPushButton" name="stepButton">
        <property name="enabled">
         <bool>false</bool>
+       </property>
+       <property name="toolTip">
+        <string>Play step by step</string>
        </property>
        <property name="text">
         <string/>
@@ -634,12 +652,11 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="toolTip">
+        <string>Stop</string>
+       </property>
        <property name="text">
         <string/>
-       </property>
-       <property name="icon">
-        <iconset resource="Resources/QtTesting.qrc">
-         <normaloff>:/Icons/stop.png</normaloff>:/Icons/stop.png</iconset>
        </property>
        <property name="flat">
         <bool>false</bool>
@@ -677,6 +694,9 @@
          <verstretch>0</verstretch>
         </sizepolicy>
        </property>
+       <property name="toolTip">
+        <string>Time step between each events</string>
+       </property>
        <property name="suffix">
         <string> ms</string>
        </property>
@@ -695,7 +715,10 @@
       </widget>
      </item>
      <item>
-      <widget class="QRadioButton" name="radioButton">
+      <widget class="QCheckBox" name="checkBox">
+       <property name="toolTip">
+        <string>Show/Hide log browser</string>
+       </property>
        <property name="text">
         <string>Logs</string>
        </property>
@@ -720,18 +743,18 @@
  </resources>
  <connections>
   <connection>
-   <sender>radioButton</sender>
-   <signal>clicked(bool)</signal>
+   <sender>checkBox</sender>
+   <signal>toggled(bool)</signal>
    <receiver>logBrowser</receiver>
    <slot>setVisible(bool)</slot>
    <hints>
     <hint type="sourcelabel">
-     <x>51</x>
-     <y>238</y>
+     <x>381</x>
+     <y>220</y>
     </hint>
     <hint type="destinationlabel">
-     <x>130</x>
-     <y>269</y>
+     <x>161</x>
+     <y>270</y>
     </hint>
    </hints>
   </connection>

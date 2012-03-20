@@ -106,6 +106,8 @@ void pqPlayBackEventsDialog::pqImplementation::init(pqPlayBackEventsDialog* dial
 
   this->Ui.loadFileButton->setIcon(
       QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon));
+  this->Ui.stopButton->setIcon(
+      QApplication::style()->standardIcon(QStyle::SP_MediaStop));
 
   this->Ui.playerErrorTextLabel->setVisible(false);
   this->Ui.playerErrorIconLabel->setVisible(false);
@@ -140,18 +142,22 @@ void pqPlayBackEventsDialog::pqImplementation::init(pqPlayBackEventsDialog* dial
   QObject::connect(this->Ui.minusButton, SIGNAL(clicked()),
                    dialog, SLOT(removeFiles()));
 
-  QObject::connect(this->Ui.playPauseButton, SIGNAL(clicked(bool)),
+  QObject::connect(this->Ui.playPauseButton, SIGNAL(toggled(bool)),
                    dialog, SLOT(onPlayOrPause(bool)));
+  QObject::connect(this->Ui.playPauseButton, SIGNAL(toggled(bool)),
+                   &this->Dispatcher, SLOT(run(bool)));
   QObject::connect(this->Ui.stopButton, SIGNAL(clicked()),
                    this->TestUtility, SLOT(stopTests()));
   QObject::connect(this->Ui.stepButton, SIGNAL(clicked()),
-                   &this->Dispatcher, SLOT(oneStep()));
+                   dialog, SLOT(onOneStep()));
 
   QObject::connect(this->TestUtility, SIGNAL(started(QString)),
                    dialog, SLOT(onStarted(QString)));
 
+  QObject::connect(this->TestUtility, SIGNAL(started()),
+                   dialog, SLOT(onStarted()));
   QObject::connect(this->TestUtility, SIGNAL(stopped()),
-                   dialog, SLOT(updateUi()));
+                   dialog, SLOT(onStopped()));
   QObject::connect(&this->Dispatcher, SIGNAL(paused()),
                    dialog, SLOT(updateUi()));
   QObject::connect(&this->Dispatcher, SIGNAL(restarted()),
@@ -292,6 +298,7 @@ void pqPlayBackEventsDialog::removeFiles()
       this->Implementation->Ui.tableWidget->removeRow(index);
       this->Implementation->Filenames.removeAt(index);
       }
+    this->updateUi();
     }
 }
 
@@ -318,6 +325,7 @@ void pqPlayBackEventsDialog::addFile(const QString& filename)
   this->Implementation->setProgressBarValue(newIndex, 0);
   QCheckBox* check = new QCheckBox(this->Implementation->Ui.tableWidget);
   check->setChecked(true);
+  QObject::connect(check, SIGNAL(toggled(bool)), this, SLOT(updateUi()));
   this->Implementation->Ui.tableWidget->setCellWidget(newIndex, 0, check);
   this->updateUi();
 }
@@ -325,21 +333,30 @@ void pqPlayBackEventsDialog::addFile(const QString& filename)
 // ----------------------------------------------------------------------------
 void pqPlayBackEventsDialog::onPlayOrPause(bool playOrPause)
 {
-  if(playOrPause)
+  if (this->Implementation->TestUtility->playingTest() ||
+      !playOrPause)
     {
-    if(!this->Implementation->TestUtility->playingTest())
-      {
-      QStringList newList = this->selectedFileNames();
-      this->Implementation->TestUtility->playTests(newList);
-      }
-    else
-      {
-      this->Implementation->Dispatcher.restart();
-      }
+    return;
+    }
+
+  QStringList newList = this->selectedFileNames();
+  this->Implementation->TestUtility->playTests(newList);
+}
+
+// ----------------------------------------------------------------------------
+void pqPlayBackEventsDialog::onOneStep()
+{
+  this->Implementation->Ui.playPauseButton->setChecked(false);
+  if (!this->Implementation->TestUtility->playingTest())
+    {
+    this->Implementation->Dispatcher.run(false);
+    this->Implementation->Dispatcher.oneStep();
+    QStringList newList = this->selectedFileNames();
+    this->Implementation->TestUtility->playTests(newList);
     }
   else
     {
-    this->Implementation->Dispatcher.pause();
+    this->Implementation->Dispatcher.oneStep();
     }
 }
 
@@ -373,21 +390,31 @@ void pqPlayBackEventsDialog::onStarted(const QString& filename)
 }
 
 // ----------------------------------------------------------------------------
+void pqPlayBackEventsDialog::onStarted()
+{
+  this->Implementation->setProgressBarsValue(0);
+  this->updateUi();
+}
+
+// ----------------------------------------------------------------------------
+void pqPlayBackEventsDialog::onStopped()
+{
+  this->Implementation->Ui.playPauseButton->setChecked(false);
+  this->updateUi();
+}
+
+// ----------------------------------------------------------------------------
 void pqPlayBackEventsDialog::updateUi()
 {
   // Update player buttons
   this->Implementation->Ui.playPauseButton->setEnabled(
-      !this->Implementation->Filenames.isEmpty());
+      !this->Implementation->Filenames.isEmpty() &&
+      this->selectedFileNames().count() > 0);
   this->Implementation->Ui.stepButton->setEnabled(
-      this->Implementation->TestUtility->playingTest() &&
-      this->Implementation->Dispatcher.isPaused());
+      !this->Implementation->Filenames.isEmpty() &&
+      this->selectedFileNames().count() > 0);
   this->Implementation->Ui.stopButton->setEnabled(
       this->Implementation->TestUtility->playingTest());
-
-  // Play or pause
-  this->Implementation->Ui.playPauseButton->setChecked(
-      this->Implementation->TestUtility->playingTest() &&
-      !this->Implementation->Dispatcher.isPaused());
 
   // loadFile, plus and minus buttons
   this->Implementation->Ui.loadFileButton->setEnabled(
@@ -432,8 +459,8 @@ void pqPlayBackEventsDialog::updateUi()
     {
     this->Implementation->Ui.currentFileLabel->setText(
         QString("No Test is playing ..."));
-    this->Implementation->setProgressBarsValue(0);
     }
+
   this->Implementation->Ui.commandLabel->setText(command);
   this->Implementation->Ui.argumentsLabel->setText(argument);
   this->Implementation->Ui.objectLabel->setText(object);
