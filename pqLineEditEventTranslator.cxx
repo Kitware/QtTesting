@@ -33,6 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqLineEditEventTranslator.h"
 
 #include <QEvent>
+#include <QDebug>
 #include <QLineEdit>
 #include <QSpinBox>
 #include <QTextDocument>
@@ -53,7 +54,8 @@ bool pqLineEditEventTranslator::translateEvent(QObject* Object, QEvent* Event, b
     return false;
     }
   
-  // If this line edit is part of a spinbox, don't translate events (the spinbox translator will receive the final value directly)
+  // If this line edit is part of a spinbox, don't translate events
+  // (the spinbox translator will receive the final value directly)
   if(qobject_cast<QSpinBox*>(Object->parent()))
     {
     return false;
@@ -76,8 +78,11 @@ bool pqLineEditEventTranslator::translateEvent(QObject* Object, QEvent* Event, b
           emit recordEvent(Object, "set_string", teObject->document()->toPlainText());
           }
         }
-      else
+      // if we record F2 event, will cause some issue with the TreeView
+      // Need test to know if we need to record those events
+      else if (ke->key() != Qt::Key_F2)
         {
+        qDebug() << "key text" << ke->text();
         emit recordEvent(Object, "key", QString("%1").arg(ke->key()));
         }
       }
