@@ -60,13 +60,15 @@ private slots:
   void onCollapsed(const QModelIndex&);
   void onCurrentChanged(const QModelIndex&);
 
-private:
-  QString getIndexAsString(const QModelIndex&);
-
+protected:
   QPointer<QTreeView> TreeView;
+  bool                Editing;
+
 private:
   pqTreeViewEventTranslator(const pqTreeViewEventTranslator&); // Not implemented.
   void operator=(const pqTreeViewEventTranslator&); // Not implemented.
+
+  QString getIndexAsString(const QModelIndex&);
 };
 
 #endif

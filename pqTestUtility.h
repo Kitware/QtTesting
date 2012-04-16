@@ -89,7 +89,6 @@ public:
   /// it does not return until the test has been played or aborted due to
   /// failure. Returns true if the test played successfully.
   virtual bool playTests(const QStringList& filenames);
-
   /// start the recording of tests to a file
   Q_INVOKABLE void recordTests(const QString& filename);
 
@@ -99,13 +98,11 @@ public:
   QMap<QObject*, QString> objectStateProperty() const;
   /// add a directory for recording/playback of file dialogs
   void addDataDirectory(const QString& label, const QDir& path);
-
   /// remove a directory for recording/playback of file dialogs
   void removeDataDirectory(const QString& label);
 
   /// given filename convert to one of the data directories
   QString convertToDataDirectory(const QString& file);
-
   /// give a filename convert from one of the data directories
   QString convertFromDataDirectory(const QString& file);
 
@@ -121,12 +118,12 @@ signals:
   void stopped(const QString& filename, bool error);
 
 protected:
-  pqEventDispatcher Dispatcher;
-  pqEventPlayer Player;
-  pqEventTranslator Translator;
-  bool PlayingTest;
+  pqEventDispatcher   Dispatcher;
+  pqEventPlayer       Player;
+  pqEventTranslator   Translator;
+  bool                PlayingTest;
 
-  QMap<QString, pqEventSource*> EventSources;
+  QMap<QString, pqEventSource*>   EventSources;
   QMap<QString, pqEventObserver*> EventObservers;
 
   QMap<QString, QDir>      DataDirectories;
