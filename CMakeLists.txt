@@ -258,7 +258,13 @@ INSTALL(TARGETS QtTesting
   LIBRARY DESTINATION ${QtTesting_INSTALL_LIB_DIR} COMPONENT Runtime
   ARCHIVE DESTINATION ${QtTesting_INSTALL_LIB_DIR} COMPONENT Development)
 
+
 add_subdirectory(Examples)
+
+include(CTest)
+IF(BUILD_TESTING)
+  add_subdirectory(Testing)
+ENDIF()
 
 export(TARGETS QtTesting FILE ${QtTesting_BINARY_DIR}/QtTestingExports.cmake)
 

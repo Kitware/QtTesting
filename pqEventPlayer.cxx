@@ -76,7 +76,13 @@ void pqEventPlayer::addDefaultWidgetEventPlayers(pqTestUtility* util)
   addWidgetEventPlayer(new pqTreeViewEventPlayer());
   addWidgetEventPlayer(new pqAbstractMiscellaneousEventPlayer());
   addWidgetEventPlayer(new pq3DViewEventPlayer("QGLWidget"));
-  //addWidgetEventPlayer(new pqNativeFileDialogEventPlayer(util));
+  addWidgetEventPlayer(new pqNativeFileDialogEventPlayer(util));
+}
+
+// ----------------------------------------------------------------------------
+QList<pqWidgetEventPlayer*> pqEventPlayer::players() const
+{
+  return this->Players;
 }
 
 // ----------------------------------------------------------------------------
@@ -84,6 +90,14 @@ void pqEventPlayer::addWidgetEventPlayer(pqWidgetEventPlayer* Player)
 {
   if(Player)
     {
+    // We Check if the Player has already been added previously
+    int index =
+      this->getWidgetEventPlayerIndex(QString(Player->metaObject()->className()));
+    if (index != -1)
+      {
+      return;
+      }
+
     this->Players.push_front(Player);
     Player->setParent(this);
     }

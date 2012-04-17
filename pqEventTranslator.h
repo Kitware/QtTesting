@@ -72,7 +72,12 @@ public:
   /** Method to get a specific player */
   pqWidgetEventTranslator* getWidgetEventTranslator(const QString& className);
 
-  /// Adds a Qt object to a list of objects that should be ignored when translating events (useful to prevent recording UI events from being captured as part of the recording)
+  /// Return a QList of all the Translators previously added.
+  QList<pqWidgetEventTranslator*> translators() const;
+
+  /// Adds a Qt object to a list of objects that should be ignored when
+  /// translating events (useful to prevent recording UI events from being
+  /// captured as part of the recording)
   void ignoreObject(QObject* Object);
 
   /// start listening to the GUI and translating events
@@ -82,7 +87,9 @@ public:
   void stop();
 
 signals:
-  /// This signal will be emitted every time a translator generates a high-level ParaView event.  Observers should connect to this signal to serialize high-level events.
+  /// This signal will be emitted every time a translator generates a
+  /// high-level ParaView event.  Observers should connect to this signal
+  /// to serialize high-level events.
   void recordEvent(const QString& Object, const QString& Command, const QString& Arguments);
 
   /// this signals when recording starts

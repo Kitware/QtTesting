@@ -90,16 +90,19 @@ public:
   /** Method to get a specific player */
   pqWidgetEventPlayer* getWidgetEventPlayer(const QString& className);
 
+  /** Method to return the list of widget event players added previously*/
+  QList<pqWidgetEventPlayer*> players() const;
+
   /** This method is called with each high-level ParaView event, which
   will invoke the corresponding low-level Qt functionality in-turn.  
   If there was an error playing the event, Error argument will be set
   to "true".  Note: Currently there is no guarantee that playEvent()
   will return immediately, since the functionality it invokes may enter
   a separate event loop (a modal dialog or context menu, for example). */
-void playEvent(const QString& Object,
-               const QString& Command,
-               const QString& Arguments,
-               bool& Error);
+  void playEvent(const QString& Object,
+                 const QString& Command,
+                 const QString& Arguments,
+                 bool& Error);
 
 signals:
   void eventAboutToBePlayed(const QString& Object,
