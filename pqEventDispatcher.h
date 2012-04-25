@@ -140,7 +140,6 @@ protected:
   bool PlayBackOneStep;
   bool PlayBackStoped;
   static bool DeferMenuTimeouts;
-  int TimeStep;
 
   pqEventSource* ActiveSource;
   pqEventPlayer* ActivePlayer;

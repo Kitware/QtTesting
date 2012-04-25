@@ -135,8 +135,7 @@ void pqEventPlayer::playEvent(const QString& Object,
 {
   emit this->eventAboutToBePlayed(Object, Command, Arguments);
   // If we can't find an object with the right name, we're done ...
-  QString messageError;
-  QObject* const object = pqObjectNaming::GetObject(Object, messageError);
+  QObject* const object = pqObjectNaming::GetObject(Object);
 
   if(!object && Object.contains(QString("QScrollBar")))
     {
@@ -147,7 +146,8 @@ void pqEventPlayer::playEvent(const QString& Object,
 
   if(!object && Command != "comment")
     {
-    emit this->errorMessage(messageError);
+    qCritical() << pqObjectNaming::lastErrorMessage();
+    emit this->errorMessage(pqObjectNaming::lastErrorMessage());
     Error = true;
     return;
     }
@@ -167,7 +167,9 @@ void pqEventPlayer::playEvent(const QString& Object,
   // The event wasn't handled at all ...
   if(!accepted)
     {
-    messageError = QString("Unhandled event %1 object %2\n").arg(Command, object->objectName());
+    QString messageError =
+        QString("Unhandled event %1 object %2\n")
+          .arg(Command, object->objectName());
     qCritical() << messageError;
     emit this->errorMessage(messageError);
     Error = true;
@@ -177,7 +179,9 @@ void pqEventPlayer::playEvent(const QString& Object,
   // The event was handled, but there was a problem ...    
   if(accepted && error)
     {
-    messageError = QString("Event error %1 object %2\n").arg(Command, object->objectName());
+    QString messageError =
+        QString("Event error %1 object %2\n")
+          .arg(Command, object->objectName());
     qCritical() << messageError;
     emit this->errorMessage(messageError);
     Error = true;

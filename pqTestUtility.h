@@ -107,7 +107,7 @@ public:
   QString convertFromDataDirectory(const QString& file);
 
 public slots:
-  void playTests(const QString& filename);
+  bool playTests(const QString& filename);
   void openPlayerDialog();
   void stopTests();
 

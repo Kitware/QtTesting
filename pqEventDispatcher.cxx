@@ -49,10 +49,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <iostream>
 using namespace std;
 
+//-----------------------------------------------------------------------------
 namespace
 {
   static QList<QPointer<QTimer> > RegisteredTimers;
-  
+
   void processTimers()
     {
     foreach (QTimer* timer, RegisteredTimers)
@@ -83,7 +84,6 @@ pqEventDispatcher::pqEventDispatcher(QObject* parentObject) :
   this->PlayBackPaused = false;
   this->PlayBackOneStep = false;
   this->PlayBackStoped = false;
-  this->TimeStep = 1;
 
 #ifdef __APPLE__
   this->BlockTimer.setInterval(1000);
@@ -149,7 +149,7 @@ void pqEventDispatcher::awake()
 //-----------------------------------------------------------------------------
 void pqEventDispatcher::setTimeStep(int value)
 {
-  this->TimeStep = value;
+  EventPlaybackDelay = value;
 }
 
 //-----------------------------------------------------------------------------

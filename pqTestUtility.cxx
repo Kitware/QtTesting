@@ -140,11 +140,11 @@ void pqTestUtility::stopTests()
 }
 
 //-----------------------------------------------------------------------------
-void pqTestUtility::playTests(const QString& filename)
+bool pqTestUtility::playTests(const QString& filename)
 {
   QStringList files;
   files << filename;
-  this->playTests(files);
+  return this->playTests(files);
 }
 
 //-----------------------------------------------------------------------------
@@ -174,10 +174,8 @@ bool pqTestUtility::playTests(const QStringList& filenames)
     iter = this->EventSources.find(suffix);
     if(info.isReadable() && iter != this->EventSources.end())
       {
-      if(!iter.value()->setContent(filename))
-        {
-        return false;
-        }
+      iter.value()->setContent(filename);
+
 //      QEventLoop loop;
 //      QTimer::singleShot(100, &loop, SLOT(quit()));
 //      loop.exec();

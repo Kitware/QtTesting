@@ -55,8 +55,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QToolButton>
 #include <QtDebug>
 
-/** Returns the name of an object as if it was unnamed.
-*/
+
+namespace
+{
+  QString ErrorMessage;
+}
+
+/** Returns the name of an object as if it was unnamed.*/
 static const QString InternalGetNameAsUnnamed(QObject& Object)
 {
   QString result;
@@ -178,7 +183,7 @@ const QString pqObjectNaming::GetName(QObject& Object)
   return name;
 }
 
-QObject* pqObjectNaming::GetObject(const QString& Name, QString& messageError)
+QObject* pqObjectNaming::GetObject(const QString& Name)
 {
   QObject* result = 0;
   QObject* lastObject = 0;
@@ -241,10 +246,10 @@ QObject* pqObjectNaming::GetObject(const QString& Name, QString& messageError)
   if(result)
     return result;
   
-  messageError = QString("Couldn't find object %1\n").arg(Name);
   if(lastObject)
+    ErrorMessage = QString("Couldn't find object %1\n").arg(Name);
     {
-    messageError += QString("Found up to %1\n").arg(
+    ErrorMessage += QString("Found up to %1\n").arg(
                       pqObjectNaming::GetName(*lastObject));
     }
   if(lastObject)
@@ -253,10 +258,11 @@ QObject* pqObjectNaming::GetObject(const QString& Name, QString& messageError)
       lastObject->findChildren<QObject*>(names[names.size()-1]);
     foreach(QObject* o, matches)
       {
-      messageError += QString("\tPossible match: %1\n").arg(pqObjectNaming::GetName(*o));
+      ErrorMessage  += QString("\tPossible match: %1\n").arg(pqObjectNaming::GetName(*o));
       }
     }
-  qCritical() << messageError;
+
+  qCritical() << ErrorMessage ;
   return 0;
 }
 
@@ -279,3 +285,9 @@ void pqObjectNaming::DumpHierarchy(QObject& object, QStringList& results)
     DumpHierarchy(*children[i], results);
     }
 }
+
+QString pqObjectNaming::lastErrorMessage()
+{
+  return ErrorMessage;
+}
+
