@@ -45,6 +45,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 pqAbstractButtonEventTranslator::pqAbstractButtonEventTranslator(QObject* p)
   : pqWidgetEventTranslator(p)
 {
+  this->LastMouseEvent = 0;
 }
 
 bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& /*Error*/)
@@ -52,7 +53,6 @@ bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Ev
   QAbstractButton* const object = qobject_cast<QAbstractButton*>(Object);
   if(!object)
     return false;
-
   switch(Event->type())
     {
     case QEvent::KeyPress:
@@ -67,6 +67,7 @@ bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Ev
     case QEvent::MouseButtonPress:
       {
       QMouseEvent* const e = static_cast<QMouseEvent*>(Event);
+      this->LastMouseEvent = e;
       QPushButton* pushButton = qobject_cast<QPushButton*>(object);
       if(pushButton && 
          e->button() == Qt::LeftButton && 
@@ -87,17 +88,22 @@ bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Ev
       break;
     case QEvent::Timer:
       {
-      QToolButton* tButton = qobject_cast<QToolButton*>(object);
-      if(tButton &&
-         tButton->popupMode() == QToolButton::DelayedPopup)
+      if (this->LastMouseEvent &&
+          this->LastMouseEvent->type() == QEvent::MouseButtonPress)
         {
-        emit recordEvent(object, "longActivate", "");
+        QToolButton* tButton = qobject_cast<QToolButton*>(object);
+        if(tButton &&
+           tButton->popupMode() == QToolButton::DelayedPopup)
+          {
+          emit recordEvent(object, "longActivate", "");
+          }
         }
       }
       break;
     case QEvent::MouseButtonRelease:
       {
       QMouseEvent* const e = static_cast<QMouseEvent*>(Event);
+      this->LastMouseEvent = e;
       if(e->button() == Qt::LeftButton && object->rect().contains(e->pos()))
         {
         onActivate(object);
@@ -124,9 +130,12 @@ void pqAbstractButtonEventTranslator::onActivate(QAbstractButton* actualObject)
     const bool new_value = !actualObject->isChecked();
     emit recordEvent(object, "set_boolean", new_value ? "true" : "false");
     }
-  else if(tb && tb->actions().count() < 2)
+  else if(tb)
     {
-    emit recordEvent(tb, "activate", "");
+    if (!tb->menu())
+      {
+      emit recordEvent(tb, "activate", "");
+      }
     }
   else
     {

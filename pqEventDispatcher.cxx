@@ -155,7 +155,6 @@ void pqEventDispatcher::setTimeStep(int value)
 //-----------------------------------------------------------------------------
 void pqEventDispatcher::run(bool value)
 {
-  qDebug() << "Dispatcher" << value;
   this->PlayBackPaused = !value;
   if (value)
     {
@@ -251,7 +250,6 @@ bool pqEventDispatcher::playEvents(pqEventSource& source, pqEventPlayer& player)
   QObject::disconnect(QAbstractEventDispatcher::instance(), SIGNAL(awake()),
                    this, SLOT(awake()));
 
-  qDebug() << "About to Stop Dispatcher";
   return this->PlayBackStatus;
 }
 

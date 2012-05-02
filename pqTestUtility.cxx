@@ -193,7 +193,6 @@ bool pqTestUtility::playTests(const QStringList& filenames)
     }
   this->PlayingTest = false;
 
-  qDebug() << "About to stop TestUtility";
   emit this->stopped();
   return success;
 }

@@ -33,6 +33,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _pqAbstractButtonEventTranslator_h
 #define _pqAbstractButtonEventTranslator_h
 
+// Qt includes
+#include <QMouseEvent>
+
 #include "pqWidgetEventTranslator.h"
 
 class QAbstractButton;
@@ -58,6 +61,8 @@ private:
   pqAbstractButtonEventTranslator& operator=(const pqAbstractButtonEventTranslator&);
 
   void onActivate(QAbstractButton*);
+
+  QMouseEvent* LastMouseEvent;
 };
 
 #endif // !_pqAbstractButtonEventTranslator_h
