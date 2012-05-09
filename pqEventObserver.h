@@ -65,6 +65,11 @@ public slots:
     const QString& Command,
     const QString& Arguments) = 0;
 
+signals:
+  void eventRecorded(const QString& Widget,
+                     const QString& Command,
+                     const QString& Arguments);
+
 protected:
   QTextStream* Stream;
 };

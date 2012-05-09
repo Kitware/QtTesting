@@ -101,8 +101,8 @@ pqNativeFileDialogEventPlayer::pqNativeFileDialogEventPlayer(pqTestUtility* util
     loop = new QEventLoop();
     }
 
-    QObject::connect(util, SIGNAL(started()), this, SLOT(start()));
-    QObject::connect(util, SIGNAL(stopped()), this, SLOT(stop()));
+    QObject::connect(util, SIGNAL(playbackStarted()), this, SLOT(start()));
+    QObject::connect(util, SIGNAL(playbackStopped()), this, SLOT(stop()));
 }
 
 pqNativeFileDialogEventPlayer::~pqNativeFileDialogEventPlayer()

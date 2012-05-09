@@ -109,6 +109,7 @@ QT4_WRAP_CPP(MOC_BUILT_SOURCES
   pqNativeFileDialogEventPlayer.h
   pqNativeFileDialogEventTranslator.h
   pqPlayBackEventsDialog.h
+  pqEventRecorder.h
   pqRecordEventsDialog.h
   pqSpinBoxEventTranslator.h
   pqStdoutEventObserver.h
@@ -163,6 +164,7 @@ SET(QtTesting_SOURCES
   pqNativeFileDialogEventTranslator.cxx
   pqObjectNaming.cxx
   pqPlayBackEventsDialog.cxx
+  pqEventRecorder.cxx
   pqRecordEventsDialog.cxx
   pqSpinBoxEventTranslator.cxx
   pqStdoutEventObserver.cxx
@@ -205,6 +207,7 @@ SET(QtTesting_DEVEL_HEADERS
   pqNativeFileDialogEventTranslator.h
   pqObjectNaming.h
   pqPlayBackEventsDialog.h
+  pqEventRecorder.h
   pqRecordEventsDialog.h
   pqSpinBoxEventTranslator.h
   pqStdoutEventObserver.h

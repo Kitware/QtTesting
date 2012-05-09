@@ -151,12 +151,12 @@ void pqPlayBackEventsDialog::pqImplementation::init(pqPlayBackEventsDialog* dial
   QObject::connect(this->Ui.stepButton, SIGNAL(clicked()),
                    dialog, SLOT(onOneStep()));
 
-  QObject::connect(this->TestUtility, SIGNAL(started(QString)),
+  QObject::connect(this->TestUtility, SIGNAL(playbackStarted(QString)),
                    dialog, SLOT(onStarted(QString)));
 
-  QObject::connect(this->TestUtility, SIGNAL(started()),
+  QObject::connect(this->TestUtility, SIGNAL(playbackStarted()),
                    dialog, SLOT(onStarted()));
-  QObject::connect(this->TestUtility, SIGNAL(stopped()),
+  QObject::connect(this->TestUtility, SIGNAL(playbackStopped()),
                    dialog, SLOT(onStopped()));
   QObject::connect(&this->Dispatcher, SIGNAL(paused()),
                    dialog, SLOT(updateUi()));

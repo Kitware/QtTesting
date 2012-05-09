@@ -30,16 +30,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
 
-#include "pqEventTranslator.h"
+// Qt includes
+#include <QDebug>
+#include <QFile>
+#include <QFileDialog>
+#include <QTextStream>
+#include <QTimer>
+#include <QPushButton>
+
+// QtTesting includes
+#include "pqEventRecorder.h"
 #include "pqRecordEventsDialog.h"
-#include "pqEventObserver.h"
+#include "pqTestUtility.h"
 
 #include "ui_pqRecordEventsDialog.h"
-
-#include <QPushButton>
-#include <QTimer>
-#include <QFile>
-#include <QTextStream>
 
 //////////////////////////////////////////////////////////////////////////////////
 // pqImplementation
@@ -47,87 +51,53 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 struct pqRecordEventsDialog::pqImplementation
 {
 public:
-  pqImplementation(pqEventTranslator& translator,
-                   pqEventObserver& observer) 
-    : Translator(translator), Observer(observer)
+  pqImplementation(pqEventRecorder* recorder,
+                   pqTestUtility* testUtility)
+    : Recorder(recorder), TestUtility(testUtility)
   {
   }
   
   ~pqImplementation()
   {
+    this->Recorder = 0;
+    this->TestUtility = 0;
   }
 
   Ui::pqRecordEventsDialog Ui;
 
-  pqEventTranslator& Translator;
-  pqEventObserver& Observer;
-  QFile File;
-  QTextStream Stream;
+  pqEventRecorder*    Recorder;
+  pqTestUtility*      TestUtility;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////
 // pqRecordEventsDialog
 
-pqRecordEventsDialog::pqRecordEventsDialog(pqEventTranslator& Translator, 
-                                           pqEventObserver& observer,
-                                           const QString& Path,
-                                           QWidget* Parent) 
+// ----------------------------------------------------------------------------
+pqRecordEventsDialog::pqRecordEventsDialog(pqEventRecorder* recorder,
+                                           pqTestUtility* testUtility,
+                                           QWidget* Parent)
   : QDialog(Parent),
-    Implementation(new pqImplementation(Translator, observer))
+    Implementation(new pqImplementation(recorder, testUtility))
 {
   this->Implementation->Ui.setupUi(this);
-  this->Implementation->Ui.label->setText(QString(tr("Recording User Input to %1")).arg(Path));
 
-  this->Implementation->Translator.ignoreObject(this->Implementation->Ui.stopButton);
-  this->Implementation->Translator.ignoreObject(this);
-  
+  this->Implementation->TestUtility->eventTranslator()->ignoreObject(this->Implementation->Ui.stopButton);
+  this->Implementation->TestUtility->eventTranslator()->ignoreObject(this);
+
   this->setWindowTitle(tr("Recording User Input"));
   this->setObjectName("");
 
-  QObject::connect(
-    &this->Implementation->Translator,
-    SIGNAL(recordEvent(const QString&, const QString&, const QString&)),
-    &this->Implementation->Observer,
-    SLOT(onRecordEvent(const QString&, const QString&, const QString&)));
-
-  this->Implementation->File.setFileName(Path);
-  this->Implementation->File.open(QIODevice::WriteOnly);
-  this->Implementation->Stream.setDevice(&this->Implementation->File);
-  this->Implementation->Observer.setStream(&this->Implementation->Stream);
-  
-  this->Implementation->Translator.start();
 }
 
+// ----------------------------------------------------------------------------
 pqRecordEventsDialog::~pqRecordEventsDialog()
 {
-  this->Implementation->Translator.stop();
-  
-  QObject::disconnect(
-    &this->Implementation->Translator,
-    SIGNAL(recordEvent(const QString&, const QString&, const QString&)),
-    &this->Implementation->Observer,
-    SLOT(onRecordEvent(const QString&, const QString&, const QString&)));
-  
-  this->Implementation->Observer.setStream(NULL);
-  this->Implementation->Stream.flush();
-  this->Implementation->File.close();
-
   delete Implementation;
 }
 
-void pqRecordEventsDialog::accept()
+// ----------------------------------------------------------------------------
+void pqRecordEventsDialog::done(int value)
 {
-  QDialog::accept();
-  QTimer::singleShot(0, this, SLOT(onAutoDelete()));
-}
-
-void pqRecordEventsDialog::reject()
-{
-  QDialog::reject();
-  QTimer::singleShot(0, this, SLOT(onAutoDelete()));
-}
-
-void pqRecordEventsDialog::onAutoDelete()
-{
-  delete this;
+  this->Implementation->TestUtility->stopRecords();
+  QDialog::done(value);
 }

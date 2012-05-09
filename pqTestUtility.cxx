@@ -30,28 +30,37 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
 
-#include "pqTestUtility.h"
-
-#include <QFileInfo>
-#include <QDebug>
+// Qt includes
 #include <QApplication>
+#include <QDebug>
+#include <QFileDialog>
+#include <QFileInfo>
+#include <QTemporaryFile>
 
-#include "pqEventSource.h"
+// QtTesting includes
 #include "pqEventObserver.h"
+#include "pqEventSource.h"
+#include "pqEventTranslator.h"
 #include "pqPlayBackEventsDialog.h"
-#include "pqRecordEventsDialog.h"
-#include "QtTestingConfigure.h"
-
 #ifdef QT_TESTING_WITH_PYTHON
 #include "pqPythonEventSource.h"
 #include "pqPythonEventObserver.h"
 #endif
+#include "pqRecordEventsDialog.h"
+#include "pqTestUtility.h"
+
+#include "QtTestingConfigure.h"
+
 
 //-----------------------------------------------------------------------------
 pqTestUtility::pqTestUtility(QObject* p) :
   QObject(p)
 {
   this->PlayingTest = false;
+
+  this->File = 0;
+  this->FileSuffix = QString();
+
   this->Translator.addDefaultWidgetEventTranslators(this);
   this->Player.addDefaultWidgetEventPlayers(this);
 
@@ -65,12 +74,19 @@ pqTestUtility::pqTestUtility(QObject* p) :
 //-----------------------------------------------------------------------------
 pqTestUtility::~pqTestUtility()
 {
+  this->File = 0;
 }
   
 //-----------------------------------------------------------------------------
 pqEventDispatcher* pqTestUtility::dispatcher()
 {
   return &this->Dispatcher;
+}
+
+//-----------------------------------------------------------------------------
+pqEventRecorder* pqTestUtility::recorder()
+{
+  return &this->Recorder;
 }
 
 //-----------------------------------------------------------------------------
@@ -118,8 +134,6 @@ void pqTestUtility::addEventObserver(const QString& fileExtension,
     }
   this->EventObservers.insert(fileExtension, observer);
   observer->setParent(this);
-  
-
 }
 
 //-----------------------------------------------------------------------------
@@ -140,6 +154,30 @@ void pqTestUtility::stopTests()
 }
 
 //-----------------------------------------------------------------------------
+void pqTestUtility::stopRecords()
+{
+  this->Recorder.stop();
+}
+
+//-----------------------------------------------------------------------------
+void pqTestUtility::onRecordStopped()
+{
+  QTemporaryFile* file = qobject_cast<QTemporaryFile*>(this->File);
+  if(file)
+    {
+    QString newFilename = QFileDialog::getSaveFileName(0, tr("Macro File Name"),
+                            QString("macro"), tr("XML Files (*.xml)"));
+    if(!newFilename.endsWith(QString(".%1").arg(this->FileSuffix)))
+        {
+        newFilename += QString(".%1").arg(this->FileSuffix);
+        }
+    QFile::copy(file->fileName(), newFilename);
+    }
+
+  this->File->close();
+}
+
+//-----------------------------------------------------------------------------
 bool pqTestUtility::playTests(const QString& filename)
 {
   QStringList files;
@@ -156,7 +194,7 @@ bool pqTestUtility::playTests(const QStringList& filenames)
     return false;
     }
 
-  emit this->started();
+  emit this->playbackStarted();
 
   this->PlayingTest = true;
 
@@ -168,7 +206,7 @@ bool pqTestUtility::playTests(const QStringList& filenames)
       break;
       }
     QFileInfo info(filename);
-    emit this->started(filename);
+    emit this->playbackStarted(filename);
     QString suffix = info.completeSuffix();
     QMap<QString, pqEventSource*>::iterator iter;
     iter = this->EventSources.find(suffix);
@@ -185,20 +223,20 @@ bool pqTestUtility::playTests(const QStringList& filenames)
         // dispatcher returned failure, don't continue with rest of the tests
         // and flag error.
         success = false;
-        emit this->stopped(info.fileName(), success);
+        emit this->playbackStopped(info.fileName(), success);
         break;
         }
-      emit this->stopped(info.fileName(), success);
+      emit this->playbackStopped(info.fileName(), success);
       }
     }
   this->PlayingTest = false;
 
-  emit this->stopped();
+  emit this->playbackStopped();
   return success;
 }
 
 //-----------------------------------------------------------------------------
-void pqTestUtility::recordTests(const QString& filename)
+void pqTestUtility::recordTests()
 {
 #if defined(Q_WS_MAC)
   // check for native or non-native menu bar.
@@ -212,29 +250,47 @@ void pqTestUtility::recordTests(const QString& filename)
     }
 #endif
 
-  QMap<QString, pqEventObserver*>::iterator iter;
-
-  QFileInfo info(filename);
-  QString suffix = info.completeSuffix();
-  pqEventObserver* observer = NULL;
-  iter = this->EventObservers.find(suffix);
-  if(iter != this->EventObservers.end())
-    {
-    observer = iter.value();
-    }
-
+  pqEventObserver* observer = this->EventObservers.value(this->FileSuffix);
   if(!observer)
     {
-    // cannot find observer for type of file
     return;
     }
 
-  pqRecordEventsDialog* dialog = new pqRecordEventsDialog(this->Translator,
-                                          *observer,
-                                          filename,
+  if(!this->File->open(QIODevice::WriteOnly))
+    {
+    qCritical() << "File cannot be opened";
+    return;
+    }
+
+  QObject::connect(&this->Recorder, SIGNAL(stopped()),
+                   this, SLOT(onRecordStopped()), Qt::UniqueConnection);
+
+
+  pqRecordEventsDialog* dialog = new pqRecordEventsDialog(&this->Recorder,
+                                          this,
                                           QApplication::activeWindow());
   dialog->setAttribute(Qt::WA_QuitOnClose, false);
   dialog->show();
+
+  this->Recorder.recordEvents(&this->Translator, observer, this->File, true);
+}
+
+//-----------------------------------------------------------------------------
+void pqTestUtility::recordTests(const QString& filename)
+{
+  this->File = new QFile(filename);
+  QFileInfo info(filename);
+  this->FileSuffix = info.completeSuffix();
+  this->recordTests();
+}
+
+//-----------------------------------------------------------------------------
+void pqTestUtility::recordTestsBySuffix(const QString& suffix)
+{
+  QString tempFilename(QString("%1/macro.%2").arg(QDir::tempPath(), suffix));
+  this->File = new QTemporaryFile(tempFilename);
+  this->FileSuffix = suffix;
+  this->recordTests();
 }
 
 // ----------------------------------------------------------------------------

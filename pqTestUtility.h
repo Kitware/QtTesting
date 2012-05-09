@@ -33,18 +33,23 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _pqTestUtility_h
 #define _pqTestUtility_h
 
-#include <QObject>
-#include <QMap>
-#include <QSet>
-#include <QTextStream>
-#include <QFile>
+// Qt inlcudes
 #include <QDir>
+#include <QFile>
+#include <QMap>
+#include <QObject>
+#include <QSet>
 #include <QStringList>
+#include <QTextStream>
 
-#include "QtTestingExport.h"
+// QtTesting includes
 #include "pqEventDispatcher.h"
 #include "pqEventPlayer.h"
+#include "pqEventRecorder.h"
 #include "pqEventTranslator.h"
+
+#include "QtTestingExport.h"
+
 class pqEventObserver;
 class pqEventSource;
 
@@ -61,6 +66,9 @@ public:
 
   /// Get the event dispatcher. Dispatcher is used to play tests back.
   pqEventDispatcher* dispatcher();
+
+  /// Get the event recorder. Recorder is used to record tests.
+  pqEventRecorder* recorder();
 
   /// Get the event player. This the test-file-interpreter (if you will), that
   /// parses the test file and creates events from it that can be dispatched by
@@ -89,8 +97,11 @@ public:
   /// it does not return until the test has been played or aborted due to
   /// failure. Returns true if the test played successfully.
   virtual bool playTests(const QStringList& filenames);
+
   /// start the recording of tests to a file
+  void recordTests();
   Q_INVOKABLE void recordTests(const QString& filename);
+  Q_INVOKABLE void recordTestsBySuffix(const QString& suffix);
 
   /// Add custom object properties, which will be saved during the recording
   /// and restored before the playback
@@ -109,19 +120,27 @@ public:
 public slots:
   bool playTests(const QString& filename);
   void openPlayerDialog();
+
   void stopTests();
+  void stopRecords();
+
+  void onRecordStopped();
 
 signals:
-  void started();
-  void stopped();
-  void started(const QString& filename);
-  void stopped(const QString& filename, bool error);
+  void playbackStarted();
+  void playbackStopped();
+  void playbackStarted(const QString& filename);
+  void playbackStopped(const QString& filename, bool error);
 
 protected:
+  pqEventRecorder     Recorder;
   pqEventDispatcher   Dispatcher;
   pqEventPlayer       Player;
   pqEventTranslator   Translator;
   bool                PlayingTest;
+
+  QIODevice*          File;
+  QString             FileSuffix;
 
   QMap<QString, pqEventSource*>   EventSources;
   QMap<QString, pqEventObserver*> EventObservers;

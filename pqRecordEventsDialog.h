@@ -36,8 +36,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "QtTestingExport.h"
 #include <QDialog>
 
-class pqEventTranslator;
-class pqEventObserver;
+class pqEventRecorder;
+class pqTestUtility;
 
 /// Provides a standard dialog that will record user input to an XML file as long as the dialog remains open
 class QTTESTING_EXPORT pqRecordEventsDialog :
@@ -49,13 +49,12 @@ public:
   /**
   Creates the dialog and begins translating user input with the supplied translator.
   */
-  pqRecordEventsDialog(pqEventTranslator& Translator, pqEventObserver& observer,
-                       const QString& File, QWidget* Parent);
+  pqRecordEventsDialog(pqEventRecorder* recorder,
+                       pqTestUtility* testUtility,
+                       QWidget* Parent);
 
 private slots:
-  void accept();
-  void reject();
-  void onAutoDelete();
+  virtual void done(int);
 
 private:
   pqRecordEventsDialog(const pqRecordEventsDialog&);
