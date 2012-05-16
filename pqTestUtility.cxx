@@ -171,6 +171,11 @@ void pqTestUtility::onRecordStopped()
         {
         newFilename += QString(".%1").arg(this->FileSuffix);
         }
+    // QFile::copy doesn't overwrite if the file already exist, and return false
+    if(QFile::exists(newFilename))
+      {
+      QFile::remove(newFilename);
+      }
     QFile::copy(file->fileName(), newFilename);
     }
 
