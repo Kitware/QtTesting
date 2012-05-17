@@ -80,13 +80,16 @@ pqRecordEventsDialog::pqRecordEventsDialog(pqEventRecorder* recorder,
     Implementation(new pqImplementation(recorder, testUtility))
 {
   this->Implementation->Ui.setupUi(this);
+  this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
 
-  this->Implementation->TestUtility->eventTranslator()->ignoreObject(this->Implementation->Ui.stopButton);
-  this->Implementation->TestUtility->eventTranslator()->ignoreObject(this);
+  this->ignoreObject(this);
 
   this->setWindowTitle(tr("Recording User Input"));
   this->setObjectName("");
 
+  QObject::connect(this->Implementation->TestUtility->eventTranslator(),
+                   SIGNAL(recordEvent(QString,QString,QString)),
+                   this, SLOT(onEventRecorded(QString,QString,QString)));
 }
 
 // ----------------------------------------------------------------------------
@@ -96,8 +99,28 @@ pqRecordEventsDialog::~pqRecordEventsDialog()
 }
 
 // ----------------------------------------------------------------------------
+void pqRecordEventsDialog::ignoreObject(QObject* object)
+{
+  this->Implementation->TestUtility->eventTranslator()->ignoreObject(object);
+  foreach(QObject* child, object->children())
+    {
+    this->ignoreObject(child);
+    }
+}
+
+// ----------------------------------------------------------------------------
 void pqRecordEventsDialog::done(int value)
 {
-  this->Implementation->TestUtility->stopRecords();
+  this->Implementation->TestUtility->stopRecords(value);
   QDialog::done(value);
+}
+
+// ----------------------------------------------------------------------------
+void pqRecordEventsDialog::onEventRecorded(const QString& widget, const QString& command, const QString& argument)
+{
+  this->Implementation->Ui.eventWidgetEdit->setText(widget);
+  this->Implementation->Ui.eventCommandEdit->setText(command);
+  this->Implementation->Ui.eventArgumentEdit->setText(argument);
+  int newValue = this->Implementation->Ui.nbEvents->value() + 1;
+  this->Implementation->Ui.nbEvents->display(newValue);
 }

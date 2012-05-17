@@ -122,7 +122,7 @@ public slots:
   void openPlayerDialog();
 
   void stopTests();
-  void stopRecords();
+  void stopRecords(int value);
 
   void onRecordStopped();
 

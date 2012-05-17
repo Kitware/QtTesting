@@ -55,11 +55,14 @@ public:
 
 private slots:
   virtual void done(int);
+  void onEventRecorded(const QString&, const QString&, const QString&);
 
 private:
   pqRecordEventsDialog(const pqRecordEventsDialog&);
   pqRecordEventsDialog& operator=(const pqRecordEventsDialog&);
   ~pqRecordEventsDialog();
+
+  void ignoreObject(QObject* object);
 
   struct pqImplementation;
   pqImplementation* const Implementation;

@@ -154,9 +154,9 @@ void pqTestUtility::stopTests()
 }
 
 //-----------------------------------------------------------------------------
-void pqTestUtility::stopRecords()
+void pqTestUtility::stopRecords(int value)
 {
-  this->Recorder.stop();
+  this->Recorder.stop(value);
 }
 
 //-----------------------------------------------------------------------------
@@ -167,10 +167,14 @@ void pqTestUtility::onRecordStopped()
     {
     QString newFilename = QFileDialog::getSaveFileName(0, tr("Macro File Name"),
                             QString("macro"), tr("XML Files (*.xml)"));
-    if(!newFilename.endsWith(QString(".%1").arg(this->FileSuffix)))
-        {
-        newFilename += QString(".%1").arg(this->FileSuffix);
-        }
+    if (newFilename.isEmpty())
+      {
+      return;
+      }
+    if (!newFilename.endsWith(QString(".%1").arg(this->FileSuffix)))
+      {
+      newFilename += QString(".%1").arg(this->FileSuffix);
+      }
     // QFile::copy doesn't overwrite if the file already exist, and return false
     if(QFile::exists(newFilename))
       {
@@ -178,7 +182,6 @@ void pqTestUtility::onRecordStopped()
       }
     QFile::copy(file->fileName(), newFilename);
     }
-
   this->File->close();
 }
 
@@ -275,6 +278,12 @@ void pqTestUtility::recordTests()
                                           this,
                                           QApplication::activeWindow());
   dialog->setAttribute(Qt::WA_QuitOnClose, false);
+
+  QRect rectApp = QApplication::activeWindow()->geometry();
+  QRect rectDialog(QPoint(rectApp.left(),
+                          rectApp.bottom() - dialog->sizeHint().height()),
+                   QSize(dialog->geometry().width(), dialog->sizeHint().height()));
+  dialog->setGeometry(rectDialog);
   dialog->show();
 
   this->Recorder.recordEvents(&this->Translator, observer, this->File, true);

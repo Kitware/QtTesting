@@ -164,7 +164,7 @@ void pqEventRecorder::start()
 }
 
 // ----------------------------------------------------------------------------
-void pqEventRecorder::stop()
+void pqEventRecorder::stop(int value)
 {
   QObject::disconnect(
     this->ActiveTranslator,
@@ -173,11 +173,14 @@ void pqEventRecorder::stop()
     SLOT(onRecordEvent(QString,QString,QString)));
 
   this->ActiveObserver->setStream(NULL);
-
-  this->flush();
-
   this->ActiveTranslator->stop();
 
+  if (!value)
+    {
+    return;
+    }
+
+  this->flush();
   emit this->stopped();
 }
 

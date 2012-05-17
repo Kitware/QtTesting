@@ -44,18 +44,10 @@ pqEventObserver::pqEventObserver(QObject* p)
 
 pqEventObserver::~pqEventObserver()
 {
-  if(this->Stream)
-    {
-    this->Stream->flush();
-    }
 }
 
 void pqEventObserver::setStream(QTextStream* stream)
 {
-  if(this->Stream)
-    {
-    this->Stream->flush();
-    }
   this->Stream = stream;
 }
 

@@ -89,7 +89,7 @@ public slots:
   void flush();
 
   void start();
-  void stop();
+  void stop(int value);
   void pause();
 
 protected:
