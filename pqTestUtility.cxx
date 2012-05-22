@@ -36,6 +36,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QFileDialog>
 #include <QFileInfo>
 #include <QTemporaryFile>
+#include <QVariant>
 
 // QtTesting includes
 #include "pqEventObserver.h"
@@ -53,8 +54,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 
 //-----------------------------------------------------------------------------
-pqTestUtility::pqTestUtility(QObject* p) :
-  QObject(p)
+pqTestUtility::pqTestUtility(QObject* p)
+  : QObject(p)
 {
   this->PlayingTest = false;
 
@@ -102,12 +103,23 @@ pqEventTranslator* pqTestUtility::eventTranslator()
 }
 
 //-----------------------------------------------------------------------------
-void pqTestUtility::addEventSource(const QString& fileExtension, pqEventSource* source)
+void pqTestUtility::addEventSource(const QString& fileExtension,
+                                   pqEventSource* source)
 {
+  if (!source)
+    {
+    return;
+    }
+
   QMap<QString, pqEventSource*>::iterator iter;
   iter = this->EventSources.find(fileExtension);
+
   if(iter != this->EventSources.end())
     {
+    if (iter.value() == source)
+      {
+      return;
+      }
     pqEventSource* src = iter.value();
     this->EventSources.erase(iter);
     delete src;
@@ -117,32 +129,51 @@ void pqTestUtility::addEventSource(const QString& fileExtension, pqEventSource* 
 }
 
 //-----------------------------------------------------------------------------
+QMap<QString, pqEventSource*> pqTestUtility::eventSources() const
+{
+  return this->EventSources;
+}
+
+//-----------------------------------------------------------------------------
 void pqTestUtility::addEventObserver(const QString& fileExtension,
                                      pqEventObserver* observer)
 {
+  if (!observer)
+    {
+    return;
+    }
+
   QMap<QString, pqEventObserver*>::iterator iter;
   iter = this->EventObservers.find(fileExtension);
-  if(iter != this->EventObservers.end() && iter.value() != observer)
+  if(iter != this->EventObservers.end())
     {
+    if (iter.value() == observer)
+      {
+      return;
+      }
+
     pqEventObserver* src = iter.value();
     this->EventObservers.erase(iter);
     delete src;
-    }
-  if(iter != this->EventObservers.end() && iter.value() == observer)
-    {
-    return;
     }
   this->EventObservers.insert(fileExtension, observer);
   observer->setParent(this);
 }
 
 //-----------------------------------------------------------------------------
+QMap<QString, pqEventObserver*> pqTestUtility::eventObservers() const
+{
+  return this->EventObservers;
+}
+
+//-----------------------------------------------------------------------------
 void pqTestUtility::openPlayerDialog()
 {
-  pqPlayBackEventsDialog* dialog = new pqPlayBackEventsDialog(this->Player,
-                                                              this->Dispatcher,
-                                                              this,
-                                                              QApplication::activeWindow());
+  pqPlayBackEventsDialog* dialog =
+      new pqPlayBackEventsDialog(this->Player,
+                                this->Dispatcher,
+                                this,
+                                QApplication::activeWindow());
   dialog->exec();
 }
 
@@ -310,41 +341,120 @@ void pqTestUtility::recordTestsBySuffix(const QString& suffix)
 // ----------------------------------------------------------------------------
 void pqTestUtility::addObjectStateProperty(QObject* object, const QString& property)
 {
-  this->ObjectStateProperty[object] = property;
+  if (!object)
+    {
+    return;
+    }
+  if (property.isEmpty() ||
+      !object->property(property.toLatin1()).isValid())
+    {
+    return;
+    }
+  if(this->objectStatePropertyAlreadyAdded(object, property))
+    {
+    return;
+    }
+
+  this->ObjectStateProperty[object].append(property);
 }
 
 // ----------------------------------------------------------------------------
-QMap<QObject*, QString> pqTestUtility::objectStateProperty() const
+bool pqTestUtility::objectStatePropertyAlreadyAdded(QObject* object,
+                                                    const QString& property)
+{
+  // Check if this property already exist for this object
+  QMap<QObject*, QStringList>::iterator iter =
+      this->ObjectStateProperty.find(object);
+  if (iter != this->ObjectStateProperty.end())
+    {
+    return this->ObjectStateProperty[object].contains(property);
+    }
+
+  return false;
+}
+
+// ----------------------------------------------------------------------------
+QMap<QObject*, QStringList> pqTestUtility::objectStateProperty() const
 {
   return this->ObjectStateProperty;
 }
+
 //-----------------------------------------------------------------------------
 void pqTestUtility::addDataDirectory(const QString& label, const QDir& path)
 {
+  // To simplify, we allow only absolute path for the moment.
+  if (label.isEmpty())
+    {
+    return;
+    }
+  // Find better way to check if the path seams to be valid.
+  // But as long as we would like to label some path, to allow a cross
+  // platform use of QtTesting, a simple path.exist() seams not good.
+  // not working !
+  if (!path.isAbsolute())
+    {
+    return;
+    }
+
   this->DataDirectories[label] = path;
 }
 
 //-----------------------------------------------------------------------------
-void pqTestUtility::removeDataDirectory(const QString& label)
+bool pqTestUtility::removeDataDirectory(const QString& label)
 {
-  this->DataDirectories.remove(label);
+  return this->DataDirectories.remove(label);
+}
+
+//-----------------------------------------------------------------------------
+QMap<QString, QDir> pqTestUtility::dataDirectory() const
+{
+  return this->DataDirectories;
+}
+
+//-----------------------------------------------------------------------------
+QMap<QString, QDir>::iterator pqTestUtility::findBestIterator(const QString& file,
+                                               QMap<QString, QDir>::iterator startIter)
+{
+  QMap<QString, QDir>::iterator currentIter;
+  QMap<QString, QDir>::iterator iter;
+  int size = file.size();
+  bool find = false;
+
+  for(iter = startIter; iter != this->DataDirectories.end() ; ++ iter)
+    {
+    if (file.startsWith(iter.value().path()))
+      {
+      QString relativePos = iter.value().relativeFilePath(file);
+      if (relativePos.size() < size)
+        {
+        find = true;
+        size = relativePos.size();
+        currentIter = iter;
+        }
+      }
+    }
+
+  if (!find)
+    {
+    return this->DataDirectories.end();
+    }
+  return currentIter;
 }
 
 //-----------------------------------------------------------------------------
 QString pqTestUtility::convertToDataDirectory(const QString& file)
 {
-  QString normalized_file = file;
-  QMap<QString, QDir>::iterator iter;
-  for(iter = this->DataDirectories.begin(); iter != this->DataDirectories.end(); ++iter)
+  QMap<QString, QDir>::iterator iter =
+      this->findBestIterator(file, this->DataDirectories.begin());
+
+  // If iterator at the end, we didn't find a match.
+  if (iter == this->DataDirectories.end())
     {
-    QString rel_file = iter.value().relativeFilePath(file);
-    if(!rel_file.contains(".."))
-      {
-      normalized_file = QString("${%1}/%2").arg(iter.key()).arg(rel_file);
-      break;
-      }
+    return file;
     }
-  return normalized_file;
+
+  QString rel_file = iter.value().relativeFilePath(file);
+  return QString("${%1}/%2").arg(iter.key()).arg(rel_file);
 }
 
 //-----------------------------------------------------------------------------

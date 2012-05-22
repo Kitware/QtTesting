@@ -5,6 +5,7 @@ set(KIT ${PROJECT_NAME})
 set(TEST_SOURCES
   pqEventPlayerTest.cpp
   pqEventTranslatorTest.cpp
+  pqTestUtilityTest.cpp
   )
 
 create_test_sourcelist(Tests ${KIT}CppTests.cxx
@@ -25,7 +26,7 @@ add_executable(${KIT}CppTests ${Tests})
 target_link_libraries(${KIT}CppTests ${PROJECT_NAME} ${QT_QTTEST_LIBRARY})
 
 macro(SIMPLE_TEST testname)
-  add_test(NAME ${testname} COMMAND $<TARGET_FILE:${KIT}CppTests> ${Testname} ${ARGN})
+  add_test(NAME ${testname} COMMAND $<TARGET_FILE:${KIT}CppTests> ${testname} ${ARGN})
 endmacro()
 
 #
@@ -33,3 +34,4 @@ endmacro()
 #
 SIMPLE_TEST( pqEventPlayerTest )
 SIMPLE_TEST( pqEventTranslatorTest )
+SIMPLE_TEST( pqTestUtilityTest )

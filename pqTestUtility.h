@@ -33,7 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _pqTestUtility_h
 #define _pqTestUtility_h
 
-// Qt inlcudes
+// Qt includes
 #include <QDir>
 #include <QFile>
 #include <QMap>
@@ -82,12 +82,18 @@ public:
   /// An pqXMLEventSource is automatically added if XML support is enabled.
   /// A pqPythonEventSource is automatically added if Python support is enabled.
   void addEventSource(const QString& fileExtension, pqEventSource* source);
+
+  /// Return a QMap of all the eventSources.
+  QMap<QString, pqEventSource*> eventSources() const;
   
   /// add an event observer for recording files
   /// An pqXMLEventObserver is automatically added if XML support is enabled.
   /// A pqPythonEventObserver is automatically added if Python support is enabled.
   void addEventObserver(const QString& fileExtension, 
                           pqEventObserver* translator);
+
+  /// Return a QMap of all the event Observers.
+  QMap<QString, pqEventObserver*> eventObservers() const;
 
   /// Returns if the utility is currently playing a test.
   bool playingTest() const
@@ -106,11 +112,14 @@ public:
   /// Add custom object properties, which will be saved during the recording
   /// and restored before the playback
   void addObjectStateProperty(QObject* object, const QString& property);
-  QMap<QObject*, QString> objectStateProperty() const;
+  QMap<QObject*, QStringList> objectStateProperty() const;
+
   /// add a directory for recording/playback of file dialogs
   void addDataDirectory(const QString& label, const QDir& path);
   /// remove a directory for recording/playback of file dialogs
-  void removeDataDirectory(const QString& label);
+  bool removeDataDirectory(const QString& label);
+  /// recover all dataDirectories
+  QMap<QString, QDir> dataDirectory() const;
 
   /// given filename convert to one of the data directories
   QString convertToDataDirectory(const QString& file);
@@ -132,6 +141,11 @@ signals:
   void playbackStarted(const QString& filename);
   void playbackStopped(const QString& filename, bool error);
 
+private:
+  QMap<QString, QDir>::iterator findBestIterator(const QString& file,
+                                                 QMap<QString, QDir>::iterator startIter);
+  bool objectStatePropertyAlreadyAdded(QObject* object, const QString& property);
+
 protected:
   pqEventRecorder     Recorder;
   pqEventDispatcher   Dispatcher;
@@ -145,8 +159,8 @@ protected:
   QMap<QString, pqEventSource*>   EventSources;
   QMap<QString, pqEventObserver*> EventObservers;
 
-  QMap<QString, QDir>      DataDirectories;
-  QMap<QObject*, QString>  ObjectStateProperty;
+  QMap<QString, QDir>          DataDirectories;
+  QMap<QObject*, QStringList>  ObjectStateProperty;
 
 };
 
