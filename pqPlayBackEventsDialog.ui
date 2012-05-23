@@ -10,7 +10,7 @@
     <x>0</x>
     <y>0</y>
     <width>392</width>
-    <height>319</height>
+    <height>332</height>
    </rect>
   </property>
   <property name="sizePolicy">
@@ -657,6 +657,10 @@
        </property>
        <property name="text">
         <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="Resources/QtTesting.qrc">
+         <normaloff>:/Icons/playback-stop.png</normaloff>:/Icons/playback-stop.png</iconset>
        </property>
        <property name="flat">
         <bool>false</bool>

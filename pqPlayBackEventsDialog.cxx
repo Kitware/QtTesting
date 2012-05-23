@@ -106,8 +106,6 @@ void pqPlayBackEventsDialog::pqImplementation::init(pqPlayBackEventsDialog* dial
 
   this->Ui.loadFileButton->setIcon(
       QApplication::style()->standardIcon(QStyle::SP_DirOpenIcon));
-  this->Ui.stopButton->setIcon(
-      QApplication::style()->standardIcon(QStyle::SP_MediaStop));
 
   this->Ui.playerErrorTextLabel->setVisible(false);
   this->Ui.playerErrorIconLabel->setVisible(false);
