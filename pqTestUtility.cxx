@@ -196,22 +196,31 @@ void pqTestUtility::onRecordStopped()
   QTemporaryFile* file = qobject_cast<QTemporaryFile*>(this->File);
   if(file)
     {
-    QString newFilename = QFileDialog::getSaveFileName(0, tr("Macro File Name"),
-                            QString("macro"), tr("XML Files (*.xml)"));
-    if (newFilename.isEmpty())
+    QFileDialog* dialog = new QFileDialog(0, tr("Macro File Name"),
+                                QString("macro"), tr("XML Files (*.xml)"));
+    dialog->setAcceptMode(QFileDialog::AcceptSave);
+    dialog->setDefaultSuffix(".xml");
+    if (dialog->exec() == QDialog::Rejected)
       {
       return;
       }
-    if (!newFilename.endsWith(QString(".%1").arg(this->FileSuffix)))
+
+    QStringList newFilename = dialog->selectedFiles();
+    if (newFilename[0].isEmpty())
       {
-      newFilename += QString(".%1").arg(this->FileSuffix);
+      return;
+      }
+    if (!newFilename[0].endsWith(QString(".%1").arg(this->FileSuffix)))
+      {
+      newFilename[0] += QString(".%1").arg(this->FileSuffix);
       }
     // QFile::copy doesn't overwrite if the file already exist, and return false
-    if(QFile::exists(newFilename))
+    if(QFile::exists(newFilename[0]))
       {
-      QFile::remove(newFilename);
+      QFile::remove(newFilename[0]);
       }
-    QFile::copy(file->fileName(), newFilename);
+    QFile::copy(file->fileName(), newFilename[0]);
+    delete dialog;
     }
   this->File->close();
 }
