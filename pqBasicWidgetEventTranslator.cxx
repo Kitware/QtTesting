@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QDialog>
 #include <QEvent>
 #include <QKeyEvent>
+#include <QScrollBar>
 #include <QWidget>
 
 pqBasicWidgetEventTranslator::pqBasicWidgetEventTranslator(QObject* p)
@@ -107,18 +108,21 @@ bool pqBasicWidgetEventTranslator::translateEvent(QObject* Object,
       break;
     case QEvent::Wheel:
       {
-      QWheelEvent* wheelEvent = dynamic_cast<QWheelEvent*>(Event);
-      if(wheelEvent)
+      if(qobject_cast<QScrollBar*>(Object))
         {
-        int buttons = wheelEvent->buttons();
-        int modifiers = wheelEvent->modifiers();
-        int numStep = wheelEvent->delta() > 0 ? 120 : -120;
-        emit emit recordEvent(Object, "mouseWheel", QString("%1,%2,%3,%4,%5")
-                              .arg(numStep)
-                              .arg(buttons)
-                              .arg(modifiers)
-                              .arg(wheelEvent->x())
-                              .arg(wheelEvent->y()));
+        QWheelEvent* wheelEvent = dynamic_cast<QWheelEvent*>(Event);
+        if(wheelEvent)
+          {
+          int buttons = wheelEvent->buttons();
+          int modifiers = wheelEvent->modifiers();
+          int numStep = wheelEvent->delta();
+          emit emit recordEvent(Object, "mouseWheel", QString("%1,%2,%3,%4,%5")
+                                .arg(numStep)
+                                .arg(buttons)
+                                .arg(modifiers)
+                                .arg(wheelEvent->x())
+                                .arg(wheelEvent->y()));
+          }
         }
       }
       break;
