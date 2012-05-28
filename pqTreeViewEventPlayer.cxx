@@ -191,13 +191,12 @@ bool pqTreeViewEventPlayer::playEvent(
       return true;
       }
     treeView->setCurrentIndex(index);
-    if (command == "activate")
-      {
-      QKeyEvent kd(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
-      QKeyEvent ku(QEvent::KeyRelease, Qt::Key_Enter, Qt::NoModifier);
-      QCoreApplication::sendEvent(treeView, &kd);
-      QCoreApplication::sendEvent(treeView, &ku);
-      }
+
+    QKeyEvent kd(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
+    QKeyEvent ku(QEvent::KeyRelease, Qt::Key_Enter, Qt::NoModifier);
+    QCoreApplication::sendEvent(treeView, &kd);
+    QCoreApplication::sendEvent(treeView, &ku);
+
     return true;
     }
   return false;
