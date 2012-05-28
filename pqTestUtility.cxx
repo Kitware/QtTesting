@@ -199,7 +199,7 @@ void pqTestUtility::onRecordStopped()
     QFileDialog* dialog = new QFileDialog(0, tr("Macro File Name"),
                                 QString("macro"), tr("XML Files (*.xml)"));
     dialog->setAcceptMode(QFileDialog::AcceptSave);
-    dialog->setDefaultSuffix(".xml");
+    dialog->setDefaultSuffix("xml");
     if (dialog->exec() == QDialog::Rejected)
       {
       return;
