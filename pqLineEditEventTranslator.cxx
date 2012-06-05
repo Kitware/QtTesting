@@ -82,7 +82,6 @@ bool pqLineEditEventTranslator::translateEvent(QObject* Object, QEvent* Event, b
       // Need test to know if we need to record those events
       else if (ke->key() != Qt::Key_F2)
         {
-        qDebug() << "key text" << ke->text();
         emit recordEvent(Object, "key", QString("%1").arg(ke->key()));
         }
       }
