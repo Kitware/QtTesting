@@ -187,9 +187,12 @@ QObject* pqObjectNaming::GetObject(const QString& Name)
 {
   QObject* result = 0;
   QObject* lastObject = 0;
-  const QStringList names = Name.split("/");
-  if(names.empty())
+  if(Name.isEmpty())
+    {
     return 0;
+    }
+
+  const QStringList names = Name.split("/");
 
   // see if QApplication is the requested object
   QString app_name = InternalGetName(*QApplication::instance());
