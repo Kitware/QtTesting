@@ -75,6 +75,8 @@ public:
   void setTranslator(pqEventTranslator* translator);
   pqEventTranslator* translator() const;
 
+  bool isRecording() const;
+
   void recordEvents(pqEventTranslator* translator,
                     pqEventObserver* observer,
                     QIODevice* file,
@@ -90,13 +92,14 @@ public slots:
 
   void start();
   void stop(int value);
-  void pause();
+  void pause(bool);
 
 protected:
   pqEventObserver*    ActiveObserver;
   pqEventTranslator*  ActiveTranslator;
   QIODevice*          File;
 
+  bool                Recording;
   bool                ContinuousFlush;
   QTextStream         Stream;
 };

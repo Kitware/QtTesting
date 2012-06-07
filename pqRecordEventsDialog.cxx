@@ -91,9 +91,28 @@ pqRecordEventsDialog::pqRecordEventsDialog(pqEventRecorder* recorder,
   QObject::connect(this->Implementation->TestUtility->eventTranslator(),
                    SIGNAL(recordEvent(QString,QString,QString)),
                    this, SLOT(onEventRecorded(QString,QString,QString)));
+
   QObject::connect(this->Implementation->Ui.commentAddButton,
                    SIGNAL(clicked()),
                    this, SLOT(addComment()));
+
+  QObject::connect(this->Implementation->Ui.recordPauseButton,
+                   SIGNAL(toggled(bool)),
+                   this->Implementation->Recorder,
+                   SLOT(pause(bool)));
+
+  QObject::connect(this->Implementation->Recorder,
+                   SIGNAL(paused(bool)),
+                   this,
+                   SLOT(updateUi()));
+  QObject::connect(this->Implementation->Recorder,
+                   SIGNAL(started()),
+                   this,
+                   SLOT(updateUi()));
+  QObject::connect(this->Implementation->Recorder,
+                   SIGNAL(stopped()),
+                   this,
+                   SLOT(updateUi()));
 }
 
 // ----------------------------------------------------------------------------
@@ -124,6 +143,11 @@ void pqRecordEventsDialog::onEventRecorded(const QString& widget,
                                            const QString& command,
                                            const QString& argument)
 {
+  if (!this->Implementation->Recorder->isRecording())
+    {
+    return;
+    }
+
   this->Implementation->Ui.eventWidgetEdit->setText(widget);
   this->Implementation->Ui.eventCommandEdit->setText(command);
   this->Implementation->Ui.eventArgumentEdit->setText(argument);
@@ -145,4 +169,11 @@ void pqRecordEventsDialog::addComment()
         this->Implementation->Ui.commentTextEdit->toPlainText());
     }
   this->Implementation->Ui.commentTextEdit->clear();
+}
+
+// ----------------------------------------------------------------------------
+void pqRecordEventsDialog::updateUi()
+{
+  this->Implementation->Ui.recordPauseButton->setChecked(
+      this->Implementation->Recorder->isRecording());
 }

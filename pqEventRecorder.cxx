@@ -47,6 +47,7 @@ pqEventRecorder::pqEventRecorder(QObject *parent)
   this->ActiveObserver = 0;
   this->ActiveTranslator = 0;
 
+  this->Recording = false;
   this->ContinuousFlush = false;
 }
 
@@ -118,6 +119,12 @@ pqEventTranslator* pqEventRecorder::translator() const
 }
 
 // ----------------------------------------------------------------------------
+bool pqEventRecorder::isRecording() const
+{
+  return this->Recording;
+}
+
+// ----------------------------------------------------------------------------
 void pqEventRecorder::recordEvents(pqEventTranslator* translator,
                                    pqEventObserver* observer,
                                    QIODevice* file,
@@ -160,6 +167,7 @@ void pqEventRecorder::start()
   // Start the Translator
   this->ActiveTranslator->start();
 
+  this->Recording = true;
   emit this->started();
 }
 
@@ -181,11 +189,31 @@ void pqEventRecorder::stop(int value)
     }
 
   this->flush();
+  this->Recording = false;
   emit this->stopped();
 }
 
 // ----------------------------------------------------------------------------
-void pqEventRecorder::pause()
+void pqEventRecorder::pause(bool value)
 {
-  // To be implemented
+  if (!value)
+    {
+    QObject::disconnect(
+      this->ActiveTranslator,
+      SIGNAL(recordEvent(QString,QString,QString)),
+      this->ActiveObserver,
+      SLOT(onRecordEvent(QString,QString,QString)));
+    }
+  else
+    {
+    QObject::connect(
+      this->ActiveTranslator,
+      SIGNAL(recordEvent(QString,QString,QString)),
+      this->ActiveObserver,
+      SLOT(onRecordEvent(QString,QString,QString)),
+      Qt::UniqueConnection);
+    }
+
+  this->Recording = value;
+  emit this->paused(value);
 }

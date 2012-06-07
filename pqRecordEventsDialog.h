@@ -59,6 +59,9 @@ private slots:
 
   void addComment();
 
+public slots:
+  void updateUi();
+
 private:
   pqRecordEventsDialog(const pqRecordEventsDialog&);
   pqRecordEventsDialog& operator=(const pqRecordEventsDialog&);

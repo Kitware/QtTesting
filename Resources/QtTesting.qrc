@@ -9,5 +9,6 @@
         <file>Icons/plus.png</file>
         <file>Icons/info.png</file>
         <file>Icons/playback-stop.png</file>
+        <file>Icons/record.png</file>
     </qresource>
 </RCC>
