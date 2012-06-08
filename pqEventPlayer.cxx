@@ -64,7 +64,7 @@ pqEventPlayer::~pqEventPlayer()
 // ----------------------------------------------------------------------------
 void pqEventPlayer::addDefaultWidgetEventPlayers(pqTestUtility* util)
 {
-  addWidgetEventPlayer(new pqCommentEventPlayer());
+  addWidgetEventPlayer(new pqCommentEventPlayer(util));
   addWidgetEventPlayer(new pqBasicWidgetEventPlayer());
   addWidgetEventPlayer(new pqAbstractActivateEventPlayer());
   addWidgetEventPlayer(new pqAbstractBooleanEventPlayer());
@@ -151,6 +151,7 @@ void pqEventPlayer::playEvent(const QString& Object,
   // If we can't find an object with the right name, we're done ...
   QObject* const object = pqObjectNaming::GetObject(Object);
 
+  // Scroll bar depends on monitor's resolution
   if(!object && Object.contains(QString("QScrollBar")))
     {
     emit this->eventPlayed(Object, Command, Arguments);
@@ -158,7 +159,7 @@ void pqEventPlayer::playEvent(const QString& Object,
     return;
     }
 
-  if(!object && Command != "comment")
+  if(!object && !Command.startsWith("comment"))
     {
     qCritical() << pqObjectNaming::lastErrorMessage();
     emit this->errorMessage(pqObjectNaming::lastErrorMessage());
@@ -169,12 +170,26 @@ void pqEventPlayer::playEvent(const QString& Object,
   // Loop through players until the event gets handled ...
   bool accepted = false;
   bool error = false;
-  for(int i = 0; i != this->Players.size(); ++i)
+  if (Command.startsWith("comment"))
     {
-    accepted = this->Players[i]->playEvent(object, Command, Arguments, error);
-    if(accepted)
+    pqWidgetEventPlayer* widgetPlayer =
+        this->getWidgetEventPlayer(QString("pqCommentEventPlayer"));
+    pqCommentEventPlayer* commentPlayer =
+        qobject_cast<pqCommentEventPlayer*>(widgetPlayer);
+    if (commentPlayer)
       {
-      break;
+      accepted = commentPlayer->playEvent(object, Command, Arguments, error);
+      }
+    }
+  else
+    {
+    for(int i = 0; i != this->Players.size(); ++i)
+      {
+      accepted = this->Players[i]->playEvent(object, Command, Arguments, error);
+      if(accepted)
+        {
+        break;
+        }
       }
     }
 
@@ -183,7 +198,7 @@ void pqEventPlayer::playEvent(const QString& Object,
     {
     QString messageError =
         QString("Unhandled event %1 object %2\n")
-          .arg(Command, object->objectName());
+          .arg(Command, object ? object->objectName() : Object);
     qCritical() << messageError;
     emit this->errorMessage(messageError);
     Error = true;
@@ -195,7 +210,7 @@ void pqEventPlayer::playEvent(const QString& Object,
     {
     QString messageError =
         QString("Event error %1 object %2\n")
-          .arg(Command, object->objectName());
+          .arg(Command, object ? object->objectName() : Object);
     qCritical() << messageError;
     emit this->errorMessage(messageError);
     Error = true;

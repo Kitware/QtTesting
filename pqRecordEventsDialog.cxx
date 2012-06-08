@@ -39,6 +39,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QPushButton>
 
 // QtTesting includes
+#include "pqEventComment.h"
 #include "pqEventRecorder.h"
 #include "pqRecordEventsDialog.h"
 #include "pqTestUtility.h"
@@ -90,6 +91,9 @@ pqRecordEventsDialog::pqRecordEventsDialog(pqEventRecorder* recorder,
   QObject::connect(this->Implementation->TestUtility->eventTranslator(),
                    SIGNAL(recordEvent(QString,QString,QString)),
                    this, SLOT(onEventRecorded(QString,QString,QString)));
+  QObject::connect(this->Implementation->Ui.commentAddButton,
+                   SIGNAL(clicked()),
+                   this, SLOT(addComment()));
 }
 
 // ----------------------------------------------------------------------------
@@ -116,11 +120,29 @@ void pqRecordEventsDialog::done(int value)
 }
 
 // ----------------------------------------------------------------------------
-void pqRecordEventsDialog::onEventRecorded(const QString& widget, const QString& command, const QString& argument)
+void pqRecordEventsDialog::onEventRecorded(const QString& widget,
+                                           const QString& command,
+                                           const QString& argument)
 {
   this->Implementation->Ui.eventWidgetEdit->setText(widget);
   this->Implementation->Ui.eventCommandEdit->setText(command);
   this->Implementation->Ui.eventArgumentEdit->setText(argument);
   int newValue = this->Implementation->Ui.nbEvents->value() + 1;
   this->Implementation->Ui.nbEvents->display(newValue);
+}
+
+// ----------------------------------------------------------------------------
+void pqRecordEventsDialog::addComment()
+{
+  if (this->Implementation->Ui.blockingCheckBox->isChecked())
+    {
+    this->Implementation->Recorder->translator()->eventComment()->recordCommentBlock(
+        this->Implementation->Ui.commentTextEdit->toPlainText());
+    }
+  else
+    {
+    this->Implementation->Recorder->translator()->eventComment()->recordComment(
+        this->Implementation->Ui.commentTextEdit->toPlainText());
+    }
+  this->Implementation->Ui.commentTextEdit->clear();
 }

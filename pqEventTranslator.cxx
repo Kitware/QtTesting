@@ -38,6 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqBasicWidgetEventTranslator.h"
 #include "pqComboBoxEventTranslator.h"
 #include "pqDoubleSpinBoxEventTranslator.h"
+#include "pqEventComment.h"
 #include "pqLineEditEventTranslator.h"
 #include "pqMenuEventTranslator.h"
 #include "pqObjectNaming.h"
@@ -57,10 +58,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 struct pqEventTranslator::pqImplementation
 {
-  ~pqImplementation()
+  pqImplementation()
   {
+  this->EventComment = 0;
   }
 
+  ~pqImplementation()
+  {
+  if(this->EventComment)
+    {
+    delete this->EventComment;
+    }
+  }
+
+  pqEventComment* EventComment;
   /// Stores the working set of widget translators  
   QList<pqWidgetEventTranslator*> Translators;
   /// Stores the set of objects that should be ignored when translating events
@@ -98,8 +109,8 @@ void pqEventTranslator::start()
 // ----------------------------------------------------------------------------
 void pqEventTranslator::stop()
 {
-  emit this->stopped();
   QCoreApplication::instance()->removeEventFilter(this);
+  emit this->stopped();
 }
 
 // ----------------------------------------------------------------------------
@@ -191,6 +202,22 @@ QList<pqWidgetEventTranslator*> pqEventTranslator::translators() const
 }
 
 // ----------------------------------------------------------------------------
+void pqEventTranslator::addDefaultEventManagers(pqTestUtility* util)
+{
+  this->Implementation->EventComment = new pqEventComment(util);
+  QObject::connect(this->Implementation->EventComment,
+                   SIGNAL(recordComment(QObject*,QString,QString)),
+                   this,
+                   SLOT(onRecordEvent(QObject*,QString,QString)));
+}
+
+// ----------------------------------------------------------------------------
+pqEventComment* pqEventTranslator::eventComment() const
+{
+  return this->Implementation->EventComment;
+}
+
+// ----------------------------------------------------------------------------
 void pqEventTranslator::ignoreObject(QObject* Object)
 {
   this->Implementation->IgnoredObjects.insert(Object);
@@ -246,15 +273,21 @@ bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
 }
 
 // ----------------------------------------------------------------------------
-void pqEventTranslator::onRecordEvent(QObject* Object, const QString& Command, const QString& Arguments)
+void pqEventTranslator::onRecordEvent(QObject* Object,
+                                      const QString& Command,
+                                      const QString& Arguments)
 {
   if(this->Implementation->IgnoredObjects.contains(Object))
     return;
 
-  const QString name = pqObjectNaming::GetName(*Object);
-  if(name.isEmpty())
-    return;
-    
-//  qDebug() << "Event: " << name << " " << Command << " " << Arguments;
+  QString name;
+  // When sender is pqEventObject, the Object name can be NULL.
+  if (!qobject_cast<pqEventComment*>(this->sender()) || Object)
+    {
+    name = pqObjectNaming::GetName(*Object);
+    if(name.isEmpty())
+      return;
+    }
+
   emit recordEvent(name, Command, Arguments);
 }

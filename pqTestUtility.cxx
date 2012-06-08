@@ -39,6 +39,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QVariant>
 
 // QtTesting includes
+#include "pqEventComment.h"
 #include "pqEventObserver.h"
 #include "pqEventSource.h"
 #include "pqEventTranslator.h"
@@ -63,6 +64,7 @@ pqTestUtility::pqTestUtility(QObject* p)
   this->FileSuffix = QString();
 
   this->Translator.addDefaultWidgetEventTranslators(this);
+  this->Translator.addDefaultEventManagers(this);
   this->Player.addDefaultWidgetEventPlayers(this);
 
 #ifdef QT_TESTING_WITH_PYTHON
@@ -242,9 +244,8 @@ bool pqTestUtility::playTests(const QStringList& filenames)
     return false;
     }
 
-  emit this->playbackStarted();
-
   this->PlayingTest = true;
+  emit this->playbackStarted();
 
   bool success = true;
   foreach (QString filename, filenames)
@@ -277,9 +278,10 @@ bool pqTestUtility::playTests(const QStringList& filenames)
       emit this->playbackStopped(info.fileName(), success);
       }
     }
-  this->PlayingTest = false;
 
+  this->PlayingTest = false;
   emit this->playbackStopped();
+
   return success;
 }
 
@@ -312,7 +314,6 @@ void pqTestUtility::recordTests()
 
   QObject::connect(&this->Recorder, SIGNAL(stopped()),
                    this, SLOT(onRecordStopped()), Qt::UniqueConnection);
-
 
   pqRecordEventsDialog* dialog = new pqRecordEventsDialog(&this->Recorder,
                                           this,

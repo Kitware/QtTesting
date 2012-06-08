@@ -36,8 +36,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "QtTestingExport.h"
 #include <QObject>
 
-class pqWidgetEventTranslator;
+class pqEventComment;
 class pqTestUtility;
+class pqWidgetEventTranslator;
 
 /**
 Manages serialization of user interaction for test-cases, demos, tutorials, etc.
@@ -74,6 +75,12 @@ public:
 
   /// Return a QList of all the Translators previously added.
   QList<pqWidgetEventTranslator*> translators() const;
+
+  /// Add a new default eventComment in the scenario/recording to inform,
+  /// intract with the user during the play back.
+  void addDefaultEventManagers(pqTestUtility* util);
+  /// Return the pqEventComment, to be able to add any comment events
+  pqEventComment* eventComment() const;
 
   /// Adds a Qt object to a list of objects that should be ignored when
   /// translating events (useful to prevent recording UI events from being

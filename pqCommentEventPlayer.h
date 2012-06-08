@@ -34,6 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define __pqCommentEventPlayer_h
 
 // QtTesting includes
+#include "pqTestUtility.h"
 #include "pqWidgetEventPlayer.h"
 
 /// This class is a comment class.
@@ -45,13 +46,10 @@ class pqCommentEventPlayer : public pqWidgetEventPlayer
   Q_OBJECT
 
 public:
-  pqCommentEventPlayer(QObject* p =0);
+  pqCommentEventPlayer(pqTestUtility* testUtility, QObject* p =0);
   ~pqCommentEventPlayer();
 
   bool playEvent(QObject* Object, const QString &Command, const QString &Arguments, bool &Error);
-
-  void setCommentEnabled(bool value);
-  bool isCommentEnabled() const;
 
 signals:
   void comment(const QString&);
@@ -60,7 +58,7 @@ private:
   pqCommentEventPlayer(const pqCommentEventPlayer&); // Not implemented
   pqCommentEventPlayer& operator=(const pqCommentEventPlayer&); // Not implemented
 
-  bool CommentEnabled;
+  pqTestUtility* TestUtility;
 };
 
 #endif // __pqCommentEventPlayer_h

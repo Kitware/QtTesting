@@ -119,7 +119,6 @@ void pqPlayBackEventsDialog::pqImplementation::init(pqPlayBackEventsDialog* dial
       qobject_cast<pqCommentEventPlayer*>(widgetPlayer);
   if (commentPlayer)
     {
-    commentPlayer->setCommentEnabled(true);
     QObject::connect(commentPlayer, SIGNAL(comment(QString)),
                      this->Ui.logBrowser, SLOT(append(QString)));
     qDebug() << "Comment player : " << commentPlayer;
@@ -366,6 +365,7 @@ void pqPlayBackEventsDialog::onStarted(const QString& filename)
   this->Implementation->Ui.tableWidget->setCurrentCell(
       this->Implementation->CurrentFile, 1,
       QItemSelectionModel::Rows | QItemSelectionModel::SelectCurrent);
+  this->Implementation->Ui.logBrowser->clear();
 
   this->Implementation->MaxLines = 0;
   this->Implementation->CurrentLine = 0;
@@ -405,6 +405,9 @@ void pqPlayBackEventsDialog::onStopped()
 void pqPlayBackEventsDialog::updateUi()
 {
   // Update player buttons
+  this->Implementation->Ui.playPauseButton->setChecked(
+      this->Implementation->TestUtility->playingTest() &&
+      !this->Implementation->Dispatcher.isPaused());
   this->Implementation->Ui.playPauseButton->setEnabled(
       !this->Implementation->Filenames.isEmpty() &&
       this->selectedFileNames().count() > 0);
@@ -462,4 +465,6 @@ void pqPlayBackEventsDialog::updateUi()
   this->Implementation->Ui.commandLabel->setText(command);
   this->Implementation->Ui.argumentsLabel->setText(argument);
   this->Implementation->Ui.objectLabel->setText(object);
+
+  this->update();
 }

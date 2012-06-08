@@ -57,6 +57,8 @@ private slots:
   virtual void done(int);
   void onEventRecorded(const QString&, const QString&, const QString&);
 
+  void addComment();
+
 private:
   pqRecordEventsDialog(const pqRecordEventsDialog&);
   pqRecordEventsDialog& operator=(const pqRecordEventsDialog&);

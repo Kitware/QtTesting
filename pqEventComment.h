@@ -1,7 +1,7 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pqNativeFileDialogEventPlayer.h
+   Module:    pqEventComment.h
 
    Copyright (c) 2005-2008 Sandia Corporation, Kitware Inc.
    All rights reserved.
@@ -30,42 +30,49 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
 
-#include "pqCommentEventPlayer.h"
+#ifndef __pqEventComment_h
+#define __pqEventComment_h
 
-// ----------------------------------------------------------------------------
-pqCommentEventPlayer::pqCommentEventPlayer(pqTestUtility* testUtility,
-                                           QObject* parent)
-  : pqWidgetEventPlayer(parent)
+// Qt includes
+#include <QObject>
+
+// QtTesting inlcudes
+#include "pqTestUtility.h"
+#include "QtTestingExport.h"
+
+/// pqEventComment is responsible for adding any kind of events that are not added
+/// by widgets.
+/// For exemple, you can add an event to block the playback, to show a custom
+/// comment etc ...
+
+class QTTESTING_EXPORT pqEventComment :
+  public QObject
 {
-  this->TestUtility = testUtility;
-}
+  Q_OBJECT
+  typedef QObject Superclass;
 
-// ----------------------------------------------------------------------------
-pqCommentEventPlayer::~pqCommentEventPlayer()
-{
-  this->TestUtility = 0;
-}
+public:
+  pqEventComment(pqTestUtility* util, QObject* parent = 0);
+  ~pqEventComment();
 
-// ----------------------------------------------------------------------------
-bool pqCommentEventPlayer::playEvent(QObject* Object,
-                                     const QString &Command,
-                                     const QString &Arguments,
-                                     bool &Error)
-{
-  if (!Command.startsWith("comment"))
-    {
-    return false;
-    }
+  /// Call this function to add an event comment, which will display a message,
+  /// during the playback in the log.
+  void recordComment(const QString& arguments);
 
-  if (!Arguments.isEmpty())
-    {
-    emit this->comment(Arguments);
-    }
+  /// Call this function to add an event comment, which will display a message,
+  /// and then pause the macro during the playback.
+  void recordCommentBlock(const QString& arguments);
 
-  if (Command.split("-").contains("block"))
-    {
-    this->TestUtility->dispatcher()->run(false);
-    }
+signals:
+  /// All functions should emit this signal whenever they wish to record comment event
+  void recordComment(QObject* widget, const QString& type, const QString& argument);
 
-  return true;
-}
+protected:
+  void recordComment(const QString& command,
+                     const QString& arguments,
+                     QObject* = 0);
+
+  pqTestUtility* TestUtility;
+};
+
+#endif
