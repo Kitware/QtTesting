@@ -6,6 +6,8 @@ set(TEST_SOURCES
   pqEventPlayerTest.cpp
   pqEventRecorderTest.cpp
   pqEventTranslatorTest.cpp
+  pqDoubleSpinBoxEventPlayerTest.cpp
+  pqDoubleSpinBoxEventTranslatorTest.cpp
   pqSpinBoxEventPlayerTest.cpp
   pqSpinBoxEventTranslatorTest.cpp
   pqTestUtilityTest.cpp
@@ -42,6 +44,8 @@ endmacro()
 #
 SIMPLE_TEST( pqEventPlayerTest )
 SIMPLE_TEST( pqEventRecorderTest )
+SIMPLE_TEST( pqDoubleSpinBoxEventPlayerTest )
+SIMPLE_TEST( pqDoubleSpinBoxEventTranslatorTest )
 SIMPLE_TEST( pqSpinBoxEventPlayerTest )
 SIMPLE_TEST( pqSpinBoxEventTranslatorTest )
 SIMPLE_TEST( pqEventTranslatorTest )

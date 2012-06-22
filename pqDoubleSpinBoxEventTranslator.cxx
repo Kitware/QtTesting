@@ -38,12 +38,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QStyle>
 #include <QStyleOptionSpinBox>
 
+// ----------------------------------------------------------------------------
 pqDoubleSpinBoxEventTranslator::pqDoubleSpinBoxEventTranslator(QObject* p)
   : pqWidgetEventTranslator(p),
   CurrentObject(0)
 {
 }
 
+// ----------------------------------------------------------------------------
 bool pqDoubleSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& /*Error*/)
 {
   QDoubleSpinBox* const object = qobject_cast<QDoubleSpinBox*>(Object);
@@ -65,6 +67,7 @@ bool pqDoubleSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Eve
         {
         disconnect(this->CurrentObject, 0, this, 0);
         }
+
       this->CurrentObject = Object;
       this->Value = object->value();
       connect(object, SIGNAL(valueChanged(double)),this, SLOT(onValueChanged(double)));
@@ -72,31 +75,18 @@ bool pqDoubleSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Eve
       }
     }
 
-  if(Event->type() == QEvent::KeyRelease && Object==object)
-    {
-    QKeyEvent* ke = static_cast<QKeyEvent*>(Event);
-    QString keyText = ke->text();
-    if(keyText.length() && keyText.at(0).isLetterOrNumber())
-      {
-      emit recordEvent(object, "set_double", QString("%1").arg(object->value()));
-      }
-    else
-      {
-      emit recordEvent(object, "key", QString("%1").arg(ke->key()));
-      }
-    }
-
   return true;
 }
 
+// ----------------------------------------------------------------------------
 void pqDoubleSpinBoxEventTranslator::onDestroyed(QObject* /*Object*/)
 {
   this->CurrentObject = 0;
 }
 
+// ----------------------------------------------------------------------------
 void pqDoubleSpinBoxEventTranslator::onValueChanged(double number)
 {
-  QString sens = (number - this->Value > 0) ? "up" : "down";
-  this->Value = number;
-  emit recordEvent(this->CurrentObject, "spin", sens);
+  emit recordEvent(this->CurrentObject, "set_double", QString("%1")
+                   .arg(number));
 }
