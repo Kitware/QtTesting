@@ -315,17 +315,25 @@ void pqTestUtility::recordTests()
   QObject::connect(&this->Recorder, SIGNAL(stopped()),
                    this, SLOT(onRecordStopped()), Qt::UniqueConnection);
 
-  pqRecordEventsDialog* dialog = new pqRecordEventsDialog(&this->Recorder,
+  if (QApplication::activeWindow())
+    {
+    pqRecordEventsDialog* dialog = new pqRecordEventsDialog(&this->Recorder,
                                           this,
                                           QApplication::activeWindow());
-  dialog->setAttribute(Qt::WA_QuitOnClose, false);
+    dialog->setAttribute(Qt::WA_QuitOnClose, false);
 
-  QRect rectApp = QApplication::activeWindow()->geometry();
-  QRect rectDialog(QPoint(rectApp.left(),
-                          rectApp.bottom() - dialog->sizeHint().height()),
-                   QSize(dialog->geometry().width(), dialog->sizeHint().height()));
-  dialog->setGeometry(rectDialog);
-  dialog->show();
+    QRect rectApp = QApplication::activeWindow()->geometry();
+    QRect rectDialog(QPoint(rectApp.left(),
+                            rectApp.bottom() - dialog->sizeHint().height()),
+                     QSize(dialog->geometry().width(), dialog->sizeHint().height()));
+
+    dialog->setGeometry(rectDialog);
+    dialog->show();
+    }
+  else
+    {
+    qWarning() << "No acive windows has been found";
+    }
 
   this->Recorder.recordEvents(&this->Translator, observer, this->File, true);
 }
