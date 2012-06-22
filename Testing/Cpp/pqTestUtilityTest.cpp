@@ -76,52 +76,6 @@ private Q_SLOTS:
 };
 
 // ----------------------------------------------------------------------------
-// Dumy pqEventObserver
-
-class DummyEventObserver : public pqEventObserver
-{
-  Q_OBJECT
-
-public:
-  DummyEventObserver(QObject* p = 0) : pqEventObserver(p) {}
-  ~DummyEventObserver() {}
-
-protected:
-  virtual void setStream(QTextStream* /*stream*/)
-  {}
-
-  virtual void onRecordEvent(const QString& /*widget*/,
-                             const QString& /*command*/,
-                             const QString& /*arguments*/)
-  {}
-};
-
-// ----------------------------------------------------------------------------
-// Dumy eventSource
-
-class DummyEventSource : public pqEventSource
-{
-  typedef pqEventSource Superclass;
-
-public:
-  DummyEventSource(QObject* p = 0): Superclass(p) {}
-  ~DummyEventSource() {}
-
-protected:
-  virtual void setContent(const QString& /*xmlfilename*/)
-    {
-    return;
-    }
-
-  int getNextEvent(QString& /*widget*/,
-                   QString& /*command*/,
-                   QString& /*arguments*/)
-    {
-    return 0;
-    }
-};
-
-// ----------------------------------------------------------------------------
 void pqTestUtilityTester::testDefaults()
 {
   pqTestUtility testUtility;
@@ -159,12 +113,12 @@ void pqTestUtilityTester::testAddEventSource_data()
   QTest::addColumn<QObject*>("source2");
   QTest::addColumn<int>("newCount2");
 
-  DummyEventSource* nullSource = NULL;
-  DummyEventSource* dummySource1 = new DummyEventSource();
-  DummyEventSource* dummySource2 = new DummyEventSource();
-  DummyEventSource* dummySource3 = new DummyEventSource();
-  DummyEventSource* dummySource4 = new DummyEventSource();
-  DummyEventSource* dummySource5 = new DummyEventSource();
+  pqDummyEventSource* nullSource = NULL;
+  pqDummyEventSource* dummySource1 = new pqDummyEventSource();
+  pqDummyEventSource* dummySource2 = new pqDummyEventSource();
+  pqDummyEventSource* dummySource3 = new pqDummyEventSource();
+  pqDummyEventSource* dummySource4 = new pqDummyEventSource();
+  pqDummyEventSource* dummySource5 = new pqDummyEventSource();
   QTest::newRow("null") << QString("")
                         << qobject_cast<QObject*>(nullSource) << 0
                         << QString("null")
@@ -211,12 +165,12 @@ void pqTestUtilityTester::testAddEventObserver_data()
   QTest::addColumn<QObject*>("observer2");
   QTest::addColumn<int>("newCount2");
 
-  DummyEventObserver* nullObserver = NULL;
-  DummyEventObserver* dummyObserver1 = new DummyEventObserver();
-  DummyEventObserver* dummyObserver2 = new DummyEventObserver();
-  DummyEventObserver* dummyObserver3 = new DummyEventObserver();
-  DummyEventObserver* dummyObserver4 = new DummyEventObserver();
-  DummyEventObserver* dummyObserver5 = new DummyEventObserver();
+  pqDummyEventObserver* nullObserver = NULL;
+  pqDummyEventObserver* dummyObserver1 = new pqDummyEventObserver();
+  pqDummyEventObserver* dummyObserver2 = new pqDummyEventObserver();
+  pqDummyEventObserver* dummyObserver3 = new pqDummyEventObserver();
+  pqDummyEventObserver* dummyObserver4 = new pqDummyEventObserver();
+  pqDummyEventObserver* dummyObserver5 = new pqDummyEventObserver();
   QTest::newRow("null") << QString("")
                         << qobject_cast<QObject*>(nullObserver) << 0
                         << QString("null")

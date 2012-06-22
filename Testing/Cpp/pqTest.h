@@ -20,7 +20,6 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pqEventPlayer.h
 
    Copyright (c) 2005-2008 Sandia Corporation, Kitware Inc.
    All rights reserved.
@@ -48,8 +47,70 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
+
 // Qt includes
 #include <QtTest/QtTest>
+
+// QtTesting includes
+#include "pqEventObserver.h"
+#include "pqEventSource.h"
+
+
+// ----------------------------------------------------------------------------
+// Dumy pqEventObserver
+
+class pqDummyEventObserver : public pqEventObserver
+{
+  Q_OBJECT
+
+public:
+  pqDummyEventObserver(QObject* p = 0) : pqEventObserver(p) {}
+  ~pqDummyEventObserver() {}
+
+  virtual void setStream(QTextStream* /*stream*/)
+  {
+  }
+
+  QString Text;
+
+public slots:
+  virtual void onRecordEvent(const QString& widget,
+                             const QString& command,
+                             const QString& arguments)
+  {
+    this->Text.append(QString("%1, %2, %3#").arg(widget,
+                                          command,
+                                          arguments));
+  }
+};
+
+// ----------------------------------------------------------------------------
+// Dumy eventSource
+
+class pqDummyEventSource : public pqEventSource
+{
+  typedef pqEventSource Superclass;
+
+public:
+  pqDummyEventSource(QObject* p = 0): Superclass(p) {}
+  ~pqDummyEventSource() {}
+
+protected:
+  virtual void setContent(const QString& /*xmlfilename*/)
+    {
+    return;
+    }
+
+  int getNextEvent(QString& /*widget*/,
+                   QString& /*command*/,
+                   QString& /*arguments*/)
+    {
+    return 0;
+    }
+};
+
+// ----------------------------------------------------------------------------
+// MACRO
 
 #define CTK_TEST_NOOP_MAIN(TestObject) \
 int TestObject(int argc, char *argv[]) \

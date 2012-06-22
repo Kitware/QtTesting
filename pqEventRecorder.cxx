@@ -31,7 +31,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =========================================================================*/
 
 // Qt includes
-#include <QDebug>
 #include <QIODevice>
 #include <QTextStream>
 
@@ -46,6 +45,7 @@ pqEventRecorder::pqEventRecorder(QObject *parent)
 {
   this->ActiveObserver = 0;
   this->ActiveTranslator = 0;
+  this->File = 0;
 
   this->Recording = false;
   this->ContinuousFlush = false;
@@ -61,6 +61,11 @@ pqEventRecorder::~pqEventRecorder()
 // ----------------------------------------------------------------------------
 void pqEventRecorder::setContinuousFlush(bool value)
 {
+  if (!this->ActiveObserver)
+    {
+    return;
+    }
+
   if (value)
     {
     QObject::connect(this->ActiveObserver,
@@ -183,13 +188,14 @@ void pqEventRecorder::stop(int value)
   this->ActiveObserver->setStream(NULL);
   this->ActiveTranslator->stop();
 
+  this->Recording = false;
+
   if (!value)
     {
     return;
     }
 
   this->flush();
-  this->Recording = false;
   emit this->stopped();
 }
 
