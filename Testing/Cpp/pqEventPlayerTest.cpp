@@ -103,12 +103,12 @@ void pqEventPlayerTester::testAddWidgetEventPlayer_data()
       << qobject_cast<QObject*>(nullWidget) << 0;
   QTest::newRow("empty_pqComment")
       << qobject_cast<QObject*>(nullWidget) << 0
-      << qobject_cast<QObject*>(new pqCommentEventPlayer()) << 1;
+      << qobject_cast<QObject*>(new pqCommentEventPlayer(0)) << 1;
   QTest::newRow("pqComment_pqComment")
-      << qobject_cast<QObject*>(new pqCommentEventPlayer()) << 1
-      << qobject_cast<QObject*>(new pqCommentEventPlayer()) << 1;
+      << qobject_cast<QObject*>(new pqCommentEventPlayer(0)) << 1
+      << qobject_cast<QObject*>(new pqCommentEventPlayer(0)) << 1;
   QTest::newRow("pqComment_pqTreeView")
-      << qobject_cast<QObject*>(new pqCommentEventPlayer()) << 1
+      << qobject_cast<QObject*>(new pqCommentEventPlayer(0)) << 1
       << qobject_cast<QObject*>(new pqTreeViewEventPlayer()) << 2;
 }
 
@@ -128,7 +128,7 @@ void pqEventPlayerTester::testRemoveWidgetEventPlayer()
 
   // When we add the widgetEventPlayer into the eventPlayer, it is automaticaly
   // reparented to the eventPlayer. So its deletion would be automatic.
-  pqCommentEventPlayer* commentPlayer = new pqCommentEventPlayer();
+  pqCommentEventPlayer* commentPlayer = new pqCommentEventPlayer(0);
   eventPlayer.addWidgetEventPlayer(commentPlayer);
 
   QCOMPARE(eventPlayer.players().count(), 1);
@@ -166,7 +166,7 @@ void pqEventPlayerTester::testGetWidgetEventPlayer()
 
   // When we add the widgetEventPlayer into the eventPlayer, it is automaticaly
   // reparented to the eventPlayer. So its deletion would be automatic.
-  pqCommentEventPlayer* comment = new pqCommentEventPlayer();
+  pqCommentEventPlayer* comment = new pqCommentEventPlayer(0);
   eventPlayer.addWidgetEventPlayer(comment);
 
   QCOMPARE(eventPlayer.getWidgetEventPlayer(0),
