@@ -38,13 +38,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QStyle>
 #include <QStyleOptionSpinBox>
 
+// ----------------------------------------------------------------------------
 pqSpinBoxEventTranslator::pqSpinBoxEventTranslator(QObject* p)
   : pqWidgetEventTranslator(p)
 {
   this->CurrentObject = 0;
 }
 
-bool pqSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& /*Error*/)
+// ----------------------------------------------------------------------------
+bool pqSpinBoxEventTranslator::translateEvent(QObject* Object,
+                                              QEvent* Event,
+                                              bool& /*Error*/)
 {
   QSpinBox* object = qobject_cast<QSpinBox*>(Object);
   
@@ -54,17 +58,18 @@ bool pqSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, bo
     return true;
     }
 
- if(!object)
+  if(!object)
       return false;
 
   if(Event->type() == QEvent::Enter && Object==object)
     {
     if(this->CurrentObject != Object)
       {
-//      if(this->CurrentObject)
-//        {
-//        disconnect(this->CurrentObject, 0, this, 0);
-//        }
+      if(this->CurrentObject)
+        {
+        disconnect(this->CurrentObject, 0, this, 0);
+        }
+
       this->CurrentObject = Object;
       this->Value = object->value();
       connect(object, SIGNAL(valueChanged(int)),this, SLOT(onValueChanged(int)));
@@ -72,38 +77,19 @@ bool pqSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, bo
       }
     }
 
-  if (Event->type() == QEvent::Leave && Object==object)
-    {
-    disconnect(this->CurrentObject, 0, this, 0);
-    this->CurrentObject = 0;
-    }
-
-  if(Event->type() == QEvent::KeyRelease && Object == object)
-    {
-    QKeyEvent* ke = static_cast<QKeyEvent*>(Event);
-    QString keyText = ke->text();
-    this->Value = object->value();
-    if(keyText.length() && keyText.at(0).isLetterOrNumber())
-      {
-      emit recordEvent(object, "set_int", QString("%1").arg(object->value()));
-      }
-    else
-      {
-      emit recordEvent(object, "key", QString("%1").arg(ke->key()));
-      }
-    }
   return true;
 }
 
+// ----------------------------------------------------------------------------
 void pqSpinBoxEventTranslator::onDestroyed(QObject* /*Object*/)
 {
   this->CurrentObject = 0;
 }
 
+// ----------------------------------------------------------------------------
 void pqSpinBoxEventTranslator::onValueChanged(int number)
 {
-  QString sens = (number - this->Value > 0) ? "up" : "down";
-  this->Value = number;
-  emit recordEvent(this->CurrentObject, "spin", sens);
+  emit recordEvent(this->CurrentObject, "set_int", QString("%1")
+                   .arg(number));
 }
 

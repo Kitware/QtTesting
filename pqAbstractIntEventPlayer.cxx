@@ -43,7 +43,7 @@ pqAbstractIntEventPlayer::pqAbstractIntEventPlayer(QObject* p)
 
 bool pqAbstractIntEventPlayer::playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
 {
-  if(Command != "set_int" && Command != "spin")
+  if(Command != "set_int")
     return false;
 
   const int value = Arguments.toInt();
@@ -61,22 +61,6 @@ bool pqAbstractIntEventPlayer::playEvent(QObject* Object, const QString& Command
       object->setValue(value);
       return true;
       }
-    else if(Command == "spin" && Arguments == "up")
-      {
-      object->stepUp();
-      return true;
-      }
-    else if(Command == "spin" && Arguments == "down")
-      {
-      object->stepDown();
-      return true;
-      }
-    }
-
-  if (Command == "spin")
-    {
-    // let pqAbstractDoubleEventPlayer handle it if possible.
-    return false;
     }
 
   qCritical() << "calling set_int on unhandled type " << Object;
