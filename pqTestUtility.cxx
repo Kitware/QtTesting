@@ -276,6 +276,7 @@ bool pqTestUtility::playTests(const QStringList& filenames)
         break;
         }
       emit this->playbackStopped(info.fileName(), success);
+      qDebug() << "Test " << info.fileName() << "is finished. Success = " << success;
       }
     }
 
