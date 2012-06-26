@@ -45,6 +45,7 @@ class QTTESTING_EXPORT pqPlayBackEventsDialog : public QDialog
 {
   Q_OBJECT
   
+  typedef QDialog Superclass;
 public:
   /**
   Creates the dialog and begins translating user input with the supplied translator.
@@ -63,10 +64,14 @@ private slots:
   void onStarted();
   void onStarted(const QString&);
   void onStopped();
+  void onModal(bool value);
 
 public slots:
   virtual void done(int);
   void updateUi();
+
+protected:
+  virtual void moveEvent(QMoveEvent* event);
 
 private:
   void loadFiles(const QStringList& filenames);

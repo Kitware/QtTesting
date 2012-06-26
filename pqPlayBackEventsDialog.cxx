@@ -42,6 +42,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QFile>
 #include <QFileDialog>
 #include <QMessageBox>
+#include <QMoveEvent>
 #include <QTableWidget>
 #include <QProgressBar>
 #include <QPushButton>
@@ -77,6 +78,7 @@ public:
   int           CurrentFile;
   QStringList   Filenames;
   QStringList   CurrentEvent;
+  QRect         OldRect;
 };
 
 // ----------------------------------------------------------------------------
@@ -121,7 +123,6 @@ void pqPlayBackEventsDialog::pqImplementation::init(pqPlayBackEventsDialog* dial
     {
     QObject::connect(commentPlayer, SIGNAL(comment(QString)),
                      this->Ui.logBrowser, SLOT(append(QString)));
-    qDebug() << "Comment player : " << commentPlayer;
     }
 
   dialog->setMaximumHeight(dialog->minimumSizeHint().height());
@@ -404,6 +405,11 @@ void pqPlayBackEventsDialog::onStopped()
 // ----------------------------------------------------------------------------
 void pqPlayBackEventsDialog::updateUi()
 {
+  // Update Moda/Modeless
+  this->onModal(this->Implementation->TestUtility->playingTest() &&
+                !(this->Implementation->TestUtility->playingTest() &&
+                  this->Implementation->Dispatcher.isPaused()));
+
   // Update player buttons
   this->Implementation->Ui.playPauseButton->setChecked(
       this->Implementation->TestUtility->playingTest() &&
@@ -467,4 +473,38 @@ void pqPlayBackEventsDialog::updateUi()
   this->Implementation->Ui.objectLabel->setText(object);
 
   this->update();
+}
+
+// ----------------------------------------------------------------------------
+void pqPlayBackEventsDialog::onModal(bool value)
+{
+  // From modal to modeless we don't need to hide() show() the dialog
+  if (value)
+    {
+    this->setAttribute(Qt::WA_WState_Visible, false);
+    this->setAttribute(Qt::WA_WState_Hidden, true);
+    }
+  this->setModal(value);
+  if (value)
+    {
+    this->Implementation->OldRect = this->frameGeometry();
+    this->setVisible(true);
+    this->Implementation->OldRect = QRect();
+    }
+  this->raise();
+}
+
+// ----------------------------------------------------------------------------
+void pqPlayBackEventsDialog::moveEvent(QMoveEvent* event)
+{
+  if(this->Implementation->OldRect.isValid())
+    {
+    QPoint oldPos = this->Implementation->OldRect.topLeft();
+    this->Implementation->OldRect = QRect();
+    this->move(oldPos);
+    }
+  else
+    {
+    this->Superclass::moveEvent(event);
+    }
 }
