@@ -249,8 +249,8 @@ QObject* pqObjectNaming::GetObject(const QString& Name)
   if(result)
     return result;
   
+  ErrorMessage = QString("Couldn't find object %1\n").arg(Name);
   if(lastObject)
-    ErrorMessage = QString("Couldn't find object %1\n").arg(Name);
     {
     ErrorMessage += QString("Found up to %1\n").arg(
                       pqObjectNaming::GetName(*lastObject));
