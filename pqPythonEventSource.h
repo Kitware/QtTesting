@@ -67,6 +67,9 @@ private:
   class pqInternal;
   pqInternal* Internal;
 
+  /// method called to initialize Python. This can be called several times. It
+  /// will init Python only if it hasn't been already.
+  void initPythonIfNeeded();
 };
 
 #endif // !_pqPythonEventSource_h

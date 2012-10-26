@@ -406,6 +406,15 @@ pqPythonEventSource::pqPythonEventSource(QObject* p)
   : pqThreadedEventSource(p)
 {
   this->Internal = new pqInternal;
+}
+
+pqPythonEventSource::~pqPythonEventSource()
+{
+  delete this->Internal;
+}
+
+void pqPythonEventSource::initPythonIfNeeded()
+{
   int initPy = Py_IsInitialized();
   if(!initPy)
     {
@@ -418,12 +427,6 @@ pqPythonEventSource::pqPythonEventSource(QObject* p)
   // add QtTesting to python's inittab, so it is
   // available to all interpreters
   PyImport_AppendInittab(const_cast<char*>("QtTesting"), initQtTesting);
-
-}
-
-pqPythonEventSource::~pqPythonEventSource()
-{
-  delete this->Internal;
 }
 
 void pqPythonEventSource::setContent(const QString& path)
@@ -544,6 +547,8 @@ void pqPythonEventSource::threadGetChildren()
 
 void pqPythonEventSource::start()
 {
+  this->initPythonIfNeeded();
+
   PyEval_InitThreads();
   PyEval_ReleaseLock();
   pqThreadedEventSource::start();
@@ -557,7 +562,7 @@ void pqPythonEventSource::run()
     printf("Unable to open python script\n");
     return;
     } 
-
+  this->initPythonIfNeeded();
   Instance = this;
 
   PyGILState_STATE gstate = PyGILState_Ensure();
