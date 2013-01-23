@@ -26,7 +26,7 @@ IF(NOT DEFINED QtTesting_INSTALL_LIB_DIR)
 ENDIF()
 
 IF(NOT DEFINED QtTesting_INSTALL_CMAKE_DIR)
-  SET(QtTesting_INSTALL_CMAKE_DIR lib/CMake)
+  SET(QtTesting_INSTALL_CMAKE_DIR lib/cmake/qttesting)
 ENDIF()
 
 IF(NOT DEFINED QT_TESTING_EVENT_PLAYBACK_DELAY)
@@ -272,7 +272,7 @@ ENDIF()
 export(TARGETS QtTesting FILE ${QtTesting_BINARY_DIR}/QtTestingExports.cmake)
 
 # Set up the build export configuration
-set( QtTesting_EXPORT_FILE "${QtTesting_BINARY_DIR}/QtTestingConfig.cmake" )
+set(QtTesting_EXPORT_FILE "${QtTesting_BINARY_DIR}/QtTestingConfig.cmake")
 configure_file(
   "${QtTesting_SOURCE_DIR}/QtTestingConfig.cmake.in"
   "${QtTesting_EXPORT_FILE}"
@@ -293,7 +293,7 @@ ELSE()
   get_filename_component(QtTesting_INSTALL_LIB_FULL_DIR "${QtTesting_INSTALL_LIB_FULL_DIR}" ABSOLUTE)
 ENDIF()
 
-set( QtTesting_EXPORT_INSTALL_FILE "${QtTesting_BINARY_DIR}/CMakeFiles/QtTestingConfig.cmake" )
+set(QtTesting_EXPORT_INSTALL_FILE "${QtTesting_BINARY_DIR}/CMakeFiles/QtTestingConfig.cmake")
 configure_file(
   "${QtTesting_SOURCE_DIR}/QtTestingConfig-install.cmake.in"
   "${QtTesting_EXPORT_INSTALL_FILE}"
