@@ -99,6 +99,11 @@ public:
   /// event dispatch.
   static void registerTimer(QTimer* timer);
 
+  /// Disables the behavior where more events may be dispatched if Qt starts
+  /// waiting in an event loop. Warning: Setting this to true will prevent
+  /// modal dialogs from functioning correctly.
+  static void setIgnoreBlocking(bool enable);
+
 signals:
   /// signal when playback starts
   void started();
@@ -122,6 +127,7 @@ protected:
   bool PlayBackFinished;
   bool PlayBackStatus;
   static bool DeferMenuTimeouts;
+  static bool IgnoreBlocking;
 
   pqEventSource* ActiveSource;
   pqEventPlayer* ActivePlayer;
