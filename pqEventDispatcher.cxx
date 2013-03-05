@@ -70,6 +70,8 @@ namespace
 };
 
 bool pqEventDispatcher::DeferMenuTimeouts = false;
+bool pqEventDispatcher::IgnoreBlocking = false;
+
 //-----------------------------------------------------------------------------
 pqEventDispatcher::pqEventDispatcher(QObject* parentObject) :
   Superclass(parentObject)
@@ -120,6 +122,12 @@ void pqEventDispatcher::registerTimer(QTimer* timer)
     {
     RegisteredTimers.push_back(timer);
     }
+}
+
+//-----------------------------------------------------------------------------
+void pqEventDispatcher::setIgnoreBlocking(bool enable)
+{
+  pqEventDispatcher::IgnoreBlocking = enable;
 }
 
 //-----------------------------------------------------------------------------
@@ -262,7 +270,7 @@ void pqEventDispatcher::playEventOnBlocking()
 //    return;
 //    }
 
-  if (pqEventDispatcher::DeferMenuTimeouts)
+  if (pqEventDispatcher::DeferMenuTimeouts || pqEventDispatcher::IgnoreBlocking)
     {
     this->BlockTimer.start();
     return;
