@@ -6,4 +6,5 @@ endif()
 
 set(QtTesting_INCLUDE_DIRS "@QtTesting_SOURCE_DIR@;@QtTesting_BINARY_DIR@")
 set(QtTesting_LIBRARY_DIR "@QtTesting_BINARY_DIR@")
+set(QtTesting_LIBRARIES QtTesting)
 include("${CMAKE_CURRENT_LIST_DIR}/QtTestingExports.cmake")
