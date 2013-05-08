@@ -276,6 +276,7 @@ set(QtTesting_EXPORT_FILE "${QtTesting_BINARY_DIR}/QtTestingConfig.cmake")
 configure_file(
   "${QtTesting_SOURCE_DIR}/QtTestingConfig.cmake.in"
   "${QtTesting_EXPORT_FILE}"
+  @ONLY
 )
 
 # Set up the install export
@@ -307,6 +308,9 @@ IF(QT_TESTING_INSTALL_DEVELOPMENT)
 
   # Configure the CMake EXPORT file during installation
   install( FILES ${QtTesting_BINARY_DIR}/CMakeFiles/QtTestingConfig.cmake
+    DESTINATION ${QtTesting_INSTALL_CMAKE_DIR}
+  )
+  install( EXPORT ${QT_TESTING_INSTALL_EXPORT_NAME}
     DESTINATION ${QtTesting_INSTALL_CMAKE_DIR}
   )
 ENDIF()
