@@ -35,15 +35,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "QtTestingConfigure.h"
 
-#if defined(WIN32) && defined(QTTESTING_BUILD_SHARED_LIBS)
+#if defined(QTTESTING_BUILD_SHARED_LIBS)
 # if defined(QtTesting_EXPORTS)
+#  if defined(WIN32)
 #   define QTTESTING_EXPORT __declspec(dllexport)
+#  elif defined(__GNUC__) && __GNUC__ >= 4
+#   define QTTESTING_EXPORT __attribute__ ((visibility("default")))
+#  endif
 # else
+#  if defined(WIN32)
 #   define QTTESTING_EXPORT __declspec(dllimport)
+#  endif
 # endif
-#else
+#endif
+
+#ifndef QTTESTING_EXPORT
 # define QTTESTING_EXPORT
 #endif
 
 #endif // !_QtTestingExport_h
-
