@@ -177,7 +177,7 @@ QtTesting_getProperty(PyObject* /*self*/, PyObject* args)
     }
 
   return Py_BuildValue(const_cast<char*>("s"), 
-             PropertyValue.toAscii().data());
+             PropertyValue.toLatin1().data());
 }
 
 static PyObject*
@@ -291,7 +291,7 @@ QtTesting_getChildren(PyObject* /*self*/, PyObject* args)
   QString ret = QString("[%1]").arg(objs);
 
   return Py_BuildValue(const_cast<char*>("s"), 
-             ret.toAscii().data());
+             ret.toLatin1().data());
 }
 
 static PyObject*
@@ -344,7 +344,7 @@ QtTesting_invokeMethod(PyObject* /*self*/, PyObject* args)
     }
 
   return Py_BuildValue(const_cast<char*>("s"), 
-             PropertyResult.toAscii().data());
+             PropertyResult.toLatin1().data());
 }
 
 static PyMethodDef QtTestingMethods[] = {
@@ -448,7 +448,7 @@ QString pqPythonEventSource::getProperty(QString& object, QString& prop)
     object = QString::null;
     return QString();
     }
-  int idx = qobject->metaObject()->indexOfProperty(prop.toAscii().data());
+  int idx = qobject->metaObject()->indexOfProperty(prop.toLatin1().data());
   if(idx == -1)
     {
     prop = QString::null;
@@ -490,7 +490,7 @@ void pqPythonEventSource::setProperty(QString& object, QString& prop,
     return;
     }
   
-  int idx = qobject->metaObject()->indexOfProperty(prop.toAscii().data());
+  int idx = qobject->metaObject()->indexOfProperty(prop.toLatin1().data());
   if(idx == -1)
     {
     prop = QString::null;
@@ -505,7 +505,7 @@ void pqPythonEventSource::setProperty(QString& object, QString& prop,
       {
       val = value.split(";");
       }
-    qobject->setProperty(prop.toAscii().data(), val);
+    qobject->setProperty(prop.toLatin1().data(), val);
     }
 }
 
@@ -596,7 +596,7 @@ QString pqPythonEventSource::invokeMethod(QString& object, QString& method)
     }
   else
     {
-    if(!QMetaObject::invokeMethod(qobject, method.toAscii().data(),
+    if(!QMetaObject::invokeMethod(qobject, method.toLatin1().data(),
                                   Q_RETURN_ARG(QVariant, ret)))
       {
       method = QString::null;

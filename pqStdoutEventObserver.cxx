@@ -39,7 +39,7 @@ void pqStdoutEventObserver::onRecordEvent(
   const QString& Arguments)
 {
   printf("event: %s %s %s\n",
-    Widget.toAscii().data(),
-    Command.toAscii().data(),
-    Arguments.toAscii().data());
+    Widget.toLatin1().data(),
+    Command.toLatin1().data(),
+    Arguments.toLatin1().data());
 }
