@@ -137,7 +137,12 @@ void pqEventTranslator::ignoreObject(QObject* Object)
 
 bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
 {
-
+#if QT_VERSION >= 0x050000
+  if(Object->isWindowType())
+    {
+    return false;
+    }
+#endif
   // mouse events are propagated to parents
   // our event translators/players don't quite like that,
   // so lets consume those extra ones
