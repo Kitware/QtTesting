@@ -106,8 +106,8 @@ bool pqTabBarEventPlayer::playEvent(
           if (sibling_tab_bar->tabText(cc) == value)
             {
             std::cout << "DEBUG: Could not find request tab-pane on "
-              << pqObjectNaming::GetName(*tab_bar).toAscii().data() << ". Using "
-              << pqObjectNaming::GetName(*sibling_tab_bar).toAscii().data() << " instead."
+              << pqObjectNaming::GetName(*tab_bar).toLatin1().data() << ". Using "
+              << pqObjectNaming::GetName(*sibling_tab_bar).toLatin1().data() << " instead."
               << std::endl;
             sibling_tab_bar->setCurrentIndex(cc);
             return true;

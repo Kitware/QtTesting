@@ -321,7 +321,6 @@ void pqEventDispatcher::playEvent(int indent)
     return;
     }
     
-  QApplication::syncX();
   static unsigned long counter=0;
   unsigned long local_counter = counter++;
   QString pretty_name = object.mid(object.lastIndexOf('/'));
