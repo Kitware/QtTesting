@@ -33,6 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _pqAbstractStringEventPlayer_h
 #define _pqAbstractStringEventPlayer_h
 
+#include "QtTestingExport.h"
 #include "pqWidgetEventPlayer.h"
 
 /**
@@ -41,8 +42,7 @@ Concrete implementation of pqWidgetEventPlayer that translates high-level ParaVi
 \sa pqEventPlayer
 */
 
-class pqAbstractStringEventPlayer :
-  public pqWidgetEventPlayer
+class QTTESTING_EXPORT pqAbstractStringEventPlayer : public pqWidgetEventPlayer
 {
   Q_OBJECT
 
