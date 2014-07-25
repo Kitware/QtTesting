@@ -52,7 +52,7 @@ using namespace std;
 namespace
 {
   static QList<QPointer<QTimer> > RegisteredTimers;
-  
+
   void processTimers()
     {
     foreach (QTimer* timer, RegisteredTimers)
@@ -69,7 +69,7 @@ namespace
 };
 
 bool pqEventDispatcher::DeferMenuTimeouts = false;
-bool pqEventDispatcher::IgnoreBlocking = false;
+bool pqEventDispatcher::DeferEventsIfBlocked = false;
 
 //-----------------------------------------------------------------------------
 pqEventDispatcher::pqEventDispatcher(QObject* parentObject) :
@@ -118,10 +118,11 @@ void pqEventDispatcher::registerTimer(QTimer* timer)
 }
 
 //-----------------------------------------------------------------------------
-void pqEventDispatcher::setIgnoreBlocking(bool enable)
+void pqEventDispatcher::deferEventsIfBlocked(bool enable)
 {
-  pqEventDispatcher::IgnoreBlocking = enable;
+  pqEventDispatcher::DeferEventsIfBlocked = enable;
 }
+
 
 //-----------------------------------------------------------------------------
 void pqEventDispatcher::aboutToBlock()
@@ -184,8 +185,9 @@ bool pqEventDispatcher::playEvents(pqEventSource& source, pqEventPlayer& player)
   this->PlayBackFinished = false;
   while (!this->PlayBackFinished)
     {
-    this->playEvent();
-    }
+    //cerr << "=== playEvent(1) ===" << endl;
+      this->playEvent();
+      }
   this->ActiveSource = NULL;
   this->ActivePlayer = NULL;
 
@@ -202,14 +204,16 @@ bool pqEventDispatcher::playEvents(pqEventSource& source, pqEventPlayer& player)
 //-----------------------------------------------------------------------------
 void pqEventDispatcher::playEventOnBlocking()
 {
-  if (pqEventDispatcher::DeferMenuTimeouts || pqEventDispatcher::IgnoreBlocking)
+  if (pqEventDispatcher::DeferMenuTimeouts || pqEventDispatcher::DeferEventsIfBlocked)
     {
+    //cerr << "=== playEventOnBlocking ===" << endl;
     this->BlockTimer.start();
     return;
     }
 
   //cout << "---blocked event: " << endl;
   // if needed for debugging, I can print blocking annotation here.
+  //cerr << "=== playEvent(2) ===" << endl;
   this->playEvent(1);
 
   //if (!this->BlockTimer.isActive())
