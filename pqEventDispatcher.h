@@ -99,10 +99,10 @@ public:
   /// event dispatch.
   static void registerTimer(QTimer* timer);
 
-  /// Disables the behavior where more events may be dispatched if Qt starts
-  /// waiting in an event loop. Warning: Setting this to true will prevent
-  /// modal dialogs from functioning correctly.
-  static void setIgnoreBlocking(bool enable);
+  /// Disables the behavior where more test events may be dispatched
+  /// if Qt starts waiting in an event loop. Warning: Setting this to
+  /// true will prevent modal dialogs from functioning correctly.
+  static void deferEventsIfBlocked(bool defer);
 
   /// Return if the Dispatcher is not playing events
   bool isPaused() const;
@@ -145,7 +145,11 @@ protected:
   bool PlayBackOneStep;
   bool PlayBackStoped;
   static bool DeferMenuTimeouts;
-  static bool IgnoreBlocking;
+  /// This variable says that we should not continue to process test events
+  /// when the application is blocked in a Qt event loop - it is either blocked
+  /// in a modal dialog or is in a long wait while also processing events
+  /// (such as when waiting from Insitu server @see pqLiveInsituManager).
+  static bool DeferEventsIfBlocked;
 
   pqEventSource* ActiveSource;
   pqEventPlayer* ActivePlayer;
