@@ -38,6 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqEventDispatcher.h"
 #include "pqTestUtility.h"
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 3, 0)
 
 typedef QString (*_qt_filedialog_existing_directory_hook)(QWidget *parent, const QString &caption, const QString &dir, QFileDialog::Options options);
 extern Q_DECL_IMPORT _qt_filedialog_existing_directory_hook qt_filedialog_existing_directory_hook;
@@ -91,7 +92,6 @@ namespace
 
 
 }
-
 
 pqNativeFileDialogEventPlayer::pqNativeFileDialogEventPlayer(pqTestUtility* util, QObject* p)
     : pqWidgetEventPlayer(p), mUtil(util)
@@ -175,3 +175,31 @@ bool pqNativeFileDialogEventPlayer::playEvent(QObject* Object, const QString& Co
 
     return false;
 }
+#else
+//-----------------------------------------------------------------------------
+pqNativeFileDialogEventPlayer::pqNativeFileDialogEventPlayer(
+  pqTestUtility* util, QObject* p) : pqWidgetEventPlayer(p), mUtil(util)
+{
+}
+pqNativeFileDialogEventPlayer::~pqNativeFileDialogEventPlayer()
+{
+}
+void pqNativeFileDialogEventPlayer::start()
+{
+}
+void pqNativeFileDialogEventPlayer::stop()
+{
+}
+
+bool pqNativeFileDialogEventPlayer::playEvent(
+  QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
+
+{
+  Q_UNUSED(Object);
+  Q_UNUSED(Command);
+  Q_UNUSED(Arguments);
+  Q_UNUSED(Error);
+  return false;
+}
+
+#endif
