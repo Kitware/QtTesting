@@ -38,6 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqEventTranslator.h"
 #include "pqTestUtility.h"
 
+#if QT_VERSION < QT_VERSION_CHECK(5, 3, 0)
 
 typedef QString (*_qt_filedialog_existing_directory_hook)(QWidget *parent, const QString &caption, const QString &dir, QFileDialog::Options options);
 extern Q_DECL_IMPORT _qt_filedialog_existing_directory_hook qt_filedialog_existing_directory_hook;
@@ -182,3 +183,33 @@ void pqNativeFileDialogEventTranslator::record(const QString& command, const QSt
 
     emit this->recordEvent(QApplication::instance(), command, normalized_files.join(";"));
 }
+
+#else
+pqNativeFileDialogEventTranslator::pqNativeFileDialogEventTranslator(
+  pqTestUtility* util, QObject* p) : pqWidgetEventTranslator(p), mUtil(util)
+{
+}
+pqNativeFileDialogEventTranslator::~pqNativeFileDialogEventTranslator()
+{
+}
+
+void pqNativeFileDialogEventTranslator::start()
+{
+}
+
+void pqNativeFileDialogEventTranslator::stop()
+{
+}
+
+bool pqNativeFileDialogEventTranslator::translateEvent(
+  QObject* pqNotUsed(Object), QEvent* pqNotUsed(Event), bool& pqNotUsed(Error))
+{
+    return false;
+}
+
+void pqNativeFileDialogEventTranslator::record(const QString& command, const QString& args)
+{
+  Q_UNUSED(command);
+  Q_UNUSED(args);
+}
+#endif
