@@ -75,6 +75,20 @@ bool pqDoubleSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Eve
       }
     }
 
+  if(Event->type() == QEvent::KeyRelease && Object==object)
+    {
+    QKeyEvent* ke = static_cast<QKeyEvent*>(Event);
+    QString keyText = ke->text();
+    if(keyText.length() && keyText.at(0).isLetterOrNumber())
+      {
+      emit recordEvent(object, "set_double", QString("%1").arg(object->value()));
+      }
+    else
+      {
+      emit recordEvent(object, "key", QString("%1").arg(ke->key()));
+      }
+    }
+
   return true;
 }
 

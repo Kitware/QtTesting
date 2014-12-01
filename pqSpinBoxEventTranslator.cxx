@@ -77,6 +77,27 @@ bool pqSpinBoxEventTranslator::translateEvent(QObject* Object,
       }
     }
 
+  if (Event->type() == QEvent::Leave && Object==object)
+    {
+    disconnect(this->CurrentObject, 0, this, 0);
+    this->CurrentObject = 0;
+    }
+
+  if(Event->type() == QEvent::KeyRelease && Object == object)
+    {
+    QKeyEvent* ke = static_cast<QKeyEvent*>(Event);
+    QString keyText = ke->text();
+    this->Value = object->value();
+    if(keyText.length() && keyText.at(0).isLetterOrNumber())
+      {
+      emit recordEvent(object, "set_int", QString("%1").arg(object->value()));
+      }
+    else
+      {
+      emit recordEvent(object, "key", QString("%1").arg(ke->key()));
+      }
+    }
+
   return true;
 }
 

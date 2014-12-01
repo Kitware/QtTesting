@@ -190,12 +190,22 @@ bool pqTreeViewEventPlayer::playEvent(
       {
       return true;
       }
+    treeView->setFocus();
     treeView->setCurrentIndex(index);
-
+// The following code will cause a modal dialog to close,
+// such as the pqColorPresetDialog, if the treeView widget is not handling the key event,
+// the key event will bevpropogated to the treeView's parent, in this case the dialog,
+// and the dialog be default has OK/Cancel button in focus, and will process the key event,
+// close itself. This is causing a few a paraview's tests using pqColorPresetDialog to fail.
+// The fix here (above) is to add "treeView->setFocus();" so that the
+// "treeView->setCurrentIndex(index);" will trigger selection changed event in treeView,
+// which is the purpose of the following code.
+/*
     QKeyEvent kd(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
     QKeyEvent ku(QEvent::KeyRelease, Qt::Key_Enter, Qt::NoModifier);
     QCoreApplication::sendEvent(treeView, &kd);
     QCoreApplication::sendEvent(treeView, &ku);
+ */
 
     return true;
     }
