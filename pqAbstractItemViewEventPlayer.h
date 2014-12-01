@@ -41,7 +41,7 @@ Concrete implementation of pqWidgetEventPlayer that translates high-level ParaVi
 \sa pqEventPlayer
 */
 
-class pqAbstractItemViewEventPlayer :
+class QTTESTING_EXPORT pqAbstractItemViewEventPlayer :
   public pqWidgetEventPlayer
 {
   Q_OBJECT

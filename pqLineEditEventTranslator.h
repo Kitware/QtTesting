@@ -41,7 +41,7 @@ Translates low-level Qt events into high-level ParaView events that can be recor
 \sa pqEventTranslator
 */
 
-class pqLineEditEventTranslator :
+class QTTESTING_EXPORT pqLineEditEventTranslator :
   public pqWidgetEventTranslator
 {
   Q_OBJECT

@@ -49,7 +49,7 @@ must ensure that it goes out of scope before trying to playback the stream.
 \sa pqEventTranslator, pqStdoutEventObserver, pqPythonEventSource.
 */
 
-class pqPythonEventObserver : public pqEventObserver
+class QTTESTING_EXPORT pqPythonEventObserver : public pqEventObserver
 {
   Q_OBJECT
   

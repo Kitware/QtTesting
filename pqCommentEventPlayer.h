@@ -41,7 +41,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /// Do no action on Object.
 /// Emit comment wrote in the xml, which can be catch by someone else.
 
-class pqCommentEventPlayer : public pqWidgetEventPlayer
+class QTTESTING_EXPORT pqCommentEventPlayer : public pqWidgetEventPlayer
 {
   Q_OBJECT
 

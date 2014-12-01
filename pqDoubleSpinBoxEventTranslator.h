@@ -41,7 +41,7 @@ Translates low-level Qt events into high-level ParaView events that can be recor
 \sa pqEventTranslator
 */
 
-class pqDoubleSpinBoxEventTranslator :
+class QTTESTING_EXPORT pqDoubleSpinBoxEventTranslator :
   public pqWidgetEventTranslator
 {
   Q_OBJECT

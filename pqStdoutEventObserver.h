@@ -33,6 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _pqStdoutEventObserver_h
 #define _pqStdoutEventObserver_h
 
+#include "QtTestingExport.h"
 #include <QObject>
 
 /**
@@ -43,7 +44,7 @@ slot to the pqEventTranslator::recordEvent() signal.
 \sa pqEventTranslator, pqEventObserverXML
 */
 
-class pqStdoutEventObserver :
+class QTTESTING_EXPORT pqStdoutEventObserver :
   public QObject
 {
   Q_OBJECT
