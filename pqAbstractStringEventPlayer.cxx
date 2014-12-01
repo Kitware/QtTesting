@@ -57,9 +57,7 @@ bool pqAbstractStringEventPlayer::playEvent(QObject* Object, const QString& Comm
     int index = object->findText(value);
     if(index != -1)
       {
-      object->setFocus(Qt::OtherFocusReason);
       object->setCurrentIndex(index);
-      object->clearFocus();
       }
     else
       {
@@ -78,17 +76,13 @@ bool pqAbstractStringEventPlayer::playEvent(QObject* Object, const QString& Comm
 
   if(QLineEdit* const object = qobject_cast<QLineEdit*>(Object))
     {
-    object->setFocus(Qt::OtherFocusReason);
     object->setText(value);
-    object->clearFocus();
     return true;
     }
 
   if (QTextEdit* const object = qobject_cast<QTextEdit*>(Object))
     {
-    object->setFocus(Qt::OtherFocusReason);
     object->document()->setPlainText(value);
-    object->clearFocus();
     return true;
     }
 
