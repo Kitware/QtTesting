@@ -82,6 +82,7 @@ bool pqAbstractStringEventPlayer::playEvent(QObject* Object, const QString& Comm
 
   if (QTextEdit* const object = qobject_cast<QTextEdit*>(Object))
     {
+    object->setFocus(Qt::OtherFocusReason);
     object->document()->setPlainText(value);
     return true;
     }
