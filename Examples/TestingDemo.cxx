@@ -174,6 +174,7 @@ void TestingDemo::record()
     QString(), "XML Files (*.xml)");
   if (!filename.isEmpty())
     {
+    QApplication::setActiveWindow(this);
     this->TestUtility->recordTests(filename);
     }
 }
