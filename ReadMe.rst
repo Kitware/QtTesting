@@ -101,13 +101,11 @@ Add the testing framework into your application
 
 Checkout the application example in the "Examples" directory, and follow these steps to add the testing framework to your application:
 
-- Create a variable myQtTestingUtiliy - can be added to your mainWindow class, and initialize this variable as following::
+- Create a variable myQtTestingUtiliy - can be added to your mainWindow class (You can have your own EventObserver and EventSource), and initialize this variable as following::
 
     this->TestUtility = new myQtTestingUtility(this);
     this->TestUtility->addEventObserver("xml", new myXMLEventObserver(this));
     this->TestUtility->addEventSource("xml", new myXMLEventSource(this));
-    
- Note: You can have your own EventObserver and EventSource
 
 - Link UI buttons to the myQtTestUtility "record" and "play" slots::
 
