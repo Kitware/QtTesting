@@ -84,6 +84,7 @@ bool pqAbstractStringEventPlayer::playEvent(QObject* Object, const QString& Comm
     {
     object->setFocus(Qt::OtherFocusReason);
     object->document()->setPlainText(value);
+    object->clearFocus();
     return true;
     }
 
