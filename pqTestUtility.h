@@ -57,7 +57,10 @@ class pqEventSource;
 class QTTESTING_EXPORT pqTestUtility : public QObject
 {
   Q_OBJECT
-
+  /// This property controls whether the RecordEventsDialog is opened when
+  /// recording events.
+  /// True by default.
+  Q_PROPERTY(bool recordWithDialog READ recordWithDialog WRITE setRecordWithDialog)
 public:
   pqTestUtility(QObject* parent = 0);
   ~pqTestUtility();
@@ -126,6 +129,10 @@ public:
   /// give a filename convert from one of the data directories
   QString convertFromDataDirectory(const QString& file);
 
+  /// True if a dialog is opened when recording, false otherwise
+  bool recordWithDialog() const;
+  /// Set whether a dialog is opened when recording.
+  void setRecordWithDialog(bool withDialog);
 public slots:
   bool playTests(const QString& filename);
   void openPlayerDialog();
@@ -152,6 +159,7 @@ protected:
   pqEventPlayer       Player;
   pqEventTranslator   Translator;
   bool                PlayingTest;
+  bool                RecordWithDialog;
 
   QIODevice*          File;
   QString             FileSuffix;
