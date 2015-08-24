@@ -255,6 +255,7 @@ QObject* pqObjectNaming::GetObject(const QString& Name)
     ErrorMessage += QString("Found up to %1\n").arg(
                       pqObjectNaming::GetName(*lastObject));
     }
+  bool foundMatch = false;
   if(lastObject)
     {
     QObjectList matches =
@@ -262,6 +263,15 @@ QObject* pqObjectNaming::GetObject(const QString& Name)
     foreach(QObject* o, matches)
       {
       ErrorMessage  += QString("\tPossible match: %1\n").arg(pqObjectNaming::GetName(*o));
+      foundMatch = true;
+      }
+    }
+  if (!foundMatch)
+    {
+    QObjectList matches = lastObject->findChildren<QObject*>();
+    foreach(QObject* o, matches)
+      {
+      ErrorMessage  += QString("\tAvailable widget: %1\n").arg(pqObjectNaming::GetName(*o));
       }
     }
 
