@@ -109,7 +109,12 @@ pqAbstractItemViewEventPlayer::pqAbstractItemViewEventPlayer(QObject* p)
 
 bool pqAbstractItemViewEventPlayer::playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
 {
-  QAbstractItemView* const object = qobject_cast<QAbstractItemView*>(Object);
+  QAbstractItemView* object = qobject_cast<QAbstractItemView*>(Object);
+  if(!object)
+    {
+    // mouse events go to the viewport widget
+    object = qobject_cast<QAbstractItemView*>(Object->parent());
+    }
   if(!object)
     {
     return false;
@@ -203,7 +208,10 @@ bool pqAbstractItemViewEventPlayer::playEvent(QObject* Object, const QString& Co
       }
     }
     
-  qCritical() << "Unknown abstract item command: " << Command << "\n";
-  Error = true;
+  if (!this->Superclass::playEvent(Object, Command, Arguments, Error))
+    {
+    qCritical() << "Unknown abstract item command: " << Command << "\n";
+    Error = true;
+    }
   return true;
 }

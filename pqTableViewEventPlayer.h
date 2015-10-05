@@ -1,9 +1,9 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pq3DViewEventPlayer.h
+   Module:    pqTableViewEventPlayer.h
 
-   Copyright (c) 2005-2008 Sandia Corporation, Kitware Inc.
+   Copyright (c) 2005,2006 Sandia Corporation, Kitware Inc.
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
@@ -28,37 +28,28 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-=========================================================================*/
+========================================================================*/
+#ifndef __pqTableViewEventPlayer_h
+#define __pqTableViewEventPlayer_h
 
-#ifndef _pq3DViewEventPlayer_h
-#define _pq3DViewEventPlayer_h
+#include "pqAbstractItemViewEventPlayerBase.h"
 
-#include "pqWidgetEventPlayer.h"
-
-/**
-Concrete implementation of pqWidgetEventPlayer that handles playback of "activate" events for 3d views.
-It is not registered by default, and user can register with their own 3d view type.
-
-\sa pqEventPlayer
-*/
-class QTTESTING_EXPORT pq3DViewEventPlayer :
-  public pqWidgetEventPlayer
+/// pqTableViewEventPlayer is a player for QTableWidget. Plays back the state
+/// recorded using pqTableViewEventTranslator.
+class QTTESTING_EXPORT pqTableViewEventPlayer : public pqAbstractItemViewEventPlayerBase
 {
   Q_OBJECT
-  typedef pqWidgetEventPlayer Superclass;
-
+  typedef pqAbstractItemViewEventPlayerBase Superclass;
 public:
-  pq3DViewEventPlayer(const QByteArray& classname, QObject* p = 0);
+  pqTableViewEventPlayer(QObject* parent=0);
+  ~pqTableViewEventPlayer();
 
-  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error);
-
-protected:
-  QByteArray mClassType;
+  bool playEvent(QObject* object, const QString& command,
+                 const QString& arguments, int eventType, bool& error);
 
 private:
-
-  pq3DViewEventPlayer(const pq3DViewEventPlayer&);
-  pq3DViewEventPlayer& operator=(const pq3DViewEventPlayer&);
+  pqTableViewEventPlayer(const pqTableViewEventPlayer&); // Not implemented.
+  void operator=(const pqTableViewEventPlayer&); // Not implemented.
 };
 
-#endif // !_pq3DViewEventPlayer_h
+#endif

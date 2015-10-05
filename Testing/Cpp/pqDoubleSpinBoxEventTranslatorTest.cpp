@@ -66,6 +66,9 @@ private Q_SLOTS:
 
   void testRecordComplexClick();
 
+  void testRecordCheckMouseClick();
+  void testRecordCheckMouseClick_data();
+
 private:
   QDoubleSpinBox*     DoubleSpinBox;
 
@@ -303,6 +306,31 @@ void pqDoubleSpinBoxEventTranslatorTester::testRecordComplexClick()
   recordExpected.append(QString("doubleSpinBoxTest, set_double, 0#"));
 
   QCOMPARE(this->EventObserver->Text, recordExpected);
+  this->EventObserver->Text = QString();
+}
+
+// ----------------------------------------------------------------------------
+void pqDoubleSpinBoxEventTranslatorTester::testRecordCheckMouseClick()
+{
+  this->EventObserver->Text = QString();
+  this->DoubleSpinBox->clear();
+  this->DoubleSpinBox->setValue(17.17);
+  this->TestUtility->recorder()->check(true);
+
+  QFETCH(QString, recordEmitted);
+  QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton);
+  QCOMPARE(this->EventObserver->Text, recordEmitted);
+  this->EventObserver->Text = QString();
+}
+
+// ----------------------------------------------------------------------------
+void pqDoubleSpinBoxEventTranslatorTester::testRecordCheckMouseClick_data()
+{
+  QTest::addColumn<QString>("recordEmitted");
+
+  QTest::newRow("Click") << QString("%1#%2#")
+                           .arg(QString("doubleSpinBoxTest, set_double, 17.17"),
+                                QString("Check, doubleSpinBoxTest, value, 17.17"));
 }
 
 // ----------------------------------------------------------------------------

@@ -46,19 +46,19 @@ pqDoubleSpinBoxEventTranslator::pqDoubleSpinBoxEventTranslator(QObject* p)
 }
 
 // ----------------------------------------------------------------------------
-bool pqDoubleSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& /*Error*/)
+bool pqDoubleSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& Error)
 {
   QDoubleSpinBox* const object = qobject_cast<QDoubleSpinBox*>(Object);
-  
+
   // consume line edit events if part of spin box
   if(!object && qobject_cast<QDoubleSpinBox*>(Object->parent()))
     {
     return true;
     }
-  
+
   if(!object)
-    return false;
-    
+      return false;
+
   if(Event->type() == QEvent::Enter && Object==object)
     {
     if(this->CurrentObject != Object)
@@ -73,6 +73,7 @@ bool pqDoubleSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Eve
       connect(object, SIGNAL(valueChanged(double)),this, SLOT(onValueChanged(double)));
       connect(object, SIGNAL(destroyed(QObject*)), this, SLOT(onDestroyed(QObject*)));
       }
+    return true;
     }
 
   if(Event->type() == QEvent::KeyRelease && Object==object)
@@ -87,9 +88,9 @@ bool pqDoubleSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Eve
       {
       emit recordEvent(object, "key", QString("%1").arg(ke->key()));
       }
+    return true;
     }
-
-  return true;
+  return this->Superclass::translateEvent(Object, Event, Error);
 }
 
 // ----------------------------------------------------------------------------
