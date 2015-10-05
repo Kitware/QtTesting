@@ -92,19 +92,24 @@ pqRecordEventsDialog::pqRecordEventsDialog(pqEventRecorder* recorder,
                    SIGNAL(recordEvent(QString,QString,QString)),
                    this, SLOT(onEventRecorded(QString,QString,QString)));
 
+  QObject::connect(this->Implementation->TestUtility->eventTranslator(),
+                   SIGNAL(recordCheckEvent(QString,QString,QString)),
+                   this, SLOT(onEventRecorded(QString,QString,QString)));
+
   QObject::connect(this->Implementation->Ui.commentAddButton,
                    SIGNAL(clicked()),
                    this, SLOT(addComment()));
+
+  QObject::connect(this->Implementation->Ui.checkButton,
+                   SIGNAL(toggled(bool)),
+                   this->Implementation->Recorder,
+                   SLOT(check(bool)));
 
   QObject::connect(this->Implementation->Ui.recordPauseButton,
                    SIGNAL(toggled(bool)),
                    this->Implementation->Recorder,
                    SLOT(pause(bool)));
 
-  QObject::connect(this->Implementation->Recorder,
-                   SIGNAL(paused(bool)),
-                   this,
-                   SLOT(updateUi()));
   QObject::connect(this->Implementation->Recorder,
                    SIGNAL(started()),
                    this,
@@ -176,4 +181,6 @@ void pqRecordEventsDialog::updateUi()
 {
   this->Implementation->Ui.recordPauseButton->setChecked(
       this->Implementation->Recorder->isRecording());
+  this->Implementation->Ui.recordPauseButton->setEnabled(
+      !this->Implementation->Recorder->isChecking());
 }

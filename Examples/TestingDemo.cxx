@@ -70,6 +70,19 @@ protected:
       this->XMLStream->writeEndElement();
       }
     }
+
+  virtual void onRecordCheckEvent(const QString& widget, const QString& property,
+    const QString& arguments)
+    {
+    if(this->XMLStream)
+      {
+      this->XMLStream->writeStartElement("event");
+      this->XMLStream->writeAttribute("widget", widget);
+      this->XMLStream->writeAttribute("property", property);
+      this->XMLStream->writeAttribute("arguments", arguments);
+      this->XMLStream->writeEndElement();
+      }
+    }
 };
 
 class XMLEventSource : public pqEventSource

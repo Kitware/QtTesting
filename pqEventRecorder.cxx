@@ -48,6 +48,7 @@ pqEventRecorder::pqEventRecorder(QObject *parent)
   this->File = 0;
 
   this->Recording = false;
+  this->Checking = false;
   this->ContinuousFlush = false;
 }
 
@@ -127,6 +128,12 @@ pqEventTranslator* pqEventRecorder::translator() const
 bool pqEventRecorder::isRecording() const
 {
   return this->Recording;
+}
+
+// ----------------------------------------------------------------------------
+bool pqEventRecorder::isChecking() const
+{
+  return this->Checking;
 }
 
 // ----------------------------------------------------------------------------
@@ -222,4 +229,29 @@ void pqEventRecorder::pause(bool value)
 
   this->Recording = value;
   emit this->paused(value);
+}
+
+// ----------------------------------------------------------------------------
+void pqEventRecorder::check(bool value)
+{
+  this->pause(value);
+  this->ActiveTranslator->check(value);
+  if (!value)
+    {
+    QObject::disconnect(
+      this->ActiveTranslator,
+      SIGNAL(recordCheckEvent(QString,QString,QString)),
+      this->ActiveObserver,
+      SLOT(onRecordCheckEvent(QString,QString,QString)));
+    }
+  else
+    {
+    QObject::connect(
+      this->ActiveTranslator,
+      SIGNAL(recordCheckEvent(QString,QString,QString)),
+      this->ActiveObserver,
+      SLOT(onRecordCheckEvent(QString,QString,QString)),
+      Qt::UniqueConnection);
+    }
+  this->Checking = value;
 }

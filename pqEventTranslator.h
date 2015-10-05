@@ -93,11 +93,15 @@ public:
   /// stop listening to the GUI and translating events
   void stop();
 
+  ///
+  void check(bool value);
+
 signals:
   /// This signal will be emitted every time a translator generates a
   /// high-level ParaView event.  Observers should connect to this signal
   /// to serialize high-level events.
   void recordEvent(const QString& Object, const QString& Command, const QString& Arguments);
+  void recordCheckEvent(const QString& Object, const QString& Property, const QString& Arguments);
 
   /// this signals when recording starts
   void started();
@@ -107,6 +111,7 @@ signals:
 
 private slots:
   void onRecordEvent(QObject* Object, const QString& Command, const QString& Arguments);
+  void onRecordCheckEvent(QObject* Object, const QString& Property, const QString& Arguments);
   
 private:
   pqEventTranslator(const pqEventTranslator&);

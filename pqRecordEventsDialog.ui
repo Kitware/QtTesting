@@ -120,7 +120,7 @@
          <item>
           <widget class="QLabel" name="eventCommandLabel">
            <property name="toolTip">
-            <string>Last command recorded</string>
+            <string>Last command recorded / property checked</string>
            </property>
            <property name="text">
             <string>Command :</string>
@@ -287,6 +287,23 @@
         </size>
        </property>
       </spacer>
+     </item>
+     <item>
+      <widget class="QPushButton" name="checkButton">
+       <property name="toolTip">
+        <string>Check default property of a widget instead of recording event</string>
+       </property>
+       <property name="text">
+        <string/>
+       </property>
+       <property name="icon">
+        <iconset resource="Resources/QtTesting.qrc">
+         <normaloff>:/Icons/check.png</normaloff>:/Icons/check.png</iconset>
+       </property>
+       <property name="checkable">
+        <bool>true</bool>
+       </property>
+      </widget>
      </item>
      <item>
       <widget class="QPushButton" name="recordPauseButton">

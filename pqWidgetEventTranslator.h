@@ -60,6 +60,7 @@ public:
 signals:
   /// Derivatives should emit this signal whenever they wish to record a high-level event
   void recordEvent(QObject* Object, const QString& Command, const QString& Arguments);
+  void recordCheckEvent(QObject* Object, const QString& Property, const QString& Arguments);
 
 protected:
   pqWidgetEventTranslator(const pqWidgetEventTranslator&);

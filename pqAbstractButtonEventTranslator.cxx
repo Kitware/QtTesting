@@ -53,6 +53,7 @@ bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Ev
   QAbstractButton* const object = qobject_cast<QAbstractButton*>(Object);
   if(!object)
     return false;
+
   switch(Event->type())
     {
     case QEvent::KeyPress:

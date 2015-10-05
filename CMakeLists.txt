@@ -211,13 +211,13 @@ SET(QtTesting_SOURCES
   pqEventObserver.cxx
   pqEventPlayer.cxx
   pqEventTranslator.cxx
+  pqEventRecorder.cxx
   pqLineEditEventTranslator.cxx
   pqMenuEventTranslator.cxx
   pqNativeFileDialogEventPlayer.cxx
   pqNativeFileDialogEventTranslator.cxx
   pqObjectNaming.cxx
   pqPlayBackEventsDialog.cxx
-  pqEventRecorder.cxx
   pqRecordEventsDialog.cxx
   pqSpinBoxEventTranslator.cxx
   pqStdoutEventObserver.cxx

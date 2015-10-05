@@ -65,6 +65,11 @@ public slots:
     const QString& Command,
     const QString& Arguments) = 0;
 
+virtual void onRecordCheckEvent(
+    const QString& Widget,
+    const QString& Property,
+    const QString& Arguments) = 0;
+
 signals:
   void eventRecorded(const QString& Widget,
                      const QString& Command,
