@@ -48,7 +48,7 @@ pqSpinBoxEventTranslator::pqSpinBoxEventTranslator(QObject* p)
 // ----------------------------------------------------------------------------
 bool pqSpinBoxEventTranslator::translateEvent(QObject* Object,
                                               QEvent* Event,
-                                              bool& /*Error*/)
+                                              bool& Error)
 {
   QSpinBox* object = qobject_cast<QSpinBox*>(Object);
   
@@ -75,12 +75,14 @@ bool pqSpinBoxEventTranslator::translateEvent(QObject* Object,
       connect(object, SIGNAL(valueChanged(int)),this, SLOT(onValueChanged(int)));
       connect(object, SIGNAL(destroyed(QObject*)), this, SLOT(onDestroyed(QObject*)));
       }
+    return true;
     }
 
   if (Event->type() == QEvent::Leave && Object==object)
     {
     disconnect(this->CurrentObject, 0, this, 0);
     this->CurrentObject = 0;
+    return true;
     }
 
   if(Event->type() == QEvent::KeyRelease && Object == object)
@@ -96,9 +98,9 @@ bool pqSpinBoxEventTranslator::translateEvent(QObject* Object,
       {
       emit recordEvent(object, "key", QString("%1").arg(ke->key()));
       }
+    return true;
     }
-
-  return true;
+  return this->Superclass::translateEvent(Object, Event, Error);
 }
 
 // ----------------------------------------------------------------------------

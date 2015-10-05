@@ -1,7 +1,7 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pq3DViewEventPlayer.h
+   Module:    pqEventTypes.h
 
    Copyright (c) 2005-2008 Sandia Corporation, Kitware Inc.
    All rights reserved.
@@ -30,35 +30,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
 
-#ifndef _pq3DViewEventPlayer_h
-#define _pq3DViewEventPlayer_h
+#ifndef _pqEventTypes_h
+#define _pqEventTypes_h
 
-#include "pqWidgetEventPlayer.h"
-
-/**
-Concrete implementation of pqWidgetEventPlayer that handles playback of "activate" events for 3d views.
-It is not registered by default, and user can register with their own 3d view type.
-
-\sa pqEventPlayer
-*/
-class QTTESTING_EXPORT pq3DViewEventPlayer :
-  public pqWidgetEventPlayer
+namespace pqEventTypes
 {
-  Q_OBJECT
-  typedef pqWidgetEventPlayer Superclass;
-
-public:
-  pq3DViewEventPlayer(const QByteArray& classname, QObject* p = 0);
-
-  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error);
-
-protected:
-  QByteArray mClassType;
-
-private:
-
-  pq3DViewEventPlayer(const pq3DViewEventPlayer&);
-  pq3DViewEventPlayer& operator=(const pq3DViewEventPlayer&);
+  enum eventType {
+    EVENT = 0,
+    CHECK_EVENT = 1
+  };
 };
 
-#endif // !_pq3DViewEventPlayer_h
+#endif // !_pqEventTypes_h
+

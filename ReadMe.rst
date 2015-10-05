@@ -60,11 +60,13 @@ Design
 ~~~~~~~~~~~~~~~~~~~~~~~~~
 Recording
 ********************************************
-Test case recording centers around the pqWidgetEventTranslator abstract interface class. Derivatives of this class are responsible for converting low-level Qt events ("mouse move", "button down", "button up", etc) into the high-level events (e.g: "button activated") that can be serialized and played back. pqWidgetEventTranslator derivatives may be particular to a specific widget type, such as pqComboBoxEventTranslator, or may represent a class of related widgets, such as pqAbstractSliderEventTranslator, which can translate events for any widget that derives from QAbstractSlider, including QDial, QScrollBar, and QSlider. pqWidgetEventTranslator derivatives implement the translateEvent() method, where they determine whether they can handle a Qt event, and if they can, convert it into a high-level event which consists of two strings: a command, and the corresponding command arguments (which may be empty). The translator then emits the recordEvent() signal one-or-more times to pass the high-level event(s) to its container. It is intended that the test framework eventually include pqEventWidgetTranslator derivatives for all "stock" Qt widgets.
+Test case recording centers around the pqWidgetEventTranslator abstract interface class. Derivatives of this class are responsible for converting low-level Qt events ("mouse move", "button down", "button up", etc) into the high-level events (e.g: "button activated") that can be serialized and played back. pqWidgetEventTranslator derivatives may be particular to a specific widget type, such as pqComboBoxEventTranslator, or may represent a class of related widgets, such as pqAbstractSliderEventTranslator, which can translate events for any widget that derives from QAbstractSlider, including QDial, QScrollBar, and QSlider. pqWidgetEventTranslator derivatives implement the translateEvent() method, where they determine whether they can handle a Qt event, and if they can, convert it into a high-level event which consists of two strings: a command, and the corresponding command arguments (which may be empty). The translator then emits the recordEvent() signal one-or-more times to pass the high-level event(s) to its container. It is intended that the test framework eventually include pqEventWidgetTranslator derivatives for all "stock" Qt widgets. Some events are generic for every kind of widgets ( eg. contextMenu ) and are handled by pqWidgetEventTranslator, so any derivatives should call the superclass::translateEvent method when an event cannot be treated.
 
 A collection of pqWidgetEventTranslator objects is maintained at runtime by an instance of pqEventTranslator. pqEventTranslator hooks itself into the Qt event loop as a top-level event filter, so it receives every Qt event that occurs at runtime for the entire application. pqEventTranslator passes the Qt event to each of its pqWidgetEventTranslator instances in-turn, until one of the instances signals that the event has been "consumed". When a pqWidgetEventTranslator emits a high-level event, the event is "caught" by the pqEventTranslator instance and combined with the serializable address of the widget to which the high-level event applies. The three strings (address, command, and arguments) of the complete high-level event are emitted from the pqEventTranslator as a Qt signal.
 
 The high-level event emitted from pqEventTranslator may be caught by any observer with the correct Qt slot. It is up to the observer(s) to serialize the high-level event for later playback. At this time the framework includes two observers, pqEventObserverStdout and pqEventObserverXML, which serialize the high-level events to stdout and an XML file respectively. Developers can create their own observers to implement custom functionality, such as serializing events to a logfile, a Python script, etc.
+
+It is also possible to record check event, ( by using the check button on the recordDialog ). When checking, an overlay is drawned over the widget hovered by the mouse. If the overlay is green, then it means that the widget can be checked, if it's red, that it cannot. When clicking on the widget to check, a check event is recorded, associated with a QString value representing the widget "value". Translator managing check event should handle only two types QEvent, MouseMove to see if widget is checkable, and MouseButtonRelease, to record the check.
 
 Playback
 ********************************************
@@ -111,3 +113,28 @@ Checkout the application example in the "Examples" directory, and follow these s
 
     QObject::connect(Ui.RecordButton, SIGNAL(clicked(bool)), this, SLOT(record()));
     QObject::connect(Ui.PlayBackButton, SIGNAL(clicked(bool)), this, SLOT(play()));
+
+Writing new Translators/Player
+************************************************************
+A new translator must at least reimplement the translateEvent(QObject object, QEvent event, int eventType, bool& error) method.
+For starters, it must check that the object is of correct class
+Then it should handle the pqEventTypes::EVENT case, recording meaningfull events with identifiable command and associated arguments
+And it should also handle the pqEventTypes::CHECK_EVENT case, only for two different QEvent
+For QEvent::MouseMove it should return true only if a check event can be recorded
+For QEvent::MouseButtonRelease , it should record a check event, associated to the value you want to check and an existing qt property or
+an identified command
+
+A new player, symmetrically, should at least reimplement the 
+playEvent(QObject* object, const QString& command, const QString& arguments, int eventType, bool& error) method
+
+First it should handle the pqEventTypes::EVENT, converting provided command and arguments into qt instructions, returning true for event that it can handle.
+Then, if the the translator can record check command, it should hendle the pqEventTypes::CHECK_EVENT, checking the current value of qt object using provided command and arguments, positionning error to false 
+when a value differ, but returning true for all handled check event, even failed one.
+Property to check are handled by pqBasicWidgetEventPlayer
+
+See the pqLineEditEventTranslator and pqLineEditEventPlayer for a simple example and
+pqAbstractItemViewEventTranslatorBase/pqAbstractItemViewEventPlayerBase for a advanced example.
+
+
+
+

@@ -47,12 +47,13 @@ class QTTESTING_EXPORT pqBasicWidgetEventTranslator :
   public pqWidgetEventTranslator
 {
   Q_OBJECT
+  typedef pqWidgetEventTranslator Superclass;
   
 public:
   pqBasicWidgetEventTranslator(QObject* p=0);
   ~pqBasicWidgetEventTranslator();
   
-  virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
+  virtual bool translateEvent(QObject* object, QEvent* event, int eventType, bool& error);
 
 protected:
   QPoint LastPos;

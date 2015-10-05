@@ -1,13 +1,13 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pqWidgetEventPlayer.cxx
+   Module:    pqWidgetEventTranslator.cxx
 
-   Copyright (c) 2005-2008 Sandia Corporation, Kitware Inc.
+   Copyright (c) 2005,2006 Sandia Corporation, Kitware Inc.
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -28,52 +28,52 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-=========================================================================*/
-
-#include "pqWidgetEventPlayer.h"
-
-#include <QCoreApplication>
-#include <QPoint>
-#include <QWidget>
-#include <QContextMenuEvent>
-
+========================================================================*/
+#include "pqWidgetEventTranslator.h"
 #include "pqEventTypes.h"
-  
-pqWidgetEventPlayer::pqWidgetEventPlayer(QObject* p) 
-  : QObject(p)  
+#include <QEvent>
+#include <QWidget>
+
+//-----------------------------------------------------------------------------
+pqWidgetEventTranslator::pqWidgetEventTranslator(QObject* parentObject)
+  : Superclass(parentObject)
 {
 }
 
-pqWidgetEventPlayer::~pqWidgetEventPlayer() 
+//-----------------------------------------------------------------------------
+pqWidgetEventTranslator::~pqWidgetEventTranslator()
 {
 }
 
-bool pqWidgetEventPlayer::playEvent(
-  QObject* object, const QString& command, 
-  const QString& arguments, bool& error)
+bool pqWidgetEventTranslator::translateEvent(
+  QObject* object, QEvent* event, bool& error)
 {
   QWidget* widget = qobject_cast<QWidget*>(object);
-  if(widget)
+  if(!widget)
+    return false;
+
+  switch(event->type())
     {
-    if(command == "contextMenu")
+    case QEvent::ContextMenu:
       {
-      QPoint pt(widget->x(), widget->y());
-      QPoint globalPt = widget->mapToGlobal(pt);
-      QContextMenuEvent e(QContextMenuEvent::Other, pt, globalPt);
-      qApp->notify(widget, &e);
-      return true;
+      emit recordEvent(widget, "contextMenu", "");
+      break;
+      }
+    default:
+      {
+      break;
       }
     }
-  return false;
+  return true;
 }
 
-bool pqWidgetEventPlayer::playEvent(QObject* object, const QString& command,
-    const QString& arguments, int eventType, bool& error)
+//-----------------------------------------------------------------------------
+bool pqWidgetEventTranslator::translateEvent(
+  QObject* object, QEvent* event, int eventType, bool& error)
 {
   if (eventType == pqEventTypes::EVENT)
     {
-    return this->playEvent(object, command, arguments, error);
+    return this->translateEvent(object, event, error);
     }
   return false;
 }
-

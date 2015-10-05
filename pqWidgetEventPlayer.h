@@ -58,10 +58,16 @@ public:
   returning "true" if they handled the command, and setting Error
   to "true" if there were any problems. */
   virtual bool playEvent(
-    QObject* Object,
-    const QString& Command,
-    const QString& Arguments,
-    bool& Error) = 0;
+    QObject* object,
+    const QString& command,
+    const QString& arguments,
+    bool& error);
+  virtual bool playEvent(
+    QObject* object,
+    const QString& command,
+    const QString& arguments,
+    int eventType,
+    bool& error);
 
 };
 

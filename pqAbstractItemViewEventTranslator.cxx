@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -52,7 +52,7 @@ pqAbstractItemViewEventTranslator::pqAbstractItemViewEventTranslator(QObject* p)
 {
 }
 
-bool pqAbstractItemViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& /*Error*/)
+bool pqAbstractItemViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& Error)
 {
   QAbstractItemView* object = qobject_cast<QAbstractItemView*>(Object);
   if(!object)
@@ -61,12 +61,12 @@ bool pqAbstractItemViewEventTranslator::translateEvent(QObject* Object, QEvent* 
     object = qobject_cast<QAbstractItemView*>(Object->parent());
     }
   if(!object)
-    return false;
+      return false;
 
   // Don't try to record events for QComboBox implementation details
   if(QString(object->metaObject()->className()) == "QComboBoxListView")
-    return false;
-    
+      return false;
+
   switch(Event->type())
     {
     case QEvent::KeyPress:
@@ -135,6 +135,8 @@ bool pqAbstractItemViewEventTranslator::translateEvent(QObject* Object, QEvent* 
           }
         emit recordEvent(object, "mouseRelease", info);
         }
+      return true;
+      break;
       }
     case QEvent::Wheel:
       {
@@ -162,13 +164,12 @@ bool pqAbstractItemViewEventTranslator::translateEvent(QObject* Object, QEvent* 
                               .arg(relPt.y())
                               .arg(idxStr));
         }
+      return true;
+      break;
       }
-      break;
     default:
-      break;
+    break;
     }
-
-  return true;
+  return this->Superclass::translateEvent(Object, Event, Error);
 }
-
 

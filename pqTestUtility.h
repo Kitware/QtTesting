@@ -129,6 +129,9 @@ public:
   /// give a filename convert from one of the data directories
   QString convertFromDataDirectory(const QString& file);
 
+  // Get current test filname if any
+  const QString filename(){return this->Filename;};
+
   /// True if a dialog is opened when recording, false otherwise
   bool recordWithDialog() const;
   /// Set whether a dialog is opened when recording.
@@ -139,6 +142,7 @@ public slots:
 
   void stopTests();
   void stopRecords(int value);
+  void pauseRecords(bool value);
 
   void onRecordStopped();
 
@@ -161,6 +165,7 @@ protected:
   bool                PlayingTest;
   bool                RecordWithDialog;
 
+  QString             Filename;
   QIODevice*          File;
   QString             FileSuffix;
 

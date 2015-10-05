@@ -39,7 +39,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QMenuBar>
 
 pqMenuEventTranslator::pqMenuEventTranslator(QObject* p)
-  : pqWidgetEventTranslator(p)
+: pqWidgetEventTranslator(p)
 {
 }
 
@@ -48,7 +48,7 @@ pqMenuEventTranslator::~pqMenuEventTranslator()
 }
 
 bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event,
-                                           bool& /*Error*/)
+                                           bool& Error)
 {
   QMenu* const menu = qobject_cast<QMenu*>(Object);
   QMenuBar* const menubar = qobject_cast<QMenuBar*>(Object);
@@ -59,8 +59,8 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event,
 
   if (menubar)
     {
-    QMouseEvent* e = static_cast<QMouseEvent*>(Event);
-    if (e->button() == Qt::LeftButton)
+    QMouseEvent* e = dynamic_cast<QMouseEvent*>(Event);
+    if (e && e->button() == Qt::LeftButton)
       {
       QAction* action = menubar->actionAt(e->pos());
       if (action && action->menu())
@@ -92,8 +92,9 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event,
         emit recordEvent(menu, "activate", which);
         }
       }
+    return true;
     }
-  
+
   if(Event->type() == QEvent::MouseButtonRelease)
     {
     QMouseEvent* e = static_cast<QMouseEvent*>(Event);
@@ -110,8 +111,8 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event,
         emit recordEvent(menu, "activate", which);
         }
       }
+    return true;
     }
-    
-  return true;
+  return this->Superclass::translateEvent(Object, Event, Error);
 }
 

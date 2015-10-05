@@ -45,6 +45,7 @@ class QTTESTING_EXPORT pqTabBarEventPlayer :
   public pqWidgetEventPlayer
 {
   Q_OBJECT
+  typedef pqWidgetEventPlayer Superclass;
 
 public:
   pqTabBarEventPlayer(QObject* p=0);
