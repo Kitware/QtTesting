@@ -35,9 +35,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QtTest/QtTest>
 
 // QtTesting includes
-#include "pqTestUtility.h"
-
+#include "pqEventTypes.h"
 #include "pqTest.h"
+#include "pqTestUtility.h"
 
 // ----------------------------------------------------------------------------
 class pqSpinBoxEventPlayerTester: public QObject
@@ -105,6 +105,11 @@ void pqSpinBoxEventPlayerTester::testPlayBackCommandSetInt()
       QString("spinBoxTest"), QString("set_int"), QString::number(value), error);
 
   QCOMPARE(this->SpinBox->value(), result);
+  QCOMPARE(error, false);
+
+  this->TestUtility->eventPlayer()->playEvent(
+      QString("spinBoxTest"), QString("value"), QString::number(result), pqEventTypes::CHECK_EVENT, error);
+  QCOMPARE(error, false);
   QCOMPARE(spy.count(), count);
 }
 

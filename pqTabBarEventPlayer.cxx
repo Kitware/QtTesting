@@ -47,16 +47,21 @@ pqTabBarEventPlayer::pqTabBarEventPlayer(QObject* p)
 bool pqTabBarEventPlayer::playEvent(
   QObject* target, const QString& command, const QString& arguments, bool& error_flag)
 {
-  if (command != "set_tab"  && command != "set_tab_with_text")
+/*  if (command != "set_tab"  && command != "set_tab_with_text")
     {
     // I don't handle this. Return false
     return false;
-    }
+    }*/
 
   const QString value = arguments;
     
   QTabBar* const tab_bar = qobject_cast<QTabBar*>(target);
-  if (tab_bar && command=="set_tab")
+  if (!tab_bar)
+    {
+    return false;
+    }
+
+  if (command=="set_tab")
     {
     // "set_tab" saves tab index. This was done in the past. Newly recorded
     // tests will use set_tab_with_text for more reliable playback.
@@ -79,7 +84,7 @@ bool pqTabBarEventPlayer::playEvent(
     return true;
     }
 
-  if (tab_bar && command == "set_tab_with_text")
+  if (command == "set_tab_with_text")
     {
     for (int cc=0 ; cc < tab_bar->count(); cc++)
       {
@@ -126,9 +131,11 @@ bool pqTabBarEventPlayer::playEvent(
     return true;
     }
 
-  qCritical() << "calling set_tab on unhandled type " << target;
-
-  error_flag = true;
+  if (!this->Superclass::playEvent(target, command, arguments, error_flag))
+    {
+    qCritical() << "calling set_tab on unhandled type " << target;
+    error_flag = true;
+    }
   return true;
 }
 

@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/">
+        <file>Icons/check.png</file>
         <file>Icons/frameForward.png</file>
         <file>Icons/pause.png</file>
         <file>Icons/repeat.png</file>

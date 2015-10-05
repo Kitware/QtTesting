@@ -45,6 +45,7 @@ class QTTESTING_EXPORT pqSpinBoxEventTranslator :
   public pqWidgetEventTranslator
 {
   Q_OBJECT
+  typedef pqWidgetEventTranslator Superclass;
   
 public:
   pqSpinBoxEventTranslator(QObject* p=0);

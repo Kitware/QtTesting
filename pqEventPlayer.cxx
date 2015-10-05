@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -40,12 +40,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqAbstractMiscellaneousEventPlayer.h"
 #include "pqAbstractStringEventPlayer.h"
 #include "pqBasicWidgetEventPlayer.h"
+#include "pqComboBoxEventPlayer.h"
 #include "pqCommentEventPlayer.h"
 #include "pqObjectNaming.h"
 #include "pqTabBarEventPlayer.h"
 #include "pqTreeViewEventPlayer.h"
+#include "pqTableViewEventPlayer.h"
 #include "pqNativeFileDialogEventPlayer.h"
 #include "pq3DViewEventPlayer.h"
+#include "pqEventTypes.h"
 
 #include <QApplication>
 #include <QWidget>
@@ -73,7 +76,9 @@ void pqEventPlayer::addDefaultWidgetEventPlayers(pqTestUtility* util)
   addWidgetEventPlayer(new pqAbstractItemViewEventPlayer());
   addWidgetEventPlayer(new pqAbstractStringEventPlayer());
   addWidgetEventPlayer(new pqTabBarEventPlayer());
+  addWidgetEventPlayer(new pqComboBoxEventPlayer());
   addWidgetEventPlayer(new pqTreeViewEventPlayer());
+  addWidgetEventPlayer(new pqTableViewEventPlayer());
   addWidgetEventPlayer(new pqAbstractMiscellaneousEventPlayer());
   addWidgetEventPlayer(new pq3DViewEventPlayer("QGLWidget"));
   addWidgetEventPlayer(new pqNativeFileDialogEventPlayer(util));
@@ -142,35 +147,45 @@ int pqEventPlayer::getWidgetEventPlayerIndex(const QString& className)
 }
 
 // ----------------------------------------------------------------------------
-void pqEventPlayer::playEvent(const QString& Object,
-                              const QString& Command,
-                              const QString& Arguments,
-                              bool& Error)
+void pqEventPlayer::playEvent(const QString& objectString,
+                              const QString& command,
+                              const QString& arguments,
+                              bool& error)
 {
-  emit this->eventAboutToBePlayed(Object, Command, Arguments);
+  this->playEvent(objectString, command, arguments, pqEventTypes::EVENT, error);
+}
+
+// ----------------------------------------------------------------------------
+void pqEventPlayer::playEvent(const QString& objectString,
+                              const QString& command,
+                              const QString& arguments,
+                              int eventType,
+                              bool& error)
+{
+  emit this->eventAboutToBePlayed(objectString, command, arguments);
   // If we can't find an object with the right name, we're done ...
-  QObject* const object = pqObjectNaming::GetObject(Object);
+  QObject* const object = pqObjectNaming::GetObject(objectString);
 
   // Scroll bar depends on monitor's resolution
-  if(!object && Object.contains(QString("QScrollBar")))
+  if(!object && objectString.contains(QString("QScrollBar")))
     {
-    emit this->eventPlayed(Object, Command, Arguments);
-    Error = false;
+    emit this->eventPlayed(objectString, command, arguments);
+    error = false;
     return;
     }
 
-  if(!object && !Command.startsWith("comment"))
+  if(!object && !command.startsWith("comment"))
     {
     qCritical() << pqObjectNaming::lastErrorMessage();
     emit this->errorMessage(pqObjectNaming::lastErrorMessage());
-    Error = true;
+    error = true;
     return;
     }
 
   // Loop through players until the event gets handled ...
   bool accepted = false;
-  bool error = false;
-  if (Command.startsWith("comment"))
+  bool tmpError = false;
+  if (command.startsWith("comment"))
     {
     pqWidgetEventPlayer* widgetPlayer =
         this->getWidgetEventPlayer(QString("pqCommentEventPlayer"));
@@ -178,14 +193,14 @@ void pqEventPlayer::playEvent(const QString& Object,
         qobject_cast<pqCommentEventPlayer*>(widgetPlayer);
     if (commentPlayer)
       {
-      accepted = commentPlayer->playEvent(object, Command, Arguments, error);
+      accepted = commentPlayer->playEvent(object, command, arguments, tmpError);
       }
     }
   else
     {
     for(int i = 0; i != this->Players.size(); ++i)
       {
-      accepted = this->Players[i]->playEvent(object, Command, Arguments, error);
+      accepted = this->Players[i]->playEvent(object, command, arguments, eventType, tmpError);
       if(accepted)
         {
         break;
@@ -196,29 +211,30 @@ void pqEventPlayer::playEvent(const QString& Object,
   // The event wasn't handled at all ...
   if(!accepted)
     {
-    QString messageError =
+    QString errorMessage =
         QString("Unhandled event %1 object %2\n")
-          .arg(Command, object ? object->objectName() : Object);
-    qCritical() << messageError;
-    emit this->errorMessage(messageError);
-    Error = true;
+          .arg(command, object ? object->objectName() : objectString);
+    qCritical() << errorMessage;
+    emit this->errorMessage(errorMessage);
+    error = true;
     return;
     }
 
-  // The event was handled, but there was a problem ...    
-  if(accepted && error)
+  // The event was handled, but there was a problem ...
+  if(accepted && tmpError)
     {
-    QString messageError =
-        QString("Event error %1 object %2\n")
-          .arg(Command, object ? object->objectName() : Object);
-    qCritical() << messageError;
-    emit this->errorMessage(messageError);
-    Error = true;
+    QString errorMessage =
+        QString("Event error %1 object %2 with args:%3\n")
+          .arg(command, object ? object->objectName() : objectString,
+               arguments);
+    qCritical() << errorMessage;
+    emit this->errorMessage(errorMessage);
+    error = true;
     return;
     }
 
   // The event was handled successfully ...
-  emit this->eventPlayed(Object, Command, Arguments);
-  Error = false;
+  emit this->eventPlayed(objectString, command, arguments);
+  error = false;
 }
 

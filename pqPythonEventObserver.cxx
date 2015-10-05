@@ -59,7 +59,8 @@ void pqPythonEventObserver::setStream(QTextStream* stream)
 void pqPythonEventObserver::onRecordEvent(
   const QString& Widget,
   const QString& Command,
-  const QString& Arguments)
+  const QString& Arguments,
+  const int& eventType)
 {
   if(this->Stream)
     {
@@ -74,12 +75,11 @@ void pqPythonEventObserver::onRecordEvent(
       *this->Stream << objname << "\n";
       }
 
-    QString pycommand("QtTesting.playCommand(%1, '%2', '%3')");
+    QString pycommand("QtTesting.playCommand(%1, '%2', '%3', '%4')");
     pycommand = pycommand.arg(varname);
     pycommand = pycommand.arg(Command);
     pycommand = pycommand.arg(Arguments);
+    pycommand = pycommand.arg(eventType);
     *this->Stream << pycommand << "\n";
     }
 }
-
-

@@ -60,10 +60,16 @@ public:
   virtual void setStream(QTextStream* stream);
 
 public slots:
+  // Slot called when recording an event
+  // Event Type can be pqEventTypes::EVENT or pqEventType::CHECK_EVENT
+  // Widget, Command/Property and Arguments are QString
+  // THis method has to be redefined by subclasses
   virtual void onRecordEvent(
+    const int& eventType,
     const QString& Widget,
     const QString& Command,
-    const QString& Arguments) = 0;
+    const QString& Arguments)=0;
+
 
 signals:
   void eventRecorded(const QString& Widget,

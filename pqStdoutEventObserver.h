@@ -53,7 +53,8 @@ public slots:
   void onRecordEvent(
     const QString& Widget,
     const QString& Command,
-    const QString& Arguments);
+    const QString& Arguments,
+    const int& eventType);
 };
 
 #endif // !_pqStdoutEventObserver_h

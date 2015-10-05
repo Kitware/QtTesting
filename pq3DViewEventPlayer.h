@@ -45,6 +45,7 @@ class QTTESTING_EXPORT pq3DViewEventPlayer :
   public pqWidgetEventPlayer
 {
   Q_OBJECT
+  typedef pqWidgetEventPlayer Superclass;
 
 public:
   pq3DViewEventPlayer(const QByteArray& classname, QObject* p = 0);

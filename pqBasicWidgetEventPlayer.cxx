@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -33,90 +33,107 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqBasicWidgetEventPlayer.h"
 
 #include <QApplication>
-#include <QContextMenuEvent>
 #include <QKeyEvent>
 #include <QWidget>
 #include <QtDebug>
+
+#include "pqEventTypes.h"
 
 pqBasicWidgetEventPlayer::pqBasicWidgetEventPlayer(QObject* p)
   : pqWidgetEventPlayer(p)
 {
 }
 
-bool pqBasicWidgetEventPlayer::playEvent(QObject* Object, 
-         const QString& Command, const QString& Arguments, 
-         bool& /*Error*/)
+bool pqBasicWidgetEventPlayer::playEvent(QObject* object,
+  const QString& command, const QString& arguments,
+  int eventType, bool& error)
 {
-  QWidget* widget = qobject_cast<QWidget*>(Object);
+  QWidget* widget = qobject_cast<QWidget*>(object);
   if(widget)
     {
-    if(Command == "contextMenu")
+    if (eventType == pqEventTypes::EVENT)
       {
-      QPoint pt(widget->x(), widget->y());
-      QPoint globalPt = widget->mapToGlobal(pt);
-      QContextMenuEvent e(QContextMenuEvent::Other, pt, globalPt);
-      qApp->notify(widget, &e);
-      return true;
-      }
-    else if(Command == "key")
-      {
-      QKeyEvent kd(QEvent::KeyPress, Arguments.toInt(), Qt::NoModifier);
-      QKeyEvent ku(QEvent::KeyRelease, Arguments.toInt(), Qt::NoModifier);
-      qApp->notify(widget, &kd);
-      qApp->notify(widget, &ku);
-      return true;
-      }
-    else if(Command == "keyEvent")
-      {
-      QStringList data = Arguments.split(':');
-      QKeyEvent ke(static_cast<QEvent::Type>(data[0].toInt()),
-                   data[1].toInt(),
-                   static_cast<Qt::KeyboardModifiers>(data[2].toInt()),
-                   data[3],
-                   !!data[4].toInt(),
-                   data[5].toInt());
-      qApp->notify(widget, &ke);
-      return true;
-      }
-    else if(Command.startsWith("mouse"))
-      {
-      QStringList args = Arguments.split(',');
-      if(args.size() == 5)
         {
-        Qt::MouseButtons buttons = static_cast<Qt::MouseButton>(args[1].toInt());
-        Qt::KeyboardModifiers keym = static_cast<Qt::KeyboardModifier>(args[2].toInt());
-        int x = args[3].toInt();
-        int y = args[4].toInt();
-        QPoint pt(x,y);
-        if (Command == "mouseWheel")
+        if(command == "key")
           {
-  //           QEvent::Type type = QEvent::Wheel;
-          int delta = args[0].toInt();
-          QWheelEvent we(QPoint(x,y), delta, buttons, keym);
-          QCoreApplication::sendEvent(Object, &we);
+          QKeyEvent kd(QEvent::KeyPress, arguments.toInt(), Qt::NoModifier);
+          QKeyEvent ku(QEvent::KeyRelease, arguments.toInt(), Qt::NoModifier);
+          qApp->notify(widget, &kd);
+          qApp->notify(widget, &ku);
           return true;
           }
-        Qt::MouseButton button = static_cast<Qt::MouseButton>(args[0].toInt());
-        QEvent::Type type = QEvent::MouseButtonPress;
-        type = Command == "mouseMove" ? QEvent::MouseMove : type;
-        type = Command == "mouseRelease" ? QEvent::MouseButtonRelease : type;
-        type = Command == "mouseDblClick" ? QEvent::MouseButtonDblClick : type;
-	if (type == QEvent::MouseMove)
+        else if(command == "keyEvent")
           {
-          // We have not been setting mouse move correctly.
-          buttons = button;
-          button = Qt::NoButton;
+          QStringList data = arguments.split(':');
+          QKeyEvent ke(static_cast<QEvent::Type>(data[0].toInt()),
+                       data[1].toInt(),
+                       static_cast<Qt::KeyboardModifiers>(data[2].toInt()),
+                       data[3],
+                       !!data[4].toInt(),
+                       data[5].toInt());
+          qApp->notify(widget, &ke);
+          return true;
           }
-        QMouseEvent e(type, pt, button, buttons, keym);
-        qApp->notify(widget, &e);
-        return true;
+        else if(command.startsWith("mouse"))
+          {
+          QStringList args = arguments.split(',');
+          if(args.size() == 5)
+            {
+            Qt::MouseButtons buttons = static_cast<Qt::MouseButton>(args[1].toInt());
+            Qt::KeyboardModifiers keym = static_cast<Qt::KeyboardModifier>(args[2].toInt());
+            int x = args[3].toInt();
+            int y = args[4].toInt();
+            QPoint pt(x,y);
+            if (command == "mouseWheel")
+              {
+              int delta = args[0].toInt();
+              QWheelEvent we(QPoint(x,y), delta, buttons, keym);
+              QCoreApplication::sendEvent(object, &we);
+              return true;
+              }
+            Qt::MouseButton button = static_cast<Qt::MouseButton>(args[0].toInt());
+            QEvent::Type type = QEvent::MouseButtonPress;
+            type = command == "mouseMove" ? QEvent::MouseMove : type;
+            type = command == "mouseRelease" ? QEvent::MouseButtonRelease : type;
+            type = command == "mouseDblClick" ? QEvent::MouseButtonDblClick : type;
+            if (type == QEvent::MouseMove)
+              {
+              // We have not been setting mouse move correctly.
+              buttons = button;
+              button = Qt::NoButton;
+              }
+            QMouseEvent e(type, pt, button, buttons, keym);
+            qApp->notify(widget, &e);
+            return true;
+            }
+          }
         }
       }
-    else
+    else if (eventType == pqEventTypes::CHECK_EVENT)
       {
-      return false;
+      // Recover QProperty
+      QVariant propertyValue = object->property(command.toAscii().data());
+
+      // Check it is valid
+      if (!propertyValue.isValid())
+        {
+        QString errorMessage = object->objectName() + " has no valid property named:" + command;
+        qCritical() << errorMessage.toAscii().data();
+        error = true;
+        return true;
+        }
+
+      // Check property value
+      if (propertyValue.toString() != arguments)
+        {
+        QString errorMessage = object->objectName() + " property value is: " + propertyValue.toString()
+          + ". Expecting: "+ arguments + ".";
+        qCritical() << errorMessage.toAscii().data();
+        error = true;
+        }
+        return true;
       }
     }
-  return false;
+  return this->Superclass::playEvent(object, command, arguments, error);
 }
 

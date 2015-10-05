@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "QtTestingExport.h"
 #include <QObject>
+#include <QRect>
 #include <QRegExp>
 
 class pqEventComment;
@@ -91,15 +92,22 @@ public:
 
   /// start listening to the GUI and translating events
   void start();
-  
+
   /// stop listening to the GUI and translating events
   void stop();
+
+  /// Record check event instead of events
+  void check(bool value);
+
+  /// Activate/Deactivate recording
+  void record(bool value);
+  bool isRecording();
 
 signals:
   /// This signal will be emitted every time a translator generates a
   /// high-level ParaView event.  Observers should connect to this signal
   /// to serialize high-level events.
-  void recordEvent(const QString& Object, const QString& Command, const QString& Arguments);
+  void recordEvent(int eventType, const QString& Object, const QString& Command, const QString& Arguments);
 
   /// this signals when recording starts
   void started();
@@ -108,8 +116,15 @@ signals:
   void stopped();
 
 private slots:
+  // Slot called when recording an event
+  void onRecordEvent(int eventType, QObject* Object, const QString& Command, const QString& Arguments);
+
+  // Legacy convenient slot for pqEventTypes::EVENT events
   void onRecordEvent(QObject* Object, const QString& Command, const QString& Arguments);
-  
+
+  // Slots called when widget request a specific size for the check overlay
+  void setOverlayGeometry(const QRect& geometry, bool specific = true);
+
 private:
   pqEventTranslator(const pqEventTranslator&);
   pqEventTranslator& operator=(const pqEventTranslator&);

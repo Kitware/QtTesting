@@ -203,16 +203,17 @@ void pqEventPlayerTester::testAddDefaultWidgetEventPlayers_data()
   QTest::newRow("0") << 0 << "pqNativeFileDialogEventPlayer";
   QTest::newRow("1") << 1 << "pq3DViewEventPlayer";
   QTest::newRow("2") << 2 << "pqAbstractMiscellaneousEventPlayer";
-  QTest::newRow("3") << 3 << "pqTreeViewEventPlayer";
-  QTest::newRow("4") << 4 << "pqTabBarEventPlayer";
-  QTest::newRow("5") << 5 << "pqAbstractStringEventPlayer";
-  QTest::newRow("6") << 6 << "pqAbstractItemViewEventPlayer";
-  QTest::newRow("7") << 7 << "pqAbstractIntEventPlayer";
-  QTest::newRow("8") << 8 << "pqAbstractDoubleEventPlayer";
-  QTest::newRow("9") << 9 << "pqAbstractBooleanEventPlayer";
-  QTest::newRow("10") << 10 << "pqAbstractActivateEventPlayer";
-  QTest::newRow("11") << 11 << "pqBasicWidgetEventPlayer";
-  QTest::newRow("12") << 12 << "pqCommentEventPlayer";
+  QTest::newRow("3") << 3 << "pqTableViewEventPlayer";
+  QTest::newRow("3") << 4 << "pqTreeViewEventPlayer";
+  QTest::newRow("4") << 5 << "pqTabBarEventPlayer";
+  QTest::newRow("5") << 6 << "pqAbstractStringEventPlayer";
+  QTest::newRow("6") << 7 << "pqAbstractItemViewEventPlayer";
+  QTest::newRow("7") << 8 << "pqAbstractIntEventPlayer";
+  QTest::newRow("8") << 9 << "pqAbstractDoubleEventPlayer";
+  QTest::newRow("9") << 10 << "pqAbstractBooleanEventPlayer";
+  QTest::newRow("10") << 11 << "pqAbstractActivateEventPlayer";
+  QTest::newRow("11") << 12 << "pqBasicWidgetEventPlayer";
+  QTest::newRow("12") << 13 << "pqCommentEventPlayer";
 }
 
 // ----------------------------------------------------------------------------

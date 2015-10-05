@@ -45,6 +45,7 @@ class QTTESTING_EXPORT pqAbstractItemViewEventPlayer :
   public pqWidgetEventPlayer
 {
   Q_OBJECT
+  typedef pqWidgetEventPlayer Superclass;
 
 public:
   pqAbstractItemViewEventPlayer(QObject* p=0);

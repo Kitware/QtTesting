@@ -43,6 +43,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqEventRecorder.h"
 #include "pqRecordEventsDialog.h"
 #include "pqTestUtility.h"
+#include "pqEventTypes.h"
 
 #include "ui_pqRecordEventsDialog.h"
 
@@ -89,22 +90,23 @@ pqRecordEventsDialog::pqRecordEventsDialog(pqEventRecorder* recorder,
   this->setObjectName("");
 
   QObject::connect(this->Implementation->TestUtility->eventTranslator(),
-                   SIGNAL(recordEvent(QString,QString,QString)),
-                   this, SLOT(onEventRecorded(QString,QString,QString)));
+                   SIGNAL(recordEvent(QString,QString,QString, int)),
+                   this, SLOT(onEventRecorded(QString,QString,QString, int)));
 
   QObject::connect(this->Implementation->Ui.commentAddButton,
                    SIGNAL(clicked()),
                    this, SLOT(addComment()));
 
+  QObject::connect(this->Implementation->Ui.checkButton,
+                   SIGNAL(toggled(bool)),
+                   this->Implementation->Recorder,
+                   SLOT(check(bool)));
+
   QObject::connect(this->Implementation->Ui.recordPauseButton,
                    SIGNAL(toggled(bool)),
                    this->Implementation->Recorder,
-                   SLOT(pause(bool)));
+                   SLOT(unpause(bool)));
 
-  QObject::connect(this->Implementation->Recorder,
-                   SIGNAL(paused(bool)),
-                   this,
-                   SLOT(updateUi()));
   QObject::connect(this->Implementation->Recorder,
                    SIGNAL(started()),
                    this,
@@ -139,7 +141,8 @@ void pqRecordEventsDialog::done(int value)
 }
 
 // ----------------------------------------------------------------------------
-void pqRecordEventsDialog::onEventRecorded(const QString& widget,
+void pqRecordEventsDialog::onEventRecorded(int eventType,
+                                           const QString& widget,
                                            const QString& command,
                                            const QString& argument)
 {
