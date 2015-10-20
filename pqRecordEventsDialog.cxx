@@ -181,6 +181,6 @@ void pqRecordEventsDialog::updateUi()
 {
   this->Implementation->Ui.recordPauseButton->setChecked(
       this->Implementation->Recorder->isRecording());
-  this->Implementation->Ui.recordPauseButton->setEnabled(
-      !this->Implementation->Recorder->isChecking());
+  this->Implementation->Ui.checkButton->setChecked(
+      this->Implementation->Recorder->isChecking());
 }

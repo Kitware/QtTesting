@@ -82,6 +82,11 @@ public slots:
                                           command,
                                           arguments));
   }
+  virtual void onRecordCheckEvent(const QString& widget,
+                                  const QString& command,
+                                  const QString& arguments)
+  {
+  }
 };
 
 // ----------------------------------------------------------------------------
@@ -101,7 +106,8 @@ protected:
     return;
     }
 
-  int getNextEvent(QString& /*widget*/,
+  int getNextEvent(int& /*eventType*/,
+                   QString& /*widget*/,
                    QString& /*command*/,
                    QString& /*arguments*/)
     {

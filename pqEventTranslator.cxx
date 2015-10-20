@@ -98,6 +98,7 @@ struct pqEventTranslator::pqImplementation
     delete this->EventComment;
     }
   delete this->CheckOverlay;
+  this->CheckOverlayWidgetOn = NULL;
   }
 
   pqEventComment* EventComment;
@@ -144,6 +145,7 @@ void pqEventTranslator::start()
 void pqEventTranslator::stop()
 {
   QCoreApplication::instance()->removeEventFilter(this);
+  this->check(false);
   emit this->stopped();
 }
 
@@ -324,14 +326,11 @@ bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
         }
       else
         {
-        if(this->Implementation->CheckOverlay != NULL)
-          {
-          this->Implementation->CheckOverlay->hide();
-          this->Implementation->CheckOverlayWidgetOn = NULL;
-          }
+        this->Implementation->CheckOverlay->hide();
+        this->Implementation->CheckOverlayWidgetOn = NULL;
         }
       }
-    else if (this->Implementation->CheckOverlayWidgetOn == widget && this->Implementation->CheckOverlay != NULL)
+    else if (this->Implementation->CheckOverlayWidgetOn == widget)
       {
       /*      if (Event->type() == QEvent::Leave) //TODO: Bug when leaving the widget, the overlay is still visible
               {
