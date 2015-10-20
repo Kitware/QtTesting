@@ -130,7 +130,7 @@ protected:
     return;
     }
 
-  int getNextEvent(QString& widget, QString& command, QString&
+  int getNextEvent(int& eventType, QString& widget, QString& command, QString&
     arguments)
     {
     if (this->XMLStream->atEnd())
@@ -152,6 +152,7 @@ protected:
       {
       return DONE;
       }
+    eventType = pqEventSource::EVENT;
     widget = this->XMLStream->attributes().value("widget").toString();
     command = this->XMLStream->attributes().value("command").toString();
     arguments = this->XMLStream->attributes().value("arguments").toString();

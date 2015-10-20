@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -45,13 +45,23 @@ public:
   pqEventSource(QObject* p) : QObject(p) {}
   virtual ~pqEventSource() {}
 
-  enum { SUCCESS, FAILURE, DONE };
+  enum eventReturnFlag {
+    SUCCESS,
+    FAILURE,
+    DONE
+  };
 
-  /** Retrieves the next available event.  
+  enum eventType {
+    EVENT,
+    CHECK_EVENT
+  };
+
+  /** Retrieves the next available event.
     Returns SUCCESS if an event was returned and can be processed,
     FAILURE if there was a problem,
     DONE, if there are no more events. */
   virtual int getNextEvent(
+    int& eventType,
     QString& object,
     QString& command,
     QString& arguments) = 0;

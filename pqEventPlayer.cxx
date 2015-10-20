@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -205,7 +205,7 @@ void pqEventPlayer::playEvent(const QString& Object,
     return;
     }
 
-  // The event was handled, but there was a problem ...    
+  // The event was handled, but there was a problem ...
   if(accepted && error)
     {
     QString messageError =
@@ -219,6 +219,49 @@ void pqEventPlayer::playEvent(const QString& Object,
 
   // The event was handled successfully ...
   emit this->eventPlayed(Object, Command, Arguments);
+  Error = false;
+}
+
+// ----------------------------------------------------------------------------
+void pqEventPlayer::playCheckEvent(const QString& Object,
+                                   const QString& Property,
+                                   const QString& Arguments,
+                                   bool& Error)
+{
+  emit this->eventAboutToBePlayed(Object, Property, Arguments);
+
+  // If we can't find an object with the right name, we're done ...
+  QObject* const object = pqObjectNaming::GetObject(Object);
+  if(!object)
+    {
+    qCritical() << pqObjectNaming::lastErrorMessage();
+    emit this->errorMessage(pqObjectNaming::lastErrorMessage());
+    Error = true;
+    return;
+    }
+
+  QVariant propertyValue = object->property(Property.toAscii().data());
+  if (!propertyValue.isValid())
+    {
+    QString error = Object + " has no valid property named:" + Property;
+    qCritical() << error.toAscii().data();
+    emit this->errorMessage(error.toAscii().data());
+    Error = true;
+    return;
+    }
+
+  if (propertyValue.toString() != Arguments)
+    {
+    QString error = Object + " property value is : " + propertyValue.toString()
+      + ". Expecting : "+ Arguments + ".";
+    qCritical() << error.toAscii().data();
+    emit this->errorMessage(error.toAscii().data());
+    Error = true;
+    return;
+    }
+
+  // The event was handled successfully ...
+  emit this->eventPlayed(Object, Property, Arguments);
   Error = false;
 }
 

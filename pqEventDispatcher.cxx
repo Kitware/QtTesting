@@ -311,8 +311,9 @@ void pqEventDispatcher::playEvent(int indent)
   QString object;
   QString command;
   QString arguments;
+  int eventType;
   
-  int result = this->ActiveSource->getNextEvent(object, command, arguments);
+  int result = this->ActiveSource->getNextEvent(eventType, object, command, arguments);
   if (result == pqEventSource::DONE)
     {
     this->PlayBackFinished = true;
@@ -334,17 +335,31 @@ void pqEventDispatcher::playEvent(int indent)
 #endif
   if (print_debug)
     {
+    QString eventString = "Event";
+    if (eventType == pqEventSource::CHECK_EVENT)
+      {
+      eventString = "Check Event";
+      }
+
     cout <<  QTime::currentTime().toString("hh:mm:ss").toStdString().c_str()
          << " : "
          << QString().fill(' ', 4*indent).toStdString().c_str()
          << local_counter << ": Test (" << indent << "): "
+         << eventString.toAscii().data() << ": "
          << pretty_name.toStdString().c_str() << ": "
          << command.toStdString().c_str() << " : "
          << arguments.toStdString().c_str() << endl;
     }
 
   bool error = false;
-  this->ActivePlayer->playEvent(object, command, arguments, error);
+  if (eventType == pqEventSource::CHECK_EVENT)
+    {
+    this->ActivePlayer->playCheckEvent(object, command, arguments, error);
+    }
+  else
+    {
+    this->ActivePlayer->playEvent(object, command, arguments, error);
+    }
   this->BlockTimer.stop();
 
   // process any posted events. We call processEvents() so that any slots
@@ -370,7 +385,6 @@ void pqEventDispatcher::playEvent(int indent)
     this->PlayBackFinished = true;
     return;
     }
-
 }
 
 //-----------------------------------------------------------------------------
