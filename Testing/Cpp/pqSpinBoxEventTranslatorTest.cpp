@@ -228,10 +228,17 @@ void pqSpinBoxEventTranslatorTester::testRecordKeyBoardClick_data()
   QTest::addColumn<QString>("number");
   QTest::addColumn<QString>("recordEmitted");
 
-  QTest::newRow("invalid") << QString("aa") << QString();
-  QTest::newRow("valid & invalid") << QString("2.aa") << QString("spinBoxTest, set_int, 2#");
-  QTest::newRow("valid positif") << QString::number(33) << QString("spinBoxTest, set_int, 3#spinBoxTest, set_int, 33#");
-  QTest::newRow("valid negatif") << QString::number(-5) << QString("spinBoxTest, set_int, -5#");
+  QTest::newRow("33") << QString::number(33)
+                        << QString("%1#%2#%3#%4#")
+                           .arg(QString("spinBoxTest, set_int, 3"),
+                                QString("spinBoxTest, set_int, 3"),
+                                QString("spinBoxTest, set_int, 33"),
+                                QString("spinBoxTest, set_int, 33"));
+  QTest::newRow("-5") << QString::number(-5)
+                     << QString("%1#%2#%3#")
+                        .arg(QString("spinBoxTest, key, 45"),
+                             QString("spinBoxTest, set_int, -5"),
+                             QString("spinBoxTest, set_int, -5"));
 }
 
 // ----------------------------------------------------------------------------
@@ -245,6 +252,8 @@ void pqSpinBoxEventTranslatorTester::testRecordComplexClick()
 
   QTest::keyClicks(this->SpinBox, "10");
   recordExpected.append(QString("spinBoxTest, set_int, 1#"));
+  recordExpected.append(QString("spinBoxTest, set_int, 1#"));
+  recordExpected.append(QString("spinBoxTest, set_int, 10#"));
   recordExpected.append(QString("spinBoxTest, set_int, 10#"));
 
   QTest::mouseClick(this->SpinBox, Qt::LeftButton, Qt::NoModifier,
@@ -276,6 +285,7 @@ void pqSpinBoxEventTranslatorTester::testRecordComplexClick()
   recordExpected.append(QString("spinBoxTest, set_int, 13#"));
 
   QTest::keyClicks(this->SpinBox, "0");
+  recordExpected.append(QString("spinBoxTest, set_int, 0#"));
   recordExpected.append(QString("spinBoxTest, set_int, 0#"));
 
   QCOMPARE(this->EventObserver->Text, recordExpected);
