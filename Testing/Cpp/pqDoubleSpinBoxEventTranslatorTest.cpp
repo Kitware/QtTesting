@@ -230,19 +230,24 @@ void pqDoubleSpinBoxEventTranslatorTester::testRecordKeyBoardClick_data()
   QTest::addColumn<QString>("recordEmitted");
 
   QTest::newRow("33.5") << QString::number(33.5)
-                        << QString("%1#%2#%3#")
+                        << QString("%1#%2#%3#%4#%5#%6#%7#")
                            .arg(QString("doubleSpinBoxTest, set_double, 3"),
+                                QString("doubleSpinBoxTest, set_double, 3"),
                                 QString("doubleSpinBoxTest, set_double, 33"),
+                                QString("doubleSpinBoxTest, set_double, 33"),
+                                QString("doubleSpinBoxTest, key, 46"),
+                                QString("doubleSpinBoxTest, set_double, 33.5"),
                                 QString("doubleSpinBoxTest, set_double, 33.5"));
   QTest::newRow("-5.23") << QString::number(-5.23)
-                     << QString("%1#%2#%3#")
-                        .arg(QString("doubleSpinBoxTest, set_double, -5"),
+                     << QString("%1#%2#%3#%4#%5#%6#%7#%8#")
+                        .arg(QString("doubleSpinBoxTest, key, 45"),
+                             QString("doubleSpinBoxTest, set_double, -5"),
+                             QString("doubleSpinBoxTest, set_double, -5"),
+                             QString("doubleSpinBoxTest, key, 46"),
                              QString("doubleSpinBoxTest, set_double, -5.2"),
+                             QString("doubleSpinBoxTest, set_double, -5.2"),
+                             QString("doubleSpinBoxTest, set_double, -5.23"),
                              QString("doubleSpinBoxTest, set_double, -5.23"));
-  QTest::newRow("aa") << QString("aa")
-                      << QString();
-  QTest::newRow("2.aa") << QString("2.aa")
-                        << QString("doubleSpinBoxTest, set_double, 2#");
 }
 
 // ----------------------------------------------------------------------------
@@ -256,40 +261,55 @@ void pqDoubleSpinBoxEventTranslatorTester::testRecordComplexClick()
 
   this->DoubleSpinBox->clear();
   QTest::keyClicks(this->DoubleSpinBox, QString::number(-5.25));
+  recordExpected.append(QString("doubleSpinBoxTest, key, 45#"));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5#"));
+  recordExpected.append(QString("doubleSpinBoxTest, set_double, -5#"));
+  recordExpected.append(QString("doubleSpinBoxTest, key, 46#"));
+  recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.2#"));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.2#"));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.25#"));
+  recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.25#"));
 
+  std::cout<<recordExpected.toAscii().data()<<std::endl;
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
                     QPoint(size.rwidth()- frameWidth , size.rheight() - frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.5#"));
+  std::cout<<recordExpected.toAscii().data()<<std::endl;
 
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
                     QPoint(size.rwidth()- frameWidth , size.rheight() - frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.75#"));
+  std::cout<<recordExpected.toAscii().data()<<std::endl;
 
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
                     QPoint(size.rwidth()- frameWidth , frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.5#"));
+  std::cout<<recordExpected.toAscii().data()<<std::endl;
 
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
                     QPoint(size.rwidth()- frameWidth , frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.25#"));
+  std::cout<<recordExpected.toAscii().data()<<std::endl;
 
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
                     QPoint(size.rwidth()- frameWidth , frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5#"));
+  std::cout<<recordExpected.toAscii().data()<<std::endl;
 
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
                     QPoint(size.rwidth()- frameWidth , frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -4.75#"));
+  std::cout<<recordExpected.toAscii().data()<<std::endl;
 
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
                     QPoint(size.rwidth()- frameWidth , frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -4.5#"));
+  std::cout<<recordExpected.toAscii().data()<<std::endl;
 
   QTest::keyClicks(this->DoubleSpinBox, QString::number(0));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, 0#"));
+  recordExpected.append(QString("doubleSpinBoxTest, set_double, 0#"));
+  std::cout<<recordExpected.toAscii().data()<<std::endl;
 
   QCOMPARE(this->EventObserver->Text, recordExpected);
 }
