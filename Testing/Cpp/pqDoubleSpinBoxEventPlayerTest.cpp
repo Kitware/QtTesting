@@ -107,7 +107,14 @@ void pqDoubleSpinBoxEventPlayerTester::testPlayBackCommandSetDouble()
       QString("doubleSpinBoxTest"), QString("set_double"),
       QString::number(value), error);
 
+  QCOMPARE(error, false);
   QCOMPARE(this->DoubleSpinBox->value(), result);
+
+  this->TestUtility->eventPlayer()->playCheckEvent(
+      QString("doubleSpinBoxTest"), QString("value"),
+      QString::number(result), error);
+
+  QCOMPARE(error, false);
   QCOMPARE(spy.count(), count);
 }
 

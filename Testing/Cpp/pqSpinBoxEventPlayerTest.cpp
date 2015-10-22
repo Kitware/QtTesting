@@ -105,6 +105,11 @@ void pqSpinBoxEventPlayerTester::testPlayBackCommandSetInt()
       QString("spinBoxTest"), QString("set_int"), QString::number(value), error);
 
   QCOMPARE(this->SpinBox->value(), result);
+  QCOMPARE(error, false);
+
+  this->TestUtility->eventPlayer()->playCheckEvent(
+      QString("spinBoxTest"), QString("value"), QString::number(result), error);
+  QCOMPARE(error, false);
   QCOMPARE(spy.count(), count);
 }
 

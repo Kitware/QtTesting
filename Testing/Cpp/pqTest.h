@@ -83,9 +83,12 @@ public slots:
                                           arguments));
   }
   virtual void onRecordCheckEvent(const QString& widget,
-                                  const QString& command,
+                                  const QString& property,
                                   const QString& arguments)
   {
+    this->Text.append(QString("Check, %1, %2, %3#").arg(widget,
+                                          property,
+                                          arguments));
   }
 };
 
