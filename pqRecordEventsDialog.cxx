@@ -43,6 +43,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqEventRecorder.h"
 #include "pqRecordEventsDialog.h"
 #include "pqTestUtility.h"
+#include "pqEventTypes.h"
 
 #include "ui_pqRecordEventsDialog.h"
 
@@ -89,12 +90,8 @@ pqRecordEventsDialog::pqRecordEventsDialog(pqEventRecorder* recorder,
   this->setObjectName("");
 
   QObject::connect(this->Implementation->TestUtility->eventTranslator(),
-                   SIGNAL(recordEvent(QString,QString,QString)),
-                   this, SLOT(onEventRecorded(QString,QString,QString)));
-
-  QObject::connect(this->Implementation->TestUtility->eventTranslator(),
-                   SIGNAL(recordCheckEvent(QString,QString,QString)),
-                   this, SLOT(onEventRecorded(QString,QString,QString)));
+                   SIGNAL(recordEvent(int, QString,QString,QString)),
+                   this, SLOT(onEventRecorded(int, QString,QString,QString)));
 
   QObject::connect(this->Implementation->Ui.commentAddButton,
                    SIGNAL(clicked()),
@@ -144,7 +141,8 @@ void pqRecordEventsDialog::done(int value)
 }
 
 // ----------------------------------------------------------------------------
-void pqRecordEventsDialog::onEventRecorded(const QString& widget,
+void pqRecordEventsDialog::onEventRecorded(int eventType,
+                                           const QString& widget,
                                            const QString& command,
                                            const QString& argument)
 {
@@ -181,6 +179,4 @@ void pqRecordEventsDialog::updateUi()
 {
   this->Implementation->Ui.recordPauseButton->setChecked(
       this->Implementation->Recorder->isRecording());
-  this->Implementation->Ui.checkButton->setChecked(
-      this->Implementation->Recorder->isChecking());
 }

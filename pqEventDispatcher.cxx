@@ -336,7 +336,7 @@ void pqEventDispatcher::playEvent(int indent)
   if (print_debug)
     {
     QString eventString = "Event";
-    if (eventType == pqEventSource::CHECK_EVENT)
+    if (eventType == pqEventTypes::CHECK_EVENT)
       {
       eventString = "Check Event";
       }
@@ -352,7 +352,7 @@ void pqEventDispatcher::playEvent(int indent)
     }
 
   bool error = false;
-  if (eventType == pqEventSource::CHECK_EVENT)
+  if (eventType == pqEventTypes::CHECK_EVENT)
     {
     this->ActivePlayer->playCheckEvent(object, command, arguments, error);
     }

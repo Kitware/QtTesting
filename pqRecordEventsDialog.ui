@@ -123,7 +123,7 @@
             <string>Last command recorded / property checked</string>
            </property>
            <property name="text">
-            <string>Command :</string>
+            <string>Command/Property :</string>
            </property>
           </widget>
          </item>

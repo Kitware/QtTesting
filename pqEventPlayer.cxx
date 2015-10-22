@@ -252,8 +252,8 @@ void pqEventPlayer::playCheckEvent(const QString& Object,
 
   if (propertyValue.toString() != Arguments)
     {
-    QString error = Object + " property value is : " + propertyValue.toString()
-      + ". Expecting : "+ Arguments + ".";
+    QString error = Object + " property value is: " + propertyValue.toString()
+      + ". Expecting: "+ Arguments + ".";
     qCritical() << error.toAscii().data();
     emit this->errorMessage(error.toAscii().data());
     Error = true;

@@ -32,6 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "pqEventTranslator.h"
 
+#include "pq3DViewEventTranslator.h"
 #include "pqAbstractButtonEventTranslator.h"
 #include "pqAbstractItemViewEventTranslator.h"
 #include "pqAbstractSliderEventTranslator.h"
@@ -39,14 +40,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqComboBoxEventTranslator.h"
 #include "pqDoubleSpinBoxEventTranslator.h"
 #include "pqEventComment.h"
+#include "pqEventTypes.h"
 #include "pqLineEditEventTranslator.h"
 #include "pqMenuEventTranslator.h"
+#include "pqNativeFileDialogEventTranslator.h"
 #include "pqObjectNaming.h"
 #include "pqSpinBoxEventTranslator.h"
 #include "pqTabBarEventTranslator.h"
 #include "pqTreeViewEventTranslator.h"
-#include "pqNativeFileDialogEventTranslator.h"
-#include "pq3DViewEventTranslator.h"
 
 #include <QCoreApplication>
 #include <QtDebug>
@@ -86,6 +87,7 @@ struct pqEventTranslator::pqImplementation
   {
   this->EventComment = 0;
   this->Checking = false;
+  this->Recording = false;
   this->CheckOverlay = new pqCheckEventOverlay(NULL);
   this->CheckOverlay->hide();
   this->CheckOverlayWidgetOn = NULL;
@@ -112,6 +114,7 @@ struct pqEventTranslator::pqImplementation
   QList<QWidget*> MouseParents;
 
   bool Checking;
+  bool Recording;
   QPointer<pqCheckEventOverlay> CheckOverlay;
   QPointer<QWidget> CheckOverlayWidgetOn;
 };
@@ -188,11 +191,6 @@ void pqEventTranslator::addWidgetEventTranslator(pqWidgetEventTranslator* Transl
       SIGNAL(recordEvent(QObject*, const QString&, const QString&)),
       this,
       SLOT(onRecordEvent(QObject*, const QString&, const QString&)));
-    QObject::connect(
-      Translator,
-      SIGNAL(recordCheckEvent(QObject*, const QString&, const QString&)),
-      this,
-      SLOT(onRecordCheckEvent(QObject*, const QString&, const QString&)));
     }
 }
 
@@ -267,116 +265,118 @@ void pqEventTranslator::ignoreObject(QObject* Object)
 // ----------------------------------------------------------------------------
 bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
 {
-#if QT_VERSION >= 0x050000
-  if(Object->isWindowType())
+  if (this->Implementation->Recording)
     {
-    return false;
-    }
+#if QT_VERSION >= 0x050000
+    if(Object->isWindowType())
+      {
+      return false;
+      }
 #endif
 
-  QWidget* widget = qobject_cast<QWidget*>(Object);
+    QWidget* widget = qobject_cast<QWidget*>(Object);
 
-  // mouse events are propagated to parents
-  // our event translators/players don't quite like that,
-  // so lets consume those extra ones
-  if(Event->type() == QEvent::MouseButtonPress ||
-     Event->type() == QEvent::MouseButtonDblClick ||
-     Event->type() == QEvent::MouseButtonRelease)
-    {
-    if(!this->Implementation->MouseParents.empty() &&
-      this->Implementation->MouseParents.first() == Object)
+    // mouse events are propagated to parents
+    // our event translators/players don't quite like that,
+    // so lets consume those extra ones
+    if(Event->type() == QEvent::MouseButtonPress ||
+       Event->type() == QEvent::MouseButtonDblClick ||
+       Event->type() == QEvent::MouseButtonRelease)
       {
-      // right on track
-      this->Implementation->MouseParents.removeFirst();
-      return false;
-      }
-
-    // find the chain of parent that will get this mouse event
-    this->Implementation->MouseParents.clear();
-    for(QWidget* w = widget->parentWidget(); w; w = w->parentWidget())
-      {
-      this->Implementation->MouseParents.append(w);
-      if(w->isWindow() || w->testAttribute(Qt::WA_NoMousePropagation))
+      if(!this->Implementation->MouseParents.empty() &&
+         this->Implementation->MouseParents.first() == Object)
         {
-        break;
-        }
-      }
-    }
-
-  if (widget != NULL && this->Implementation->Checking)
-    {
-
-    if(this->Implementation->IgnoredObjects.contains(Object))
-      {
-      return false;
-      }
-
-    const QMetaProperty metaProp = Object->metaObject()->userProperty();
-
-    if (Event->type() == QEvent::MouseMove 
-        && this->Implementation->CheckOverlayWidgetOn != widget)
-      {
-      if (widget->parentWidget() != NULL)
-        { 
-        this->Implementation->CheckOverlay->Valid = metaProp.isValid();
-        this->Implementation->CheckOverlay->setParent(qobject_cast<QWidget*>(widget->parent()));
-        this->Implementation->CheckOverlay->setGeometry(widget->geometry());
-        this->Implementation->CheckOverlayWidgetOn = widget;
-        this->Implementation->CheckOverlay->show();
-        }
-      else
-        {
-        this->Implementation->CheckOverlay->hide();
-        this->Implementation->CheckOverlayWidgetOn = NULL;
-        }
-      }
-    else if (this->Implementation->CheckOverlayWidgetOn == widget)
-      {
-      /*      if (Event->type() == QEvent::Leave) //TODO: Bug when leaving the widget, the overlay is still visible
-              {
-              this->Implementation->CheckOverlay->hide();
-              this->Implementation->CheckOverlayWidgetOn = NULL;
-              }
-              else */if(Event->type() == QEvent::Resize)
-        {
-        this->Implementation->CheckOverlay->setGeometry(widget->geometry());
-        }
-      }
-
-    if (Event->type() == QEvent::MouseButtonRelease)
-      {
-      if (metaProp.isValid())
-        {
-        QString propName = metaProp.name();
-        onRecordCheckEvent(Object, propName, Object->property(propName.toAscii().data()).toString());
-        return true;
-        }
-      else
-        {
-        qWarning() << "Error checking an event for object, widget type not supported:" << Object->metaObject()->className();
-        }
-      }
-    if (dynamic_cast<QInputEvent*>(Event) != NULL)
-      {
-      return true;
-      }
-    }
-  else
-    {
-    for(int i = 0; i != this->Implementation->Translators.size(); ++i)
-      {
-      bool error = false;
-      if(this->Implementation->Translators[i]->translateEvent(Object, Event, error))
-        {
-        if(error)
-          {
-          qWarning() << "Error translating an event for object " << Object;
-          }
+        // right on track
+        this->Implementation->MouseParents.removeFirst();
         return false;
         }
+
+      // find the chain of parent that will get this mouse event
+      this->Implementation->MouseParents.clear();
+      for(QWidget* w = widget->parentWidget(); w; w = w->parentWidget())
+        {
+        this->Implementation->MouseParents.append(w);
+        if(w->isWindow() || w->testAttribute(Qt::WA_NoMousePropagation))
+          {
+          break;
+          }
+        }
+      }
+
+    if (widget != NULL && this->Implementation->Checking)
+      {
+
+      if(this->Implementation->IgnoredObjects.contains(Object))
+        {
+        return false;
+        }
+
+      const QMetaProperty metaProp = Object->metaObject()->userProperty();
+
+      if (Event->type() == QEvent::MouseMove 
+          && this->Implementation->CheckOverlayWidgetOn != widget)
+        {
+        if (widget->parentWidget() != NULL)
+          { 
+          this->Implementation->CheckOverlay->Valid = metaProp.isValid();
+          this->Implementation->CheckOverlay->setParent(qobject_cast<QWidget*>(widget->parent()));
+          this->Implementation->CheckOverlay->setGeometry(widget->geometry());
+          this->Implementation->CheckOverlayWidgetOn = widget;
+          this->Implementation->CheckOverlay->show();
+          }
+        else
+          {
+          this->Implementation->CheckOverlay->hide();
+          this->Implementation->CheckOverlayWidgetOn = NULL;
+          }
+        }
+      else if (this->Implementation->CheckOverlayWidgetOn == widget)
+        {
+        /*      if (Event->type() == QEvent::Leave) //TODO: Bug when leaving the widget, the overlay is still visible
+                {
+                this->Implementation->CheckOverlay->hide();
+                this->Implementation->CheckOverlayWidgetOn = NULL;
+                }
+                else */if(Event->type() == QEvent::Resize)
+          {
+          this->Implementation->CheckOverlay->setGeometry(widget->geometry());
+          }
+        }
+
+      if (Event->type() == QEvent::MouseButtonRelease)
+        {
+        if (metaProp.isValid())
+          {
+          QString propName = metaProp.name();
+          onRecordEvent(pqEventTypes::CHECK_EVENT, Object, propName, Object->property(propName.toAscii().data()).toString());
+          return true;
+          }
+        else
+          {
+          qWarning() << "Error checking an event for object, widget type not supported:" << Object->metaObject()->className();
+          }
+        }
+      if (dynamic_cast<QInputEvent*>(Event) != NULL)
+        {
+        return true;
+        }
+      }
+    else
+      {
+      for(int i = 0; i != this->Implementation->Translators.size(); ++i)
+        {
+        bool error = false;
+        if(this->Implementation->Translators[i]->translateEvent(Object, Event, error))
+          {
+          if(error)
+            {
+            qWarning() << "Error translating an event for object " << Object;
+            }
+          return false;
+          }
+        }
       }
     }
-
   return false;
 }
 
@@ -385,24 +385,13 @@ void pqEventTranslator::onRecordEvent(QObject* Object,
                                       const QString& Command,
                                       const QString& Arguments)
 {
-  if(this->Implementation->IgnoredObjects.contains(Object))
-    return;
-
-  QString name;
-  // When sender is pqEventObject, the Object name can be NULL.
-  if (!qobject_cast<pqEventComment*>(this->sender()) || Object)
-    {
-    name = pqObjectNaming::GetName(*Object);
-    if(name.isEmpty())
-      return;
-    }
-
-  emit recordEvent(name, Command, Arguments);
+  this->onRecordEvent(pqEventTypes::EVENT, Object, Command, Arguments);
 }
 
 // ----------------------------------------------------------------------------
-void pqEventTranslator::onRecordCheckEvent(QObject* Object,
-                                      const QString& Property,
+void pqEventTranslator::onRecordEvent(int eventType,
+                                      QObject* Object,
+                                      const QString& Command,
                                       const QString& Arguments)
 {
   if(this->Implementation->IgnoredObjects.contains(Object))
@@ -410,12 +399,26 @@ void pqEventTranslator::onRecordCheckEvent(QObject* Object,
     return;
     }
 
-  QString name = pqObjectNaming::GetName(*Object);
-  if(name.isEmpty())
+  QString name;
+  if (eventType == pqEventTypes::EVENT)
     {
-    return;
+    // When sender is pqEventObject, the Object name can be NULL.
+    if (!qobject_cast<pqEventComment*>(this->sender()) || Object)
+      {
+      name = pqObjectNaming::GetName(*Object);
+      if(name.isEmpty())
+          return;
+      }
     }
-  emit recordCheckEvent(name, Property, Arguments);
+  else
+    {
+    name = pqObjectNaming::GetName(*Object);
+    if(name.isEmpty())
+      {
+      return;
+      }
+    }
+  emit recordEvent(eventType, name, Command, Arguments);
 }
 
 // ----------------------------------------------------------------------------
@@ -425,9 +428,25 @@ void pqEventTranslator::check(bool value)
 
   if(!value)
     {
-/*    delete this->Implementation->CheckOverlay;
-    this->Implementation->CheckOverlay = NULL;*/
     this->Implementation->CheckOverlay->hide();
     this->Implementation->CheckOverlayWidgetOn = NULL;
     }
+}
+
+// ----------------------------------------------------------------------------
+void pqEventTranslator::record(bool value)
+{
+  this->Implementation->Recording = value;
+
+  if(!value)
+    {
+    this->Implementation->CheckOverlay->hide();
+    this->Implementation->CheckOverlayWidgetOn = NULL;
+    }
+}
+
+// ----------------------------------------------------------------------------
+bool pqEventTranslator::isRecording()
+{
+  return this->Implementation->Recording;
 }

@@ -255,6 +255,7 @@ SET(QtTesting_DEVEL_HEADERS
   pqEventPlayer.h
   pqEventSource.h
   pqEventTranslator.h
+  pqEventTypes.h
   pqLineEditEventTranslator.h
   pqMenuEventTranslator.h
   pqNativeFileDialogEventPlayer.h

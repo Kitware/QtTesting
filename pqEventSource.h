@@ -34,6 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _pqEventSource_h
 
 #include "QtTestingExport.h"
+#include "pqEventTypes.h"
 #include <QObject>
 class QString;
 
@@ -49,11 +50,6 @@ public:
     SUCCESS,
     FAILURE,
     DONE
-  };
-
-  enum eventType {
-    EVENT,
-    CHECK_EVENT
   };
 
   /** Retrieves the next available event.

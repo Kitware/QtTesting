@@ -74,21 +74,23 @@ public:
   QString Text;
 
 public slots:
-  virtual void onRecordEvent(const QString& widget,
+  virtual void onRecordEvent(const int& eventType,
+                             const QString& widget,
                              const QString& command,
                              const QString& arguments)
   {
+  if (eventType == pqEventTypes::CHECK_EVENT)
+    {
+    this->Text.append(QString("Check, %1, %2, %3#").arg(widget,
+                                          command,
+                                          arguments));
+    }
+  else
+    {
     this->Text.append(QString("%1, %2, %3#").arg(widget,
                                           command,
                                           arguments));
-  }
-  virtual void onRecordCheckEvent(const QString& widget,
-                                  const QString& property,
-                                  const QString& arguments)
-  {
-    this->Text.append(QString("Check, %1, %2, %3#").arg(widget,
-                                          property,
-                                          arguments));
+    }
   }
 };
 
