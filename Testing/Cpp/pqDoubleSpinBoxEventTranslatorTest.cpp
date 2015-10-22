@@ -270,46 +270,37 @@ void pqDoubleSpinBoxEventTranslatorTester::testRecordComplexClick()
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.25#"));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.25#"));
 
-  std::cout<<recordExpected.toAscii().data()<<std::endl;
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
                     QPoint(size.rwidth()- frameWidth , size.rheight() - frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.5#"));
-  std::cout<<recordExpected.toAscii().data()<<std::endl;
 
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
                     QPoint(size.rwidth()- frameWidth , size.rheight() - frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.75#"));
-  std::cout<<recordExpected.toAscii().data()<<std::endl;
 
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
                     QPoint(size.rwidth()- frameWidth , frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.5#"));
-  std::cout<<recordExpected.toAscii().data()<<std::endl;
 
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
                     QPoint(size.rwidth()- frameWidth , frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.25#"));
-  std::cout<<recordExpected.toAscii().data()<<std::endl;
 
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
                     QPoint(size.rwidth()- frameWidth , frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5#"));
-  std::cout<<recordExpected.toAscii().data()<<std::endl;
 
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
                     QPoint(size.rwidth()- frameWidth , frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -4.75#"));
-  std::cout<<recordExpected.toAscii().data()<<std::endl;
 
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
                     QPoint(size.rwidth()- frameWidth , frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -4.5#"));
-  std::cout<<recordExpected.toAscii().data()<<std::endl;
 
   QTest::keyClicks(this->DoubleSpinBox, QString::number(0));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, 0#"));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, 0#"));
-  std::cout<<recordExpected.toAscii().data()<<std::endl;
 
   QCOMPARE(this->EventObserver->Text, recordExpected);
 }
