@@ -92,8 +92,7 @@ public slots:
 
   void start();
   void stop(int value);
-  void pause(bool);
-  
+  void pause(bool value);
   void check(bool value);
 
 protected:

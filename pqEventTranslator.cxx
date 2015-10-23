@@ -56,6 +56,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QPainter>
 #include <QMetaProperty>
 
+//TODO pqVTKWidget not display the rectangle correctly.
 class pqCheckEventOverlay : public QWidget {
 public:
   pqCheckEventOverlay(QWidget * parent = 0) : QWidget(parent) {
@@ -68,14 +69,16 @@ public:
 protected:
   void paintEvent(QPaintEvent *) {
     QPainter p(this);
+    // Draw red on invalid widget
     QPen pen(Qt::red, 5);
     if (this->Valid)
       {
+      // Draw green on valid widget
       pen.setColor(Qt::green);
       }
     p.setPen(pen);
+    // -2 for the line width
     p.drawRect(0, 0, width()-2, height()-2);
-    // TODO Bug when hovering the QTabWidget, ht pqQVTKWidget seems to draw the rect as well
   }
 };
 
@@ -88,6 +91,8 @@ struct pqEventTranslator::pqImplementation
   this->EventComment = 0;
   this->Checking = false;
   this->Recording = false;
+
+  // Create overlay and hide it
   this->CheckOverlay = new pqCheckEventOverlay(NULL);
   this->CheckOverlay->hide();
   this->CheckOverlayWidgetOn = NULL;
@@ -127,6 +132,7 @@ pqEventTranslator::pqEventTranslator(QObject* p)
  : QObject(p),
   Implementation(new pqImplementation())
 {
+  // Ignore the overlay so it is transparent to events.
   this->ignoreObject(this->Implementation->CheckOverlay);
 }
 
@@ -303,33 +309,48 @@ bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
         }
       }
 
+    // Checking mode
     if (widget != NULL && this->Implementation->Checking)
       {
-
+      // Ignore object if specified
       if(this->Implementation->IgnoredObjects.contains(Object))
         {
         return false;
         }
 
+      // Recover user meta propperty
       const QMetaProperty metaProp = Object->metaObject()->userProperty();
 
-      if (Event->type() == QEvent::MouseMove 
+      // Mouse Move on a non-previously overlayed widget
+      if (Event->type() == QEvent::MouseMove
           && this->Implementation->CheckOverlayWidgetOn != widget)
         {
         if (widget->parentWidget() != NULL)
-          { 
+          {
+          // Draw overlay
+
+          // Set the validity of the overlay
           this->Implementation->CheckOverlay->Valid = metaProp.isValid();
+
+          // Set parent of the overlay to be parent of the overlayed widget
           this->Implementation->CheckOverlay->setParent(qobject_cast<QWidget*>(widget->parent()));
+
+          // Set overlay geometry to be the same o as oerlayed widget
           this->Implementation->CheckOverlay->setGeometry(widget->geometry());
+
+          // Register and show overlay
           this->Implementation->CheckOverlayWidgetOn = widget;
           this->Implementation->CheckOverlay->show();
           }
         else
           {
+          // If the overlayed widget has no parent, do not draw.
+          // eg. MainWindow
           this->Implementation->CheckOverlay->hide();
           this->Implementation->CheckOverlayWidgetOn = NULL;
           }
         }
+      // event on currently overlayed widget
       else if (this->Implementation->CheckOverlayWidgetOn == widget)
         {
         /*      if (Event->type() == QEvent::Leave) //TODO: Bug when leaving the widget, the overlay is still visible
@@ -337,30 +358,42 @@ bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
                 this->Implementation->CheckOverlay->hide();
                 this->Implementation->CheckOverlayWidgetOn = NULL;
                 }
-                else */if(Event->type() == QEvent::Resize)
+                else */
+
+        // Resize event
+        if(Event->type() == QEvent::Resize)
           {
+          // Set overlay geometry
           this->Implementation->CheckOverlay->setGeometry(widget->geometry());
           }
         }
 
+      // Mouse button release -> Check Event
       if (Event->type() == QEvent::MouseButtonRelease)
         {
+        // Check meta prop validity
         if (metaProp.isValid())
           {
+          // Recover meto prop name
           QString propName = metaProp.name();
+
+          // Record check event
           onRecordEvent(pqEventTypes::CHECK_EVENT, Object, propName, Object->property(propName.toAscii().data()).toString());
           return true;
           }
         else
           {
+          // Inform user trying to check uncheckable widget
           qWarning() << "Error checking an event for object, widget type not supported:" << Object->metaObject()->className();
           }
         }
+      // Block all input events, so the UI is static but still drawn.
       if (dynamic_cast<QInputEvent*>(Event) != NULL)
         {
         return true;
         }
       }
+    // Event Recording
     else
       {
       for(int i = 0; i != this->Implementation->Translators.size(); ++i)
@@ -412,12 +445,14 @@ void pqEventTranslator::onRecordEvent(int eventType,
     }
   else
     {
+    // Check the QObject does have a name
     name = pqObjectNaming::GetName(*Object);
     if(name.isEmpty())
       {
       return;
       }
     }
+  // Record the event
   emit recordEvent(eventType, name, Command, Arguments);
 }
 
@@ -426,6 +461,7 @@ void pqEventTranslator::check(bool value)
 {
   this->Implementation->Checking = value;
 
+  // Hide avoerlay when not checking
   if(!value)
     {
     this->Implementation->CheckOverlay->hide();
@@ -438,6 +474,7 @@ void pqEventTranslator::record(bool value)
 {
   this->Implementation->Recording = value;
 
+  // Hide avoerlay when not recording
   if(!value)
     {
     this->Implementation->CheckOverlay->hide();

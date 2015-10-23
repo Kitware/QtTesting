@@ -228,10 +228,13 @@ void pqEventPlayer::playCheckEvent(const QString& Object,
                                    const QString& Arguments,
                                    bool& Error)
 {
+  // Inform world about playing event
   emit this->eventAboutToBePlayed(Object, Property, Arguments);
 
-  // If we can't find an object with the right name, we're done ...
+  // Recover QObject from it's name
   QObject* const object = pqObjectNaming::GetObject(Object);
+
+  // Check for object existence
   if(!object)
     {
     qCritical() << pqObjectNaming::lastErrorMessage();
@@ -240,7 +243,10 @@ void pqEventPlayer::playCheckEvent(const QString& Object,
     return;
     }
 
+  // Recover QProperty
   QVariant propertyValue = object->property(Property.toAscii().data());
+
+  // Check it is valid
   if (!propertyValue.isValid())
     {
     QString error = Object + " has no valid property named:" + Property;
@@ -250,6 +256,7 @@ void pqEventPlayer::playCheckEvent(const QString& Object,
     return;
     }
 
+  // Check property value
   if (propertyValue.toString() != Arguments)
     {
     QString error = Object + " property value is: " + propertyValue.toString()
@@ -260,7 +267,7 @@ void pqEventPlayer::playCheckEvent(const QString& Object,
     return;
     }
 
-  // The event was handled successfully ...
+  // The check event was correctly played.
   emit this->eventPlayed(Object, Property, Arguments);
   Error = false;
 }

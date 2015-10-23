@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -89,14 +89,15 @@ public:
 
   /// start listening to the GUI and translating events
   void start();
-  
+
   /// stop listening to the GUI and translating events
   void stop();
 
-  ///
+  /// Record check event instead of events
   void check(bool value);
+
+  /// Activate/Deactivate recording
   void record(bool value);
-  
   bool isRecording();
 
 signals:
@@ -114,7 +115,7 @@ signals:
 private slots:
   void onRecordEvent(int eventType, QObject* Object, const QString& Command, const QString& Arguments);
   void onRecordEvent(QObject* Object, const QString& Command, const QString& Arguments);
-  
+
 private:
   pqEventTranslator(const pqEventTranslator&);
   pqEventTranslator& operator=(const pqEventTranslator&);

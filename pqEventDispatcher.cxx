@@ -352,10 +352,12 @@ void pqEventDispatcher::playEvent(int indent)
     }
 
   bool error = false;
+  // Check Event
   if (eventType == pqEventTypes::CHECK_EVENT)
     {
     this->ActivePlayer->playCheckEvent(object, command, arguments, error);
     }
+  // Event
   else
     {
     this->ActivePlayer->playEvent(object, command, arguments, error);
@@ -385,6 +387,7 @@ void pqEventDispatcher::playEvent(int indent)
     this->PlayBackFinished = true;
     return;
     }
+
 }
 
 //-----------------------------------------------------------------------------
