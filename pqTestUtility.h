@@ -126,12 +126,15 @@ public:
   /// give a filename convert from one of the data directories
   QString convertFromDataDirectory(const QString& file);
 
+  const QIODevice* getFile(){ return this->File;};
+
 public slots:
   bool playTests(const QString& filename);
   void openPlayerDialog();
 
   void stopTests();
   void stopRecords(int value);
+  void pauseRecords(bool value);
 
   void onRecordStopped();
 

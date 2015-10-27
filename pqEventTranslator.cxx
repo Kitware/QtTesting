@@ -63,9 +63,11 @@ public:
     setAttribute(Qt::WA_NoSystemBackground);
     setAttribute(Qt::WA_TransparentForMouseEvents);
     this->Valid = false;
+    this->GlWidget = false;
   }
 
   bool Valid;
+  bool GlWidget;
 protected:
   void paintEvent(QPaintEvent *) {
     QPainter p(this);
@@ -192,11 +194,19 @@ void pqEventTranslator::addWidgetEventTranslator(pqWidgetEventTranslator* Transl
     this->Implementation->Translators.push_front(Translator);
     Translator->setParent(this);
 
+    // Legacy Connection, for translator not using event types
     QObject::connect(
       Translator,
       SIGNAL(recordEvent(QObject*, const QString&, const QString&)),
       this,
       SLOT(onRecordEvent(QObject*, const QString&, const QString&)));
+
+    // Connect record event
+    QObject::connect(
+      Translator,
+      SIGNAL(recordEvent(int, QObject*, const QString&, const QString&)),
+      this,
+      SLOT(onRecordEvent(int, QObject*, const QString&, const QString&)));
     }
 }
 
@@ -312,31 +322,88 @@ bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
     // Checking mode
     if (widget != NULL && this->Implementation->Checking)
       {
+
+      // In Gl Case, parentless widget is not transparent to mouse event
+      // The event is  applied to the overlayed widget
+      if (this->Implementation->CheckOverlay->GlWidget &&
+           widget == this->Implementation->CheckOverlay &&
+           Event->type() == QEvent::MouseButtonRelease)
+        {
+        widget = this->Implementation->CheckOverlayWidgetOn;
+        }
+
       // Ignore object if specified
-      if(this->Implementation->IgnoredObjects.contains(Object))
+      if(this->Implementation->IgnoredObjects.contains(widget))
         {
         return false;
         }
 
       // Recover user meta propperty
-      const QMetaProperty metaProp = Object->metaObject()->userProperty();
+      const QMetaProperty metaProp = widget->metaObject()->userProperty();
 
       // Mouse Move on a non-previously overlayed widget
       if (Event->type() == QEvent::MouseMove
           && this->Implementation->CheckOverlayWidgetOn != widget)
         {
+
+        // Check for any valid translator
+        bool validTranslator = false;
+        for(int i = 0; i != this->Implementation->Translators.size(); ++i)
+          {
+          if(this->Implementation->Translators[i]->canTranslateCheckEvent(widget))
+            {
+            validTranslator = true;
+            }
+          }
+
+        // Draw overlay
         if (widget->parentWidget() != NULL)
           {
-          // Draw overlay
+          // Check if widget is glWidget
+          this->Implementation->CheckOverlay->GlWidget = pqEventTranslator::isQVTKMetaObject(widget->metaObject());
 
-          // Set the validity of the overlay
-          this->Implementation->CheckOverlay->Valid = metaProp.isValid();
+          // Check if widget is parent to gl widget
+          QList<QWidget *> children = widget->findChildren<QWidget *>();
+          foreach(QWidget * child, children)
+            {
+            if (pqEventTranslator::isQVTKMetaObject(child->metaObject()))
+              {
+              // Ignore widget containing a Gl widget as a child
+              this->ignoreObject(widget);
+              return false;
+              }
+            }
 
-          // Set parent of the overlay to be parent of the overlayed widget
-          this->Implementation->CheckOverlay->setParent(qobject_cast<QWidget*>(widget->parent()));
+          // Set the validity of the overlay, via metaProp or valid translator
+          this->Implementation->CheckOverlay->Valid = metaProp.isValid() || validTranslator;
 
-          // Set overlay geometry to be the same o as oerlayed widget
-          this->Implementation->CheckOverlay->setGeometry(widget->geometry());
+          if (this->Implementation->CheckOverlay->GlWidget)
+            {
+            // Cannot draw QPainter directive in openGl context, bust use another context, aka another window
+            this->Implementation->CheckOverlay->setWindowFlags(Qt::ToolTip | Qt::FramelessWindowHint);
+            //this->Implementation->CheckOverlay->setWindowFlags(Qt::Tool | Qt::FramelessWindowHint); //Tool generate avatar
+            this->Implementation->CheckOverlay->setAttribute(Qt::WA_NoSystemBackground, true);
+            this->Implementation->CheckOverlay->setAttribute(Qt::WA_TranslucentBackground, true);
+            this->Implementation->CheckOverlay->setAttribute(Qt::WA_PaintOnScreen, true);
+            this->Implementation->CheckOverlay->setAttribute(Qt::WA_TransparentForMouseEvents, true);
+
+            this->Implementation->CheckOverlay->move(widget->mapToGlobal(QPoint(0,0)));
+            this->Implementation->CheckOverlay->resize(widget->size());
+            }
+          else
+            {
+            // Restore window flags
+            this->Implementation->CheckOverlay->setWindowFlags(Qt::Widget);
+            this->Implementation->CheckOverlay->setAttribute(Qt::WA_NoSystemBackground, false);
+            this->Implementation->CheckOverlay->setAttribute(Qt::WA_TranslucentBackground, false);
+            this->Implementation->CheckOverlay->setAttribute(Qt::WA_PaintOnScreen, false);
+
+            // Set parent of the overlay to be parent of the overlayed widget
+            this->Implementation->CheckOverlay->setParent(qobject_cast<QWidget*>(widget->parent()));
+
+            // Set overlay geometry to be the same o as oerlayed widget
+            this->Implementation->CheckOverlay->setGeometry(widget->geometry());
+            }
 
           // Register and show overlay
           this->Implementation->CheckOverlayWidgetOn = widget;
@@ -364,13 +431,36 @@ bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
         if(Event->type() == QEvent::Resize)
           {
           // Set overlay geometry
-          this->Implementation->CheckOverlay->setGeometry(widget->geometry());
+          if (this->Implementation->CheckOverlay->GlWidget)
+            {
+
+            this->Implementation->CheckOverlay->move(widget->mapToGlobal(QPoint(0,0)));
+            this->Implementation->CheckOverlay->resize(widget->size());
+            }
+          else
+            {
+            this->Implementation->CheckOverlay->setGeometry(widget->geometry());
+            }
           }
         }
 
       // Mouse button release -> Check Event
       if (Event->type() == QEvent::MouseButtonRelease)
         {
+        // Check Translators
+        for(int i = 0; i != this->Implementation->Translators.size(); ++i)
+          {
+          bool error = false;
+          if(this->Implementation->Translators[i]->translateCheckEvent(widget, error))
+            {
+            if(error)
+              {
+              qWarning() << "Error translating a check event for object " << widget;
+              }
+            return true;
+            }
+          }
+
         // Check meta prop validity
         if (metaProp.isValid())
           {
@@ -378,13 +468,13 @@ bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
           QString propName = metaProp.name();
 
           // Record check event
-          onRecordEvent(pqEventTypes::CHECK_EVENT, Object, propName, Object->property(propName.toAscii().data()).toString());
+          onRecordEvent(pqEventTypes::CHECK_EVENT, widget, propName, widget->property(propName.toAscii().data()).toString());
           return true;
           }
         else
           {
           // Inform user trying to check uncheckable widget
-          qWarning() << "Error checking an event for object, widget type not supported:" << Object->metaObject()->className();
+          qWarning() << "Error checking an event for object, widget type not supported:" << widget->metaObject()->className();
           }
         }
       // Block all input events, so the UI is static but still drawn.
@@ -454,6 +544,21 @@ void pqEventTranslator::onRecordEvent(int eventType,
     }
   // Record the event
   emit recordEvent(eventType, name, Command, Arguments);
+}
+
+// ----------------------------------------------------------------------------
+bool pqEventTranslator::isQVTKMetaObject(const QMetaObject* metaObject)
+{
+  if (strcmp(metaObject->className(), "QVTKWidget") == 0)
+    {
+    return true;
+    }
+  if (metaObject = metaObject->superClass())
+    {
+    // Recursive go up the inheritance
+    return isQVTKMetaObject(metaObject);
+    }
+  return false;
 }
 
 // ----------------------------------------------------------------------------

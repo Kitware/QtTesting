@@ -193,6 +193,12 @@ void pqTestUtility::stopRecords(int value)
 }
 
 //-----------------------------------------------------------------------------
+void pqTestUtility::pauseRecords(bool value)
+{
+  this->Recorder.pause(value);
+}
+
+//-----------------------------------------------------------------------------
 void pqTestUtility::onRecordStopped()
 {
   QTemporaryFile* file = qobject_cast<QTemporaryFile*>(this->File);

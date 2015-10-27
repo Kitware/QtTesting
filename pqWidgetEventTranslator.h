@@ -57,6 +57,16 @@ public:
   to "true" if there were any problems. */
   virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error) = 0;
 
+  /** An optionel tracnslateCheckEvent, so event during check can be trasnlated if necessary
+  returning "true" if they handled the event, and setting Error
+  to "true" if there were any problems. */
+  virtual bool translateCheckEvent(QObject* object, bool& error){return false;};
+
+  /** Return true is translator can translate
+  check event for given QObject **/
+  virtual bool canTranslateCheckEvent(QObject* object){return false;};
+
+
 signals:
   /// Derivatives should emit this signal whenever they wish to record a high-level event
   void recordEvent(int eventType, QObject* Object, const QString& Command, const QString& Arguments);
