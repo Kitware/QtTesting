@@ -92,7 +92,15 @@ public slots:
 
   void start();
   void stop(int value);
+
+  // Pause the recording if value is False
+  // Keep recording if value is True
+  void unpause(bool value);
+
+  // Pause the recording if value is True
+  // Keep recording if value is False
   void pause(bool value);
+
   void check(bool value);
 
 protected:

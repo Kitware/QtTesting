@@ -105,7 +105,7 @@ pqRecordEventsDialog::pqRecordEventsDialog(pqEventRecorder* recorder,
   QObject::connect(this->Implementation->Ui.recordPauseButton,
                    SIGNAL(toggled(bool)),
                    this->Implementation->Recorder,
-                   SLOT(pause(bool)));
+                   SLOT(unpause(bool)));
 
   QObject::connect(this->Implementation->Recorder,
                    SIGNAL(started()),

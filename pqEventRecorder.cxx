@@ -219,8 +219,14 @@ void pqEventRecorder::stop(int value)
 }
 
 // ----------------------------------------------------------------------------
+void pqEventRecorder::unpause(bool value)
+{
+  this->pause(!value);
+}
+
+// ----------------------------------------------------------------------------
 void pqEventRecorder::pause(bool value)
 {
-  this->ActiveTranslator->record(value);
+  this->ActiveTranslator->record(!value);
   emit this->paused(value);
 }
