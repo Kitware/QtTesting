@@ -56,7 +56,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QPainter>
 #include <QMetaProperty>
 
-//TODO pqVTKWidget not display the rectangle correctly.
+#include <iostream>
+
 class pqCheckEventOverlay : public QWidget {
 public:
   pqCheckEventOverlay(QWidget * parent = 0) : QWidget(parent) {
@@ -68,11 +69,14 @@ public:
 
   bool Valid;
   bool GlWidget;
+  static const int OVERLAY_MARGIN = 2;
+  static const int OVERLAY_PEN_WIDTH = 5;
+
 protected:
   void paintEvent(QPaintEvent *) {
     QPainter p(this);
     // Draw red on invalid widget
-    QPen pen(Qt::red, 5);
+    QPen pen(Qt::red, OVERLAY_PEN_WIDTH);
     if (this->Valid)
       {
       // Draw green on valid widget
@@ -80,7 +84,7 @@ protected:
       }
     p.setPen(pen);
     // -2 for the line width
-    p.drawRect(0, 0, width()-2, height()-2);
+    p.drawRect(0, 0, width()-OVERLAY_MARGIN, height()-OVERLAY_MARGIN);
   }
 };
 
@@ -96,8 +100,7 @@ struct pqEventTranslator::pqImplementation
 
   // Create overlay and hide it
   this->CheckOverlay = new pqCheckEventOverlay(NULL);
-  this->CheckOverlay->hide();
-  this->CheckOverlayWidgetOn = NULL;
+  this->hideOverlay();
   }
 
   ~pqImplementation()
@@ -109,6 +112,13 @@ struct pqEventTranslator::pqImplementation
   delete this->CheckOverlay;
   this->CheckOverlayWidgetOn = NULL;
   }
+
+  void hideOverlay()
+    {
+    this->CheckOverlay->hide();
+    this->CheckOverlay->setParent(NULL);
+    this->CheckOverlayWidgetOn = NULL;
+    }
 
   pqEventComment* EventComment;
   /// Stores the working set of widget translators
@@ -357,6 +367,7 @@ bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
           }
 
         // Draw overlay
+        this->Implementation->hideOverlay();
         if (widget->parentWidget() != NULL)
           {
           // Check if widget is glWidget
@@ -374,21 +385,31 @@ bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
               }
             }
 
+          // Check widget size is valid, if not do not draw overlay
+          // Widget can still be clicked and checked
+          int sizeThreshold = pqCheckEventOverlay::OVERLAY_MARGIN + 2*pqCheckEventOverlay::OVERLAY_PEN_WIDTH;
+          if (widget->width() < sizeThreshold || widget->height() < sizeThreshold)
+            {
+              return false;
+            }
+
           // Set the validity of the overlay, via metaProp or valid translator
           this->Implementation->CheckOverlay->Valid = metaProp.isValid() || validTranslator;
 
           if (this->Implementation->CheckOverlay->GlWidget)
             {
+            this->Implementation->CheckOverlay->setParent(NULL);
             // Cannot draw QPainter directive in openGl context, bust use another context, aka another window
-            this->Implementation->CheckOverlay->setWindowFlags(Qt::ToolTip | Qt::FramelessWindowHint);
-            //this->Implementation->CheckOverlay->setWindowFlags(Qt::Tool | Qt::FramelessWindowHint); //Tool generate avatar
+            //this->Implementation->CheckOverlay->setWindowFlags(Qt::ToolTip | Qt::FramelessWindowHint); // ToolTip is always on top
+            this->Implementation->CheckOverlay->setWindowFlags(Qt::Tool | Qt::FramelessWindowHint); //Tool generate avatar
             this->Implementation->CheckOverlay->setAttribute(Qt::WA_NoSystemBackground, true);
             this->Implementation->CheckOverlay->setAttribute(Qt::WA_TranslucentBackground, true);
             this->Implementation->CheckOverlay->setAttribute(Qt::WA_PaintOnScreen, true);
             this->Implementation->CheckOverlay->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
-            this->Implementation->CheckOverlay->move(widget->mapToGlobal(QPoint(0,0)));
+            // Resize and move widget
             this->Implementation->CheckOverlay->resize(widget->size());
+            this->Implementation->CheckOverlay->move(widget->mapToGlobal(QPoint(0,0)));
             }
           else
             {
@@ -405,16 +426,9 @@ bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
             this->Implementation->CheckOverlay->setGeometry(widget->geometry());
             }
 
-          // Register and show overlay
-          this->Implementation->CheckOverlayWidgetOn = widget;
+          // Show and Register overlay
           this->Implementation->CheckOverlay->show();
-          }
-        else
-          {
-          // If the overlayed widget has no parent, do not draw.
-          // eg. MainWindow
-          this->Implementation->CheckOverlay->hide();
-          this->Implementation->CheckOverlayWidgetOn = NULL;
+          this->Implementation->CheckOverlayWidgetOn = widget;
           }
         }
       // event on currently overlayed widget
@@ -422,8 +436,7 @@ bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
         {
         /*      if (Event->type() == QEvent::Leave) //TODO: Bug when leaving the widget, the overlay is still visible
                 {
-                this->Implementation->CheckOverlay->hide();
-                this->Implementation->CheckOverlayWidgetOn = NULL;
+                this->Implementation->hideOverlay();
                 }
                 else */
 
@@ -569,8 +582,7 @@ void pqEventTranslator::check(bool value)
   // Hide avoerlay when not checking
   if(!value)
     {
-    this->Implementation->CheckOverlay->hide();
-    this->Implementation->CheckOverlayWidgetOn = NULL;
+    this->Implementation->hideOverlay();
     }
 }
 
@@ -582,8 +594,7 @@ void pqEventTranslator::record(bool value)
   // Hide avoerlay when not recording
   if(!value)
     {
-    this->Implementation->CheckOverlay->hide();
-    this->Implementation->CheckOverlayWidgetOn = NULL;
+    this->Implementation->hideOverlay();
     }
 }
 
