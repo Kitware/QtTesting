@@ -1,7 +1,7 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pqTreeViewEventTranslator.h
+   Module:    pqAbstractItemViewEventPlayerBase.h
 
    Copyright (c) 2005,2006 Sandia Corporation, Kitware Inc.
    All rights reserved.
@@ -29,38 +29,38 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========================================================================*/
-#ifndef __pqTreeViewEventTranslator_h
-#define __pqTreeViewEventTranslator_h
+#ifndef __pqAbstractItemViewEventPlayerBase_h
+#define __pqAbstractItemViewEventPlayerBase_h
 
-#include "pqAbstractItemViewEventTranslatorBase.h"
+#include "pqWidgetEventPlayer.h"
+#include <QModelIndex>
 
-/// Event recorder for QTreeView. Records the toggling of the check states for
-/// tree widget items. The recorded state can be played back using
-/// pqTreeViewEventPlayer.
-class QTTESTING_EXPORT pqTreeViewEventTranslator : public pqAbstractItemViewEventTranslatorBase
+class QAbstractItemView;
+
+/// pqAbstractItemViewEventPlayerBase is a player for QAbstractItemViewWidget. Plays back the state
+/// recorded using pQAbstractItemViewEventTranslatorBase.
+class QTTESTING_EXPORT pqAbstractItemViewEventPlayerBase : public pqWidgetEventPlayer
 {
   Q_OBJECT
-  typedef pqAbstractItemViewEventTranslatorBase Superclass;
+  typedef pqWidgetEventPlayer Superclass;
 public:
-  pqTreeViewEventTranslator(QObject* parent=0);
-  ~pqTreeViewEventTranslator();
+  pqAbstractItemViewEventPlayerBase(QObject* parent=0);
+  ~pqAbstractItemViewEventPlayerBase()=0;
 
-  /// Handle QTree speicific events
-  virtual bool translateEvent(QObject* Object, QEvent* Event, int eventType, bool& Error);
+  /// Play an event on a QAbstractViewItem
+  bool playEvent(QObject* object, const QString& command,
+                 const QString& arguments, int eventType, bool& error);
 
-  /// Connect QTree signals to this class slots
-  virtual void connectWidgetToSlots(QAbstractItemView* abstractItemView);
+protected:
+  /// Get index using a previously recorded string
+  static QModelIndex GetIndex(const QString& str_index, QAbstractItemView* abstractItemView, bool &error);
 
-protected slots:
-  void onExpanded(const QModelIndex&);
-  void onCollapsed(const QModelIndex&);
-
-  /// Compute a visual rectangle for the item and signal it
-  void onEnteredCheck(const QModelIndex&);
+  /// Get data string using a previously recorded string
+  static QString GetDataString(const QString& str_index, bool &error);
 
 private:
-  pqTreeViewEventTranslator(const pqTreeViewEventTranslator&); // Not implemented.
-  void operator=(const pqTreeViewEventTranslator&); // Not implemented.
+  pqAbstractItemViewEventPlayerBase(const pqAbstractItemViewEventPlayerBase&); // Not implemented.
+  void operator=(const pqAbstractItemViewEventPlayerBase&); // Not implemented.
 };
 
 #endif

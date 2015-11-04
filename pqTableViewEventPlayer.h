@@ -1,7 +1,7 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pqTreeViewEventTranslator.h
+   Module:    pqTableViewEventPlayer.h
 
    Copyright (c) 2005,2006 Sandia Corporation, Kitware Inc.
    All rights reserved.
@@ -29,38 +29,27 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========================================================================*/
-#ifndef __pqTreeViewEventTranslator_h
-#define __pqTreeViewEventTranslator_h
+#ifndef __pqTableViewEventPlayer_h
+#define __pqTableViewEventPlayer_h
 
-#include "pqAbstractItemViewEventTranslatorBase.h"
+#include "pqAbstractItemViewEventPlayerBase.h"
 
-/// Event recorder for QTreeView. Records the toggling of the check states for
-/// tree widget items. The recorded state can be played back using
-/// pqTreeViewEventPlayer.
-class QTTESTING_EXPORT pqTreeViewEventTranslator : public pqAbstractItemViewEventTranslatorBase
+/// pqTableViewEventPlayer is a player for QTableWidget. Plays back the state
+/// recorded using pqTableViewEventTranslator.
+class QTTESTING_EXPORT pqTableViewEventPlayer : public pqAbstractItemViewEventPlayerBase
 {
   Q_OBJECT
-  typedef pqAbstractItemViewEventTranslatorBase Superclass;
+  typedef pqAbstractItemViewEventPlayerBase Superclass;
 public:
-  pqTreeViewEventTranslator(QObject* parent=0);
-  ~pqTreeViewEventTranslator();
+  pqTableViewEventPlayer(QObject* parent=0);
+  ~pqTableViewEventPlayer();
 
-  /// Handle QTree speicific events
-  virtual bool translateEvent(QObject* Object, QEvent* Event, int eventType, bool& Error);
-
-  /// Connect QTree signals to this class slots
-  virtual void connectWidgetToSlots(QAbstractItemView* abstractItemView);
-
-protected slots:
-  void onExpanded(const QModelIndex&);
-  void onCollapsed(const QModelIndex&);
-
-  /// Compute a visual rectangle for the item and signal it
-  void onEnteredCheck(const QModelIndex&);
+  bool playEvent(QObject* object, const QString& command,
+                 const QString& arguments, int eventType, bool& error);
 
 private:
-  pqTreeViewEventTranslator(const pqTreeViewEventTranslator&); // Not implemented.
-  void operator=(const pqTreeViewEventTranslator&); // Not implemented.
+  pqTableViewEventPlayer(const pqTableViewEventPlayer&); // Not implemented.
+  void operator=(const pqTableViewEventPlayer&); // Not implemented.
 };
 
 #endif

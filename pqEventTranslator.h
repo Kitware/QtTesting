@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "QtTestingExport.h"
 #include <QObject>
+#include <QRect>
 
 class pqEventComment;
 class pqTestUtility;
@@ -115,6 +116,7 @@ signals:
 private slots:
   void onRecordEvent(int eventType, QObject* Object, const QString& Command, const QString& Arguments);
   void onRecordEvent(QObject* Object, const QString& Command, const QString& Arguments);
+  void setOverlayGeometry(const QRect& geometry, bool specific = true);
 
 private:
   pqEventTranslator(const pqEventTranslator&);

@@ -40,8 +40,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QPushButton>
 #include <QToolButton>
 
-#include <iostream>
-
 pqAbstractButtonEventTranslator::pqAbstractButtonEventTranslator(QObject* p)
   : pqWidgetEventTranslator(p)
 {

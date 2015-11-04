@@ -32,20 +32,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef __pqTreeViewEventPlayer_h 
 #define __pqTreeViewEventPlayer_h
 
-#include "pqWidgetEventPlayer.h"
+#include "pqAbstractItemViewEventPlayerBase.h"
 
 /// pqTreeViewEventPlayer is a player for QTreeWidget. Plays back the state
 /// recorded using pqTreeViewEventTranslator.
-class QTTESTING_EXPORT pqTreeViewEventPlayer : public pqWidgetEventPlayer
+class QTTESTING_EXPORT pqTreeViewEventPlayer : public pqAbstractItemViewEventPlayerBase
 {
   Q_OBJECT
-  typedef pqWidgetEventPlayer Superclass;
+  typedef pqAbstractItemViewEventPlayerBase Superclass;
 public:
   pqTreeViewEventPlayer(QObject* parent=0);
   ~pqTreeViewEventPlayer();
 
-  bool playEvent(QObject* object, const QString& command, const QString&
-    arguments, bool& error);
+  bool playEvent(QObject* object, const QString& command, 
+                 const QString& arguments, int eventType, bool& error);
 
 private:
   pqTreeViewEventPlayer(const pqTreeViewEventPlayer&); // Not implemented.

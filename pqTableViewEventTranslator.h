@@ -1,7 +1,7 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pqTreeViewEventTranslator.h
+   Module:    pqTableViewEventTranslator.h
 
    Copyright (c) 2005,2006 Sandia Corporation, Kitware Inc.
    All rights reserved.
@@ -29,38 +29,32 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========================================================================*/
-#ifndef __pqTreeViewEventTranslator_h
-#define __pqTreeViewEventTranslator_h
+#ifndef __pqTableViewEventTranslator_h
+#define __pqTableViewEventTranslator_h
 
 #include "pqAbstractItemViewEventTranslatorBase.h"
 
-/// Event recorder for QTreeView. Records the toggling of the check states for
-/// tree widget items. The recorded state can be played back using
-/// pqTreeViewEventPlayer.
-class QTTESTING_EXPORT pqTreeViewEventTranslator : public pqAbstractItemViewEventTranslatorBase
+/// Event recorder for QTableView. Records the toggling of the check states for
+/// Table widget items. The recorded state can be played back using
+/// pqTableViewEventPlayer.
+class QTTESTING_EXPORT pqTableViewEventTranslator : public pqAbstractItemViewEventTranslatorBase
 {
   Q_OBJECT
   typedef pqAbstractItemViewEventTranslatorBase Superclass;
 public:
-  pqTreeViewEventTranslator(QObject* parent=0);
-  ~pqTreeViewEventTranslator();
+  pqTableViewEventTranslator(QObject* parent=0);
+  ~pqTableViewEventTranslator();
 
-  /// Handle QTree speicific events
-  virtual bool translateEvent(QObject* Object, QEvent* Event, int eventType, bool& Error);
-
-  /// Connect QTree signals to this class slots
-  virtual void connectWidgetToSlots(QAbstractItemView* abstractItemView);
+  /// Handle QTable speicific events;
+  virtual bool translateEvent(QObject* object, QEvent* event, int eventType, bool& error);
 
 protected slots:
-  void onExpanded(const QModelIndex&);
-  void onCollapsed(const QModelIndex&);
-
   /// Compute a visual rectangle for the item and signal it
   void onEnteredCheck(const QModelIndex&);
 
 private:
-  pqTreeViewEventTranslator(const pqTreeViewEventTranslator&); // Not implemented.
-  void operator=(const pqTreeViewEventTranslator&); // Not implemented.
+  pqTableViewEventTranslator(const pqTableViewEventTranslator&); // Not implemented.
+  void operator=(const pqTableViewEventTranslator&); // Not implemented.
 };
 
 #endif

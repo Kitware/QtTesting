@@ -109,20 +109,22 @@ GET_DIRECTORY_PROPERTY(include_dirs_tmp INCLUDE_DIRECTORIES)
 SET_DIRECTORY_PROPERTIES(PROPERTIES INCLUDE_DIRECTORIES "${MOC_INCLUDE_DIRS}")
 
 SET(MOC_SRCS
-  pq3DViewEventTranslator.h
   pq3DViewEventPlayer.h
+  pq3DViewEventTranslator.h
   pqAbstractActivateEventPlayer.h
-  pqAbstractButtonEventTranslator.h
   pqAbstractBooleanEventPlayer.h
+  pqAbstractButtonEventTranslator.h
   pqAbstractDoubleEventPlayer.h
   pqAbstractIntEventPlayer.h
   pqAbstractItemViewEventPlayer.h
+  pqAbstractItemViewEventPlayerBase.h
   pqAbstractItemViewEventTranslator.h
+  pqAbstractItemViewEventTranslatorBase.h
   pqAbstractMiscellaneousEventPlayer.h
   pqAbstractSliderEventTranslator.h
   pqAbstractStringEventPlayer.h
-  pqBasicWidgetEventTranslator.h
   pqBasicWidgetEventPlayer.h
+  pqBasicWidgetEventTranslator.h
   pqComboBoxEventTranslator.h
   pqCommentEventPlayer.h
   pqDoubleSpinBoxEventTranslator.h
@@ -130,6 +132,7 @@ SET(MOC_SRCS
   pqEventDispatcher.h
   pqEventObserver.h
   pqEventPlayer.h
+  pqEventRecorder.h
   pqEventSource.h
   pqEventTranslator.h
   pqLineEditEventTranslator.h
@@ -137,19 +140,20 @@ SET(MOC_SRCS
   pqNativeFileDialogEventPlayer.h
   pqNativeFileDialogEventTranslator.h
   pqPlayBackEventsDialog.h
-  pqEventRecorder.h
   pqRecordEventsDialog.h
   pqSpinBoxEventTranslator.h
   pqStdoutEventObserver.h
   pqTabBarEventPlayer.h
   pqTabBarEventTranslator.h
+  pqTableViewEventPlayer.h
+  pqTableViewEventTranslator.h
   pqTestUtility.h
   pqThreadedEventSource.h
   pqTimer.h
   pqTreeViewEventPlayer.h
   pqTreeViewEventTranslator.h
-  pqWidgetEventTranslator.h
   pqWidgetEventPlayer.h
+  pqWidgetEventTranslator.h
 )
 
 IF(QtTesting_QT_VERSION VERSION_GREATER "4")
@@ -197,7 +201,9 @@ SET(QtTesting_SOURCES
   pqAbstractDoubleEventPlayer.cxx
   pqAbstractIntEventPlayer.cxx
   pqAbstractItemViewEventPlayer.cxx
+  pqAbstractItemViewEventPlayerBase.cxx
   pqAbstractItemViewEventTranslator.cxx
+  pqAbstractItemViewEventTranslatorBase.cxx
   pqAbstractMiscellaneousEventPlayer.cxx
   pqAbstractSliderEventTranslator.cxx
   pqAbstractStringEventPlayer.cxx
@@ -210,8 +216,8 @@ SET(QtTesting_SOURCES
   pqEventDispatcher.cxx
   pqEventObserver.cxx
   pqEventPlayer.cxx
-  pqEventTranslator.cxx
   pqEventRecorder.cxx
+  pqEventTranslator.cxx
   pqLineEditEventTranslator.cxx
   pqMenuEventTranslator.cxx
   pqNativeFileDialogEventPlayer.cxx
@@ -223,25 +229,31 @@ SET(QtTesting_SOURCES
   pqStdoutEventObserver.cxx
   pqTabBarEventPlayer.cxx
   pqTabBarEventTranslator.cxx
+  pqTableViewEventPlayer.cxx
+  pqTableViewEventTranslator.cxx
   pqTestUtility.cxx
   pqThreadedEventSource.cxx
   pqTimer.cxx
   pqTreeViewEventPlayer.cxx
   pqTreeViewEventTranslator.cxx
   pqWidgetEventPlayer.cxx
+  pqWidgetEventTranslator.cxx
 )
 
 SET(QtTesting_DEVEL_HEADERS
+  QtTestingExport.h
   pq3DViewEventPlayer.h
   pq3DViewEventTranslator.h
   pqAbstractActivateEventPlayer.h
-  pqAbstractMiscellaneousEventPlayer.h
-  pqAbstractDoubleEventPlayer.h
   pqAbstractBooleanEventPlayer.h
   pqAbstractButtonEventTranslator.h
+  pqAbstractDoubleEventPlayer.h
   pqAbstractIntEventPlayer.h
   pqAbstractItemViewEventPlayer.h
+  pqAbstractItemViewEventPlayerBase.h
   pqAbstractItemViewEventTranslator.h
+  pqAbstractItemViewEventTranslatorBase.h
+  pqAbstractMiscellaneousEventPlayer.h
   pqAbstractSliderEventTranslator.h
   pqAbstractStringEventPlayer.h
   pqBasicWidgetEventPlayer.h
@@ -253,6 +265,7 @@ SET(QtTesting_DEVEL_HEADERS
   pqEventDispatcher.h
   pqEventObserver.h
   pqEventPlayer.h
+  pqEventRecorder.h
   pqEventSource.h
   pqEventTranslator.h
   pqEventTypes.h
@@ -262,12 +275,13 @@ SET(QtTesting_DEVEL_HEADERS
   pqNativeFileDialogEventTranslator.h
   pqObjectNaming.h
   pqPlayBackEventsDialog.h
-  pqEventRecorder.h
   pqRecordEventsDialog.h
   pqSpinBoxEventTranslator.h
   pqStdoutEventObserver.h
   pqTabBarEventPlayer.h
   pqTabBarEventTranslator.h
+  pqTableViewEventPlayer.h
+  pqTableViewEventTranslator.h
   pqTestUtility.h
   pqThreadedEventSource.h
   pqTimer.h
@@ -275,7 +289,6 @@ SET(QtTesting_DEVEL_HEADERS
   pqTreeViewEventTranslator.h
   pqWidgetEventPlayer.h
   pqWidgetEventTranslator.h
-  QtTestingExport.h
   ${QtTesting_BINARY_DIR}/QtTestingConfigure.h
 )
 

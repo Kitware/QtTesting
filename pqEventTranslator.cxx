@@ -48,6 +48,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqSpinBoxEventTranslator.h"
 #include "pqTabBarEventTranslator.h"
 #include "pqTreeViewEventTranslator.h"
+#include "pqTableViewEventTranslator.h"
 
 #include <QCoreApplication>
 #include <QtDebug>
@@ -56,8 +57,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QPainter>
 #include <QMetaProperty>
 
-#include <iostream>
-
 class pqCheckEventOverlay : public QWidget {
 public:
   pqCheckEventOverlay(QWidget * parent = 0) : QWidget(parent) {
@@ -65,10 +64,12 @@ public:
     setAttribute(Qt::WA_TransparentForMouseEvents);
     this->Valid = false;
     this->GlWidget = false;
+    this->Specific = false;
   }
 
   bool Valid;
   bool GlWidget;
+  bool Specific;
   static const int OVERLAY_MARGIN = 2;
   static const int OVERLAY_PEN_WIDTH = 5;
 
@@ -76,7 +77,7 @@ protected:
   void paintEvent(QPaintEvent *) {
     QPainter p(this);
     // Draw red on invalid widget
-    QPen pen(Qt::red, OVERLAY_PEN_WIDTH);
+    QPen pen(Qt::red, pqCheckEventOverlay::OVERLAY_PEN_WIDTH);
     if (this->Valid)
       {
       // Draw green on valid widget
@@ -84,7 +85,7 @@ protected:
       }
     p.setPen(pen);
     // -2 for the line width
-    p.drawRect(0, 0, width()-OVERLAY_MARGIN, height()-OVERLAY_MARGIN);
+    p.drawRect(0, 0, width()-pqCheckEventOverlay::OVERLAY_MARGIN, height()-pqCheckEventOverlay::OVERLAY_MARGIN);
   }
 };
 
@@ -173,6 +174,7 @@ void pqEventTranslator::stop()
 // ----------------------------------------------------------------------------
 void pqEventTranslator::addDefaultWidgetEventTranslators(pqTestUtility* util)
 {
+  // Add generalistic translator first, then specific, in order for this to work
   addWidgetEventTranslator(new pqBasicWidgetEventTranslator());
   addWidgetEventTranslator(new pqAbstractButtonEventTranslator());
   addWidgetEventTranslator(new pqAbstractItemViewEventTranslator());
@@ -184,6 +186,7 @@ void pqEventTranslator::addDefaultWidgetEventTranslators(pqTestUtility* util)
   addWidgetEventTranslator(new pqSpinBoxEventTranslator());
   addWidgetEventTranslator(new pqTabBarEventTranslator());
   addWidgetEventTranslator(new pqTreeViewEventTranslator());
+  addWidgetEventTranslator(new pqTableViewEventTranslator());
   addWidgetEventTranslator(new pq3DViewEventTranslator("QGLWidget"));
   addWidgetEventTranslator(new pqNativeFileDialogEventTranslator(util));
 }
@@ -217,6 +220,13 @@ void pqEventTranslator::addWidgetEventTranslator(pqWidgetEventTranslator* Transl
       SIGNAL(recordEvent(int, QObject*, const QString&, const QString&)),
       this,
       SLOT(onRecordEvent(int, QObject*, const QString&, const QString&)));
+
+    // Connect resize specific overlay
+    QObject::connect(
+      Translator,
+      SIGNAL(specificOverlay(const QRect&)),
+      this,
+      SLOT(setOverlayGeometry(const QRect&)));
     }
 }
 
@@ -289,28 +299,31 @@ void pqEventTranslator::ignoreObject(QObject* Object)
 }
 
 // ----------------------------------------------------------------------------
-bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
+bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
 {
   if (this->Implementation->Recording)
     {
 #if QT_VERSION >= 0x050000
-    if(Object->isWindowType())
+    if(object->isWindowType())
       {
       return false;
       }
 #endif
 
-    QWidget* widget = qobject_cast<QWidget*>(Object);
+    QWidget* widget = qobject_cast<QWidget*>(object);
 
     // mouse events are propagated to parents
     // our event translators/players don't quite like that,
     // so lets consume those extra ones
-    if(Event->type() == QEvent::MouseButtonPress ||
-       Event->type() == QEvent::MouseButtonDblClick ||
-       Event->type() == QEvent::MouseButtonRelease)
+    if(event->type() == QEvent::MouseButtonPress ||
+       event->type() == QEvent::MouseButtonDblClick ||
+       event->type() == QEvent::MouseMove ||
+       event->type() == QEvent::Enter ||
+       event->type() == QEvent::Leave ||
+       event->type() == QEvent::MouseButtonRelease)
       {
       if(!this->Implementation->MouseParents.empty() &&
-         this->Implementation->MouseParents.first() == Object)
+         this->Implementation->MouseParents.first() == object)
         {
         // right on track
         this->Implementation->MouseParents.removeFirst();
@@ -332,14 +345,24 @@ bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
     // Checking mode
     if (widget != NULL && this->Implementation->Checking)
       {
-
       // In Gl Case, parentless widget is not transparent to mouse event
       // The event is  applied to the overlayed widget
       if (this->Implementation->CheckOverlay->GlWidget &&
            widget == this->Implementation->CheckOverlay &&
-           Event->type() == QEvent::MouseButtonRelease)
+           event->type() == QEvent::MouseButtonRelease)
         {
         widget = this->Implementation->CheckOverlayWidgetOn;
+        }
+
+      // Leaving the checkOverlay when a widget without grand parent
+      // then hiding overlay
+      if (this->Implementation->CheckOverlay == widget &&
+          !this->Implementation->CheckOverlay->Specific )
+        {
+        if (event->type() == QEvent::Leave)
+          {
+          this->Implementation->hideOverlay();
+          }
         }
 
       // Ignore object if specified
@@ -352,15 +375,16 @@ bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
       const QMetaProperty metaProp = widget->metaObject()->userProperty();
 
       // Mouse Move on a non-previously overlayed widget
-      if (Event->type() == QEvent::MouseMove
+      if (event->type() == QEvent::MouseMove
           && this->Implementation->CheckOverlayWidgetOn != widget)
         {
-
         // Check for any valid translator
         bool validTranslator = false;
+        bool error;
         for(int i = 0; i != this->Implementation->Translators.size(); ++i)
           {
-          if(this->Implementation->Translators[i]->canTranslateCheckEvent(widget))
+          // This will not record a check event, only check if a translator can record a check event
+          if(this->Implementation->Translators[i]->translateEvent(widget, event, pqEventTypes::CHECK_EVENT, error))
             {
             validTranslator = true;
             }
@@ -408,8 +432,9 @@ bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
             this->Implementation->CheckOverlay->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
             // Resize and move widget
-            this->Implementation->CheckOverlay->resize(widget->size());
-            this->Implementation->CheckOverlay->move(widget->mapToGlobal(QPoint(0,0)));
+            QRect geometry = widget->geometry();
+            geometry.moveTo(widget->mapToGlobal(QPoint(0,0)));
+            this->setOverlayGeometry(geometry, false);
             }
           else
             {
@@ -422,8 +447,8 @@ bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
             // Set parent of the overlay to be parent of the overlayed widget
             this->Implementation->CheckOverlay->setParent(qobject_cast<QWidget*>(widget->parent()));
 
-            // Set overlay geometry to be the same o as oerlayed widget
-            this->Implementation->CheckOverlay->setGeometry(widget->geometry());
+            // Set overlay geometry to be the same as overlayed widget
+            this->setOverlayGeometry(widget->geometry(), false);
             }
 
           // Show and Register overlay
@@ -431,40 +456,26 @@ bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
           this->Implementation->CheckOverlayWidgetOn = widget;
           }
         }
-      // event on currently overlayed widget
-      else if (this->Implementation->CheckOverlayWidgetOn == widget)
+      // Resize event
+      if(event->type() == QEvent::Resize)
         {
-        /*      if (Event->type() == QEvent::Leave) //TODO: Bug when leaving the widget, the overlay is still visible
-                {
-                this->Implementation->hideOverlay();
-                }
-                else */
-
-        // Resize event
-        if(Event->type() == QEvent::Resize)
+        // Set overlay geometry
+        QRect geometry = widget->geometry();
+        if (this->Implementation->CheckOverlay->GlWidget)
           {
-          // Set overlay geometry
-          if (this->Implementation->CheckOverlay->GlWidget)
-            {
-
-            this->Implementation->CheckOverlay->move(widget->mapToGlobal(QPoint(0,0)));
-            this->Implementation->CheckOverlay->resize(widget->size());
-            }
-          else
-            {
-            this->Implementation->CheckOverlay->setGeometry(widget->geometry());
-            }
+          geometry.moveTo(widget->mapToGlobal(QPoint(0,0)));
           }
+        this->setOverlayGeometry(geometry, false);
         }
 
       // Mouse button release -> Check Event
-      if (Event->type() == QEvent::MouseButtonRelease)
+      if (event->type() == QEvent::MouseButtonRelease)
         {
         // Check Translators
         for(int i = 0; i != this->Implementation->Translators.size(); ++i)
           {
           bool error = false;
-          if(this->Implementation->Translators[i]->translateCheckEvent(widget, error))
+          if(this->Implementation->Translators[i]->translateEvent(widget, event, pqEventTypes::CHECK_EVENT, error))
             {
             if(error)
               {
@@ -491,25 +502,23 @@ bool pqEventTranslator::eventFilter(QObject* Object, QEvent* Event)
           }
         }
       // Block all input events, so the UI is static but still drawn.
-      if (dynamic_cast<QInputEvent*>(Event) != NULL)
+      // Except for MouseMove
+      if (dynamic_cast<QInputEvent*>(event) != NULL && event->type() != QEvent::MouseMove)
         {
         return true;
         }
       }
     // Event Recording
-    else
+    for(int i = 0; i != this->Implementation->Translators.size(); ++i)
       {
-      for(int i = 0; i != this->Implementation->Translators.size(); ++i)
+      bool error = false;
+      if(this->Implementation->Translators[i]->translateEvent(object, event, pqEventTypes::EVENT, error))
         {
-        bool error = false;
-        if(this->Implementation->Translators[i]->translateEvent(Object, Event, error))
+        if(error)
           {
-          if(error)
-            {
-            qWarning() << "Error translating an event for object " << Object;
-            }
-          return false;
+          qWarning() << "Error translating an event for object " << object;
           }
+        return false;
         }
       }
     }
@@ -602,4 +611,14 @@ void pqEventTranslator::record(bool value)
 bool pqEventTranslator::isRecording()
 {
   return this->Implementation->Recording;
+}
+
+// ----------------------------------------------------------------------------
+void pqEventTranslator::setOverlayGeometry(const QRect& geometry, bool specific)
+{
+  if (this->Implementation->CheckOverlay != NULL)
+    {
+      this->Implementation->CheckOverlay->setGeometry(geometry);
+    }
+  this->Implementation->CheckOverlay->Specific = specific;
 }

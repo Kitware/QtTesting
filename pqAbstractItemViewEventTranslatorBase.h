@@ -1,7 +1,7 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pqTreeViewEventTranslator.h
+   Module:    pqAbstractItemViewEventTranslatorBase.h
 
    Copyright (c) 2005,2006 Sandia Corporation, Kitware Inc.
    All rights reserved.
@@ -29,38 +29,54 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========================================================================*/
-#ifndef __pqTreeViewEventTranslator_h
-#define __pqTreeViewEventTranslator_h
+#ifndef __pqAbstractItemViewEventTranslatorBase_h
+#define __pqAbstractItemViewEventTranslatorBase_h
 
-#include "pqAbstractItemViewEventTranslatorBase.h"
+#include "pqWidgetEventTranslator.h"
+#include <QPointer>
 
-/// Event recorder for QTreeView. Records the toggling of the check states for
+class QModelIndex;
+class QAbstractItemView;
+
+/// Event recorder for QAbstractItemView. Records the toggling of the check states for
 /// tree widget items. The recorded state can be played back using
 /// pqTreeViewEventPlayer.
-class QTTESTING_EXPORT pqTreeViewEventTranslator : public pqAbstractItemViewEventTranslatorBase
+class QTTESTING_EXPORT pqAbstractItemViewEventTranslatorBase : public pqWidgetEventTranslator
 {
   Q_OBJECT
-  typedef pqAbstractItemViewEventTranslatorBase Superclass;
+  typedef pqWidgetEventTranslator Superclass;
 public:
-  pqTreeViewEventTranslator(QObject* parent=0);
-  ~pqTreeViewEventTranslator();
+  pqAbstractItemViewEventTranslatorBase(QObject* parent=0);
+  ~pqAbstractItemViewEventTranslatorBase();
 
-  /// Handle QTree speicific events
+  /// Overridden to handle events on QAbstractItemView
   virtual bool translateEvent(QObject* Object, QEvent* Event, int eventType, bool& Error);
 
-  /// Connect QTree signals to this class slots
+  /// Connect the QAbstractItemView signals to this classe slots
   virtual void connectWidgetToSlots(QAbstractItemView* abstractItemView);
 
 protected slots:
-  void onExpanded(const QModelIndex&);
-  void onCollapsed(const QModelIndex&);
+  virtual void onClicked(const QModelIndex&);
+  virtual void onActivated(const QModelIndex&);
+  virtual void onDoubleClicked(const QModelIndex&);
+  virtual void onCurrentChanged(const QModelIndex&);
 
   /// Compute a visual rectangle for the item and signal it
-  void onEnteredCheck(const QModelIndex&);
+  virtual void onEnteredCheck(const QModelIndex&)=0;
+
+protected:
+  QString getIndexAsString(const QModelIndex& item);
+
+  QPointer<QAbstractItemView> AbstractItemView;
+  QPointer<QAbstractItemView> AbstractItemViewCheck;
+  const QModelIndex* ModelItemCheck;
+  bool Editing;
+  bool AbstractItemViewCheckMouseTracking;
+  QPoint LastPos;
 
 private:
-  pqTreeViewEventTranslator(const pqTreeViewEventTranslator&); // Not implemented.
-  void operator=(const pqTreeViewEventTranslator&); // Not implemented.
+  pqAbstractItemViewEventTranslatorBase(const pqAbstractItemViewEventTranslatorBase&); // Not implemented.
+  void operator=(const pqAbstractItemViewEventTranslatorBase&); // Not implemented.
 };
 
 #endif

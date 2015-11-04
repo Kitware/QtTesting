@@ -1,13 +1,13 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pqWidgetEventPlayer.cxx
+   Module:    pqEventTypes.h
 
    Copyright (c) 2005-2008 Sandia Corporation, Kitware Inc.
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -30,27 +30,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
 
-#include "pqWidgetEventPlayer.h"
+#ifndef _pqEventTypes_h
+#define _pqEventTypes_h
 
-#include <QCoreApplication>
-#include "pqEventTypes.h"
-  
-pqWidgetEventPlayer::pqWidgetEventPlayer(QObject* p) 
-  : QObject(p)  
+namespace pqEventTypes
 {
-}
+  enum eventType {
+    EVENT = 0,
+    CHECK_EVENT = 1
+  };
+};
 
-pqWidgetEventPlayer::~pqWidgetEventPlayer() 
-{
-}
-
-bool pqWidgetEventPlayer::playEvent(QObject* object, const QString& command,
-    const QString& arguments, int eventType, bool& error)
-{
-  if (eventType == pqEventTypes::EVENT)
-    {
-    return this->playEvent(object, command, arguments, error);
-    }
-  return false;
-}
+#endif // !_pqEventTypes_h
 

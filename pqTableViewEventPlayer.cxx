@@ -1,7 +1,7 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pqTreeViewEventTranslator.h
+   Module:    pqTableViewEventPlayer.cxx
 
    Copyright (c) 2005,2006 Sandia Corporation, Kitware Inc.
    All rights reserved.
@@ -29,38 +29,29 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========================================================================*/
-#ifndef __pqTreeViewEventTranslator_h
-#define __pqTreeViewEventTranslator_h
+#include "pqTableViewEventPlayer.h"
+#include <QTableView>
 
-#include "pqAbstractItemViewEventTranslatorBase.h"
-
-/// Event recorder for QTreeView. Records the toggling of the check states for
-/// tree widget items. The recorded state can be played back using
-/// pqTreeViewEventPlayer.
-class QTTESTING_EXPORT pqTreeViewEventTranslator : public pqAbstractItemViewEventTranslatorBase
+//-----------------------------------------------------------------------------
+pqTableViewEventPlayer::pqTableViewEventPlayer(QObject* parentObject)
+  : Superclass(parentObject)
 {
-  Q_OBJECT
-  typedef pqAbstractItemViewEventTranslatorBase Superclass;
-public:
-  pqTreeViewEventTranslator(QObject* parent=0);
-  ~pqTreeViewEventTranslator();
+}
 
-  /// Handle QTree speicific events
-  virtual bool translateEvent(QObject* Object, QEvent* Event, int eventType, bool& Error);
+//-----------------------------------------------------------------------------
+pqTableViewEventPlayer::~pqTableViewEventPlayer()
+{
+}
 
-  /// Connect QTree signals to this class slots
-  virtual void connectWidgetToSlots(QAbstractItemView* abstractItemView);
-
-protected slots:
-  void onExpanded(const QModelIndex&);
-  void onCollapsed(const QModelIndex&);
-
-  /// Compute a visual rectangle for the item and signal it
-  void onEnteredCheck(const QModelIndex&);
-
-private:
-  pqTreeViewEventTranslator(const pqTreeViewEventTranslator&); // Not implemented.
-  void operator=(const pqTreeViewEventTranslator&); // Not implemented.
-};
-
-#endif
+//-----------------------------------------------------------------------------0000000
+bool pqTableViewEventPlayer::playEvent(
+  QObject* object, const QString& command,
+  const QString& arguments, int eventType, bool& error)
+{
+  QTableView* tableView= qobject_cast<QTableView*>(object);
+  if (!tableView)
+    {
+    return false;
+    }
+  return this->Superclass::playEvent(object, command, arguments, eventType, error);
+}

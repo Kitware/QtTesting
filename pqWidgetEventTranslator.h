@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "QtTestingExport.h"
 #include <QObject>
+#include <QRect>
 
 /**
 Abstract interface for an object that can translate
@@ -48,29 +49,23 @@ class QTTESTING_EXPORT pqWidgetEventTranslator :
 {
   Q_OBJECT
   
+  typedef QObject Superclass;
 public:
-  pqWidgetEventTranslator(QObject* p=0) : QObject(p) {}
-  virtual ~pqWidgetEventTranslator() {}
+  pqWidgetEventTranslator(QObject* p=0);
+  virtual ~pqWidgetEventTranslator();
   
   /** Derivatives should implement this and translate events into commands,
   returning "true" if they handled the event, and setting Error
-  to "true" if there were any problems. */
-  virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error) = 0;
-
-  /** An optionel tracnslateCheckEvent, so event during check can be trasnlated if necessary
-  returning "true" if they handled the event, and setting Error
-  to "true" if there were any problems. */
-  virtual bool translateCheckEvent(QObject* object, bool& error){return false;};
-
-  /** Return true is translator can translate
-  check event for given QObject **/
-  virtual bool canTranslateCheckEvent(QObject* object){return false;};
-
+  to "true" if there were any problems. eventType allow to specify different types of events
+  like check event*/
+  virtual bool translateEvent(QObject* object, QEvent* event, bool& error){return false;};
+  virtual bool translateEvent(QObject* object, QEvent* event, int eventType, bool& error);
 
 signals:
   /// Derivatives should emit this signal whenever they wish to record a high-level event
   void recordEvent(int eventType, QObject* Object, const QString& Command, const QString& Arguments);
   void recordEvent(QObject* Object, const QString& Command, const QString& Arguments);
+  void specificOverlay(const QRect& geometry);
 
 protected:
   pqWidgetEventTranslator(const pqWidgetEventTranslator&);
