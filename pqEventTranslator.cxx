@@ -56,6 +56,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QVector>
 #include <QPainter>
 #include <QMetaProperty>
+#include <QApplication>
 
 class pqCheckEventOverlay : public QWidget {
 public:
@@ -65,6 +66,7 @@ public:
     this->Valid = false;
     this->GlWidget = false;
     this->Specific = false;
+    this->setObjectName("Overlay");
   }
 
   bool Valid;
@@ -346,12 +348,64 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
     if (widget != NULL && this->Implementation->Checking)
       {
       // In Gl Case, parentless widget is not transparent to mouse event
-      // The event is  applied to the overlayed widget
-      if (this->Implementation->CheckOverlay->GlWidget &&
+      // The event is  applied to the overlayed widget or an another top widget
+      // TODO : use mask instead
+
+      // This is relevant only if :
+      // There is already an overlay drawn
+      // This is the gl case
+      // This is a mouse event we manage
+      // The overlay receive the event
+      if (this->Implementation->CheckOverlayWidgetOn != NULL &&
+          this->Implementation->CheckOverlay->GlWidget &&
            widget == this->Implementation->CheckOverlay &&
-           event->type() == QEvent::MouseButtonRelease)
+           (event->type() == QEvent::MouseButtonRelease ||
+            event->type() == QEvent::MouseMove))
         {
-        widget = this->Implementation->CheckOverlayWidgetOn;
+
+        // We are about to look for another top widget window behind the mouse cursor
+        bool foundTop = false;
+        QWidget* topWidget;
+        // recover all top widgets
+        QWidgetList topWidgets = QApplication::topLevelWidgets();
+        foreach(topWidget, topWidgets)
+          {
+          // only the visible ones
+          if(!topWidget->isHidden())
+            {
+            // Check it is not the overlay, and it contains the mouse cursor
+            if (topWidget != this->Implementation->CheckOverlay &&
+              topWidget->geometry().contains(static_cast<QMouseEvent*>(event)->globalPos(), true))
+              {
+              // Recover the child widget onder the cursor, if any
+              QWidget* childWidget = topWidget->childAt(topWidget->mapFromGlobal(static_cast<QMouseEvent*>(event)->globalPos()));
+
+              // If child exist, check it is not the overlayed widget and indeed a new widget
+              if (childWidget == NULL || (childWidget != NULL && childWidget != this->Implementation->CheckOverlayWidgetOn))
+                {
+                // if a child exist, use it
+                if(childWidget != NULL)
+                  {
+                  topWidget = childWidget;
+                  }
+
+                // Position top widget flag
+                foundTop = true;
+                break;
+                }
+              }
+            }
+          }
+        if (foundTop)
+          {
+          // If we found a top widget behin the cursor, use it
+          widget = topWidget;
+          }
+        else
+          {
+          // If not, use the widget behind the overlay
+          widget = this->Implementation->CheckOverlayWidgetOn;
+          }
         }
 
       // Leaving the checkOverlay when a widget without grand parent
@@ -392,7 +446,10 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
 
         // Draw overlay
         this->Implementation->hideOverlay();
-        if (widget->parentWidget() != NULL)
+
+        // Only on non-window widget
+        // TODO handle the overlay on window widget
+        if (!widget->isWindow() && widget->parent() != NULL)
           {
           // Check if widget is glWidget
           this->Implementation->CheckOverlay->GlWidget = pqEventTranslator::isQVTKMetaObject(widget->metaObject());
@@ -422,14 +479,12 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
 
           if (this->Implementation->CheckOverlay->GlWidget)
             {
-            this->Implementation->CheckOverlay->setParent(NULL);
             // Cannot draw QPainter directive in openGl context, bust use another context, aka another window
             //this->Implementation->CheckOverlay->setWindowFlags(Qt::ToolTip | Qt::FramelessWindowHint); // ToolTip is always on top
             this->Implementation->CheckOverlay->setWindowFlags(Qt::Tool | Qt::FramelessWindowHint); //Tool generate avatar
             this->Implementation->CheckOverlay->setAttribute(Qt::WA_NoSystemBackground, true);
             this->Implementation->CheckOverlay->setAttribute(Qt::WA_TranslucentBackground, true);
             this->Implementation->CheckOverlay->setAttribute(Qt::WA_PaintOnScreen, true);
-            this->Implementation->CheckOverlay->setAttribute(Qt::WA_TransparentForMouseEvents, true);
 
             // Resize and move widget
             QRect geometry = widget->geometry();
@@ -444,12 +499,12 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
             this->Implementation->CheckOverlay->setAttribute(Qt::WA_TranslucentBackground, false);
             this->Implementation->CheckOverlay->setAttribute(Qt::WA_PaintOnScreen, false);
 
-            // Set parent of the overlay to be parent of the overlayed widget
-            this->Implementation->CheckOverlay->setParent(qobject_cast<QWidget*>(widget->parent()));
-
             // Set overlay geometry to be the same as overlayed widget
             this->setOverlayGeometry(widget->geometry(), false);
             }
+
+          // Set parent of the overlay to be parent of the overlayed widget
+          this->Implementation->CheckOverlay->setParent(qobject_cast<QWidget*>(widget->parent()));
 
           // Show and Register overlay
           this->Implementation->CheckOverlay->show();
