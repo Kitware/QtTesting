@@ -126,7 +126,7 @@ public:
   /// give a filename convert from one of the data directories
   QString convertFromDataDirectory(const QString& file);
 
-  const QIODevice* getFile(){ return this->File;};
+  const QString filename(){return this->Filename;};
 
 public slots:
   bool playTests(const QString& filename);
@@ -156,6 +156,7 @@ protected:
   pqEventTranslator   Translator;
   bool                PlayingTest;
 
+  QString             Filename;
   QIODevice*          File;
   QString             FileSuffix;
 
