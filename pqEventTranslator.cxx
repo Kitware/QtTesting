@@ -477,6 +477,9 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
           // Set the validity of the overlay, via metaProp or valid translator
           this->Implementation->CheckOverlay->Valid = metaProp.isValid() || validTranslator;
 
+          // Set parent of the overlay to be parent of the overlayed widget
+          this->Implementation->CheckOverlay->setParent(qobject_cast<QWidget*>(widget->parent()));
+
           if (this->Implementation->CheckOverlay->GlWidget)
             {
             // Cannot draw QPainter directive in openGl context, bust use another context, aka another window
@@ -502,9 +505,6 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
             // Set overlay geometry to be the same as overlayed widget
             this->setOverlayGeometry(widget->geometry(), false);
             }
-
-          // Set parent of the overlay to be parent of the overlayed widget
-          this->Implementation->CheckOverlay->setParent(qobject_cast<QWidget*>(widget->parent()));
 
           // Show and Register overlay
           this->Implementation->CheckOverlay->show();
