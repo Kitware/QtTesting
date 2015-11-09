@@ -47,7 +47,7 @@ pq3DViewEventPlayer::pq3DViewEventPlayer(const QByteArray& classname, QObject * 
 bool pq3DViewEventPlayer::playEvent(QObject* Object,
                                     const QString& Command,
                                     const QString& Arguments,
-                                    bool& pqNotUsed(Error))
+                                    bool& Error)
 {
     QWidget* widget = qobject_cast<QWidget*>(Object);
     if(widget && Object->inherits(mClassType.data()))
@@ -75,6 +75,6 @@ bool pq3DViewEventPlayer::playEvent(QObject* Object,
         return true;
         }
       }
-    return false;
-
+    return this->Superclass::playEvent(Object, Command, Arguments, Error);
 }
+

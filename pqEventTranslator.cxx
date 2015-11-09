@@ -322,7 +322,8 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
        event->type() == QEvent::MouseMove ||
        event->type() == QEvent::Enter ||
        event->type() == QEvent::Leave ||
-       event->type() == QEvent::MouseButtonRelease)
+       event->type() == QEvent::MouseButtonRelease ||
+       event->type() == QEvent::ContextMenu)
       {
       if(!this->Implementation->MouseParents.empty() &&
          this->Implementation->MouseParents.first() == object)

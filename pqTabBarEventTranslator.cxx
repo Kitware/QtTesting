@@ -41,7 +41,7 @@ pqTabBarEventTranslator::pqTabBarEventTranslator(QObject* p)
 {
 }
 
-bool pqTabBarEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& /*Error*/)
+bool pqTabBarEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& Error)
 {
   QTabBar* const object = qobject_cast<QTabBar*>(Object);
   if(!object)
@@ -65,7 +65,7 @@ bool pqTabBarEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
       break;
     }
 
-  return true;
+  return this->Superclass::translateEvent(Object, Event, Error);
 }
 
 void pqTabBarEventTranslator::indexChanged(int which)

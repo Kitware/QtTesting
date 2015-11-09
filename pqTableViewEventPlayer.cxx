@@ -49,7 +49,12 @@ bool pqTableViewEventPlayer::playEvent(
   const QString& arguments, int eventType, bool& error)
 {
   QTableView* tableView= qobject_cast<QTableView*>(object);
-  if (!tableView)
+  if(!tableView)
+    {
+    // mouse events go to the viewport widget
+    tableView = qobject_cast<QTableView*>(object->parent());
+    }
+  if(!tableView)
     {
     return false;
     }

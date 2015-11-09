@@ -46,7 +46,7 @@ pqAbstractButtonEventTranslator::pqAbstractButtonEventTranslator(QObject* p)
   this->LastMouseEvent = 0;
 }
 
-bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& /*Error*/)
+bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& Error)
 {
   QAbstractButton* const object = qobject_cast<QAbstractButton*>(Object);
   if(!object)
@@ -111,8 +111,7 @@ bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Ev
     default:
       break;
     }
-      
-  return true;
+  return this->Superclass::translateEvent(Object, Event, Error);
 }
 
 void pqAbstractButtonEventTranslator::onActivate(QAbstractButton* actualObject)

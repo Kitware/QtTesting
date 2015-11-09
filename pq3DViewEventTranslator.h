@@ -46,6 +46,7 @@ class QTTESTING_EXPORT pq3DViewEventTranslator :
   public pqWidgetEventTranslator
 {
   Q_OBJECT
+  typedef pqWidgetEventTranslator Superclass;
 
 public:
   pq3DViewEventTranslator(const QByteArray& classname, QObject* p=0);

@@ -45,7 +45,7 @@ pqLineEditEventTranslator::pqLineEditEventTranslator(QObject* p)
 {
 }
 
-bool pqLineEditEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& /*Error*/)
+bool pqLineEditEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& Error)
 {
   QLineEdit* const object = qobject_cast<QLineEdit*>(Object);
   QTextEdit* const teObject = qobject_cast<QTextEdit*>(Object);
@@ -89,6 +89,5 @@ bool pqLineEditEventTranslator::translateEvent(QObject* Object, QEvent* Event, b
     default:
       break;
     }
-
-  return true;
+  return this->Superclass::translateEvent(Object, Event, Error);
 }

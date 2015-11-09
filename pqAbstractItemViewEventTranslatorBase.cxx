@@ -58,9 +58,14 @@ pqAbstractItemViewEventTranslatorBase::~pqAbstractItemViewEventTranslatorBase()
 
 //-----------------------------------------------------------------------------
 bool pqAbstractItemViewEventTranslatorBase::translateEvent(
-  QObject* object, QEvent* event, int eventType, bool& /*error*/)
+  QObject* object, QEvent* event, int eventType, bool& error)
 {
   QAbstractItemView* abstractItemView = qobject_cast<QAbstractItemView*>(object);
+  if(!abstractItemView)
+    {
+    // mouse events go to the viewport widget
+    abstractItemView = qobject_cast<QAbstractItemView*>(object->parent());
+    }
   if(!abstractItemView)
     {
     return false;
@@ -119,7 +124,6 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
         break;
         }
       }
-    return true;
     }
   else if (eventType == pqEventTypes::CHECK_EVENT)
     {
@@ -157,8 +161,8 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
                                this->ModelItemCheck->data().toString().replace("\t", " ")));
       // Replacing tab by space, as they are not valid in xml
       }
-    return true;
     }
+  return this->Superclass::translateEvent(object, event, eventType, error);
 }
 
 //-----------------------------------------------------------------------------

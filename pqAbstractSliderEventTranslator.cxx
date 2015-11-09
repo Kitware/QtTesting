@@ -42,7 +42,7 @@ pqAbstractSliderEventTranslator::pqAbstractSliderEventTranslator(QObject* p)
 {
 }
 
-bool pqAbstractSliderEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& /*Error*/)
+bool pqAbstractSliderEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& Error)
 {
   QAbstractSlider* const object = qobject_cast<QAbstractSlider*>(Object);
   if(!object || qobject_cast<QScrollBar*>(object))
@@ -61,8 +61,7 @@ bool pqAbstractSliderEventTranslator::translateEvent(QObject* Object, QEvent* Ev
     default:
       break;
     }
-      
-  return true;
+  return this->Superclass::translateEvent(Object, Event, Error);
 }
 
 void pqAbstractSliderEventTranslator::onValueChanged(int Value)

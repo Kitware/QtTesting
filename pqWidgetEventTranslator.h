@@ -58,7 +58,7 @@ public:
   returning "true" if they handled the event, and setting Error
   to "true" if there were any problems. eventType allow to specify different types of events
   like check event*/
-  virtual bool translateEvent(QObject* object, QEvent* event, bool& error){return false;};
+  virtual bool translateEvent(QObject* object, QEvent* event, bool& error);
   virtual bool translateEvent(QObject* object, QEvent* event, int eventType, bool& error);
 
 signals:

@@ -88,7 +88,12 @@ bool pqAbstractItemViewEventPlayerBase::playEvent(
   const QString& arguments, int eventType, bool& error)
 {
   QAbstractItemView* abstractItemView= qobject_cast<QAbstractItemView*>(object);
-  if (!abstractItemView)
+  if(!abstractItemView)
+    {
+    // mouse events go to the viewport widget
+    abstractItemView = qobject_cast<QAbstractItemView*>(object->parent());
+    }
+  if(!abstractItemView)
     {
     return false;
     }
@@ -207,5 +212,6 @@ bool pqAbstractItemViewEventPlayerBase::playEvent(
       return true;
       }
     }
-  return false;
+  return this->Superclass::playEvent(object, command, arguments, eventType, error);
 }
+

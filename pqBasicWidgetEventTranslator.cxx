@@ -49,7 +49,7 @@ pqBasicWidgetEventTranslator::~pqBasicWidgetEventTranslator()
 
 bool pqBasicWidgetEventTranslator::translateEvent(QObject* Object, 
                                                   QEvent* Event, 
-                                                  bool& /*Error*/)
+                                                  bool& Error)
 {
   QWidget* const object = qobject_cast<QWidget*>(Object);
   if(!object)
@@ -57,11 +57,6 @@ bool pqBasicWidgetEventTranslator::translateEvent(QObject* Object,
 
   switch(Event->type())
     {
-    case QEvent::ContextMenu:
-      {
-      emit recordEvent(Object, "contextMenu", "");
-      }
-      break;
     case QEvent::KeyPress:
       {
       QKeyEvent* keyEvent = static_cast<QKeyEvent*>(Event);
@@ -129,7 +124,6 @@ bool pqBasicWidgetEventTranslator::translateEvent(QObject* Object,
     default:
       break;
     }
-      
-  return true;
+  return this->Superclass::translateEvent(Object, Event, Error);
 }
 

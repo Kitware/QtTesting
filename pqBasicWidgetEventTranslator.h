@@ -47,6 +47,7 @@ class QTTESTING_EXPORT pqBasicWidgetEventTranslator :
   public pqWidgetEventTranslator
 {
   Q_OBJECT
+  typedef pqWidgetEventTranslator Superclass;
   
 public:
   pqBasicWidgetEventTranslator(QObject* p=0);

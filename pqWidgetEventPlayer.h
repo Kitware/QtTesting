@@ -61,7 +61,7 @@ public:
     QObject* object,
     const QString& command,
     const QString& arguments,
-    bool& error){return false;};
+    bool& error);
   virtual bool playEvent(
     QObject* object,
     const QString& command,

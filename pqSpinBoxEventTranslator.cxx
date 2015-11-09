@@ -48,7 +48,7 @@ pqSpinBoxEventTranslator::pqSpinBoxEventTranslator(QObject* p)
 // ----------------------------------------------------------------------------
 bool pqSpinBoxEventTranslator::translateEvent(QObject* Object,
                                               QEvent* Event,
-                                              bool& /*Error*/)
+                                              bool& Error)
 {
   QSpinBox* object = qobject_cast<QSpinBox*>(Object);
   
@@ -98,7 +98,7 @@ bool pqSpinBoxEventTranslator::translateEvent(QObject* Object,
       }
     }
 
-  return true;
+  return this->Superclass::translateEvent(Object, Event, Error);
 }
 
 // ----------------------------------------------------------------------------

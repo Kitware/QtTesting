@@ -50,7 +50,12 @@ bool pqTreeViewEventPlayer::playEvent(
   const QString& arguments, int eventType, bool& error)
 {
   QTreeView* treeView= qobject_cast<QTreeView*>(object);
-  if (!treeView)
+  if(!treeView)
+    {
+    // mouse events go to the viewport widget
+    treeView = qobject_cast<QTreeView*>(object->parent());
+    }
+  if(!treeView)
     {
     return false;
     }

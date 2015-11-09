@@ -45,6 +45,7 @@ class QTTESTING_EXPORT pqComboBoxEventTranslator :
   public pqWidgetEventTranslator
 {
   Q_OBJECT
+  typedef pqWidgetEventTranslator Superclass;
   
 public:
   pqComboBoxEventTranslator(QObject* p=0);

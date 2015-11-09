@@ -48,7 +48,7 @@ pqMenuEventTranslator::~pqMenuEventTranslator()
 }
 
 bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event,
-                                           bool& /*Error*/)
+                                           bool& Error)
 {
   QMenu* const menu = qobject_cast<QMenu*>(Object);
   QMenuBar* const menubar = qobject_cast<QMenuBar*>(Object);
@@ -111,7 +111,6 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event,
         }
       }
     }
-    
-  return true;
+  return this->Superclass::translateEvent(Object, Event, Error);
 }
 

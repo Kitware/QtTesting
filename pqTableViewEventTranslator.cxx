@@ -59,7 +59,7 @@ bool pqTableViewEventTranslator::translateEvent(
     {
     return false;
     }
-  return this->Superclass::translateEvent(tableView, event, eventType, error);
+  return this->Superclass::translateEvent(object, event, eventType, error);
 }
 
 //-----------------------------------------------------------------------------

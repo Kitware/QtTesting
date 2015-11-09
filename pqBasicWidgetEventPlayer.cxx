@@ -33,7 +33,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqBasicWidgetEventPlayer.h"
 
 #include <QApplication>
-#include <QContextMenuEvent>
 #include <QKeyEvent>
 #include <QWidget>
 #include <QtDebug>
@@ -45,20 +44,12 @@ pqBasicWidgetEventPlayer::pqBasicWidgetEventPlayer(QObject* p)
 
 bool pqBasicWidgetEventPlayer::playEvent(QObject* Object, 
          const QString& Command, const QString& Arguments, 
-         bool& /*Error*/)
+         bool& Error)
 {
   QWidget* widget = qobject_cast<QWidget*>(Object);
   if(widget)
     {
-    if(Command == "contextMenu")
-      {
-      QPoint pt(widget->x(), widget->y());
-      QPoint globalPt = widget->mapToGlobal(pt);
-      QContextMenuEvent e(QContextMenuEvent::Other, pt, globalPt);
-      qApp->notify(widget, &e);
-      return true;
-      }
-    else if(Command == "key")
+    if(Command == "key")
       {
       QKeyEvent kd(QEvent::KeyPress, Arguments.toInt(), Qt::NoModifier);
       QKeyEvent ku(QEvent::KeyRelease, Arguments.toInt(), Qt::NoModifier);
@@ -117,6 +108,6 @@ bool pqBasicWidgetEventPlayer::playEvent(QObject* Object,
       return false;
       }
     }
-  return false;
+  return this->Superclass::playEvent(Object, Command, Arguments, Error);
 }
 

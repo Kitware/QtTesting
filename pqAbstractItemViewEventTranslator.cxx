@@ -52,7 +52,7 @@ pqAbstractItemViewEventTranslator::pqAbstractItemViewEventTranslator(QObject* p)
 {
 }
 
-bool pqAbstractItemViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& /*Error*/)
+bool pqAbstractItemViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& Error)
 {
   QAbstractItemView* object = qobject_cast<QAbstractItemView*>(Object);
   if(!object)
@@ -167,8 +167,6 @@ bool pqAbstractItemViewEventTranslator::translateEvent(QObject* Object, QEvent* 
     default:
       break;
     }
-
-  return true;
+  return this->Superclass::translateEvent(Object, Event, Error);
 }
-
 

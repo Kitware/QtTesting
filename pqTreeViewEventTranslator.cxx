@@ -57,7 +57,7 @@ bool pqTreeViewEventTranslator::translateEvent(
     {
     return false;
     }
-  return this->Superclass::translateEvent(treeView, event, eventType, error);
+  return this->Superclass::translateEvent(object, event, eventType, error);
 }
 
 //-----------------------------------------------------------------------------

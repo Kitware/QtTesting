@@ -44,6 +44,7 @@ class pqBasicWidgetEventPlayer :
   public pqWidgetEventPlayer
 {
   Q_OBJECT
+  typedef pqWidgetEventPlayer Superclass;
 
 public:
   pqBasicWidgetEventPlayer(QObject* p=0);

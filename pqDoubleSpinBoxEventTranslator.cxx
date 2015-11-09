@@ -46,7 +46,7 @@ pqDoubleSpinBoxEventTranslator::pqDoubleSpinBoxEventTranslator(QObject* p)
 }
 
 // ----------------------------------------------------------------------------
-bool pqDoubleSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& /*Error*/)
+bool pqDoubleSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& Error)
 {
   QDoubleSpinBox* const object = qobject_cast<QDoubleSpinBox*>(Object);
   
@@ -88,8 +88,7 @@ bool pqDoubleSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Eve
       emit recordEvent(object, "key", QString("%1").arg(ke->key()));
       }
     }
-
-  return true;
+  return this->Superclass::translateEvent(Object, Event, Error);
 }
 
 // ----------------------------------------------------------------------------

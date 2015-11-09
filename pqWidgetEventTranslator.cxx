@@ -32,6 +32,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqWidgetEventTranslator.h"
 #include "pqEventTypes.h"
 #include <QEvent>
+#include <QWidget>
+
 //-----------------------------------------------------------------------------
 pqWidgetEventTranslator::pqWidgetEventTranslator(QObject* parentObject)
   : Superclass(parentObject)
@@ -42,6 +44,30 @@ pqWidgetEventTranslator::pqWidgetEventTranslator(QObject* parentObject)
 pqWidgetEventTranslator::~pqWidgetEventTranslator()
 {
 }
+
+bool pqWidgetEventTranslator::translateEvent(
+  QObject* object, QEvent* event, bool& error)
+{
+  QWidget* widget = qobject_cast<QWidget*>(object);
+  if(!widget)
+    return false;
+
+  switch(event->type())
+    {
+    case QEvent::ContextMenu:
+      {
+      emit recordEvent(widget, "contextMenu", "");
+      break;
+      }
+    default:
+      {
+      break;
+      }
+    }
+  return true;
+}
+
+
 
 //-----------------------------------------------------------------------------
 bool pqWidgetEventTranslator::translateEvent(
