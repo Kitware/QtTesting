@@ -148,6 +148,8 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
           this->AbstractItemView->setMouseTracking(this->AbstractItemViewMouseTracking);
           QObject::disconnect(this->AbstractItemView, SIGNAL(entered(const QModelIndex&)),
                               this, SLOT(onEnteredCheck(const QModelIndex&)));
+          QObject::disconnect(this->AbstractItemView, SIGNAL(viewportEntered()),
+                           this, SLOT(onViewportEnteredCheck()));
           }
 
         // Keep track of checked item view
@@ -160,17 +162,29 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
         // Connect item entered event to the entered check slot
         QObject::connect(this->AbstractItemView, SIGNAL(entered(const QModelIndex&)),
                          this, SLOT(onEnteredCheck(const QModelIndex&)));
+        QObject::connect(this->AbstractItemView, SIGNAL(viewportEntered()),
+                         this, SLOT(onViewportEnteredCheck()));
         }
       return true;
       }
     // Clicking while checking, actual check event
     if (event->type() == QEvent::MouseButtonRelease)
       {
-      QString indexString = this->getIndexAsString(*this->ModelItemCheck);
-      emit this->recordEvent(pqEventTypes::CHECK_EVENT, abstractItemView,
-                             "modelItemData", QString("%1,%2").arg(indexString).arg(
-                               this->ModelItemCheck->data().toString().replace("\t", " ")));
-      // Replacing tab by space, as they are not valid in xml
+      // Item Check
+      if (this->ModelItemCheck != NULL)
+        {
+        QString indexString = this->getIndexAsString(*this->ModelItemCheck);
+        emit this->recordEvent(pqEventTypes::CHECK_EVENT, abstractItemView,
+          "modelItemData", QString("%1,%2").arg(indexString).arg(
+            this->ModelItemCheck->data().toString().replace("\t", " ")));
+        // Replacing tab by space, as they are not valid in xml
+        }
+      // Abstract Item View nb row check
+      else
+        {
+        emit this->recordEvent(pqEventTypes::CHECK_EVENT, abstractItemView,
+          "modelRowCount", QString::number(abstractItemView->model()->rowCount()));
+        }
       return true;
       }
     }
@@ -264,4 +278,11 @@ void pqAbstractItemViewEventTranslatorBase::onCurrentChanged(const QModelIndex& 
     emit this->recordEvent(abstractItemView,
       "setCurrent", this->getIndexAsString(index));
     }
+}
+
+//-----------------------------------------------------------------------------
+void pqAbstractItemViewEventTranslatorBase::onViewportEnteredCheck()
+{
+  this->ModelItemCheck = NULL;
+  emit this->specificOverlay(this->AbstractItemView->rect());
 }

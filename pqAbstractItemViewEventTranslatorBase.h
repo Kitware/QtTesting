@@ -63,6 +63,7 @@ protected slots:
 
   /// Compute a visual rectangle for the item and signal it
   virtual void onEnteredCheck(const QModelIndex&)=0;
+  virtual void onViewportEnteredCheck();
 
 protected:
   QString getIndexAsString(const QModelIndex& item);

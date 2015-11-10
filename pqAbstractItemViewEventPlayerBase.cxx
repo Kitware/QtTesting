@@ -182,7 +182,7 @@ bool pqAbstractItemViewEventPlayerBase::playEvent(
     }
   else if (eventType == pqEventTypes::CHECK_EVENT)
     {
-    if(command == "modelItemData")
+    if (command == "modelItemData")
       {
       // Recover index to check
       QString itemString = arguments;
@@ -207,6 +207,17 @@ bool pqAbstractItemViewEventPlayerBase::playEvent(
         qCritical() << "ERROR: Checked item contain :"
           << index.data().toString() << ".Expecting :"
           << testDataString;
+        error = true;
+        }
+      return true;
+      }
+    else if (command == "modelRowCount")
+      {
+      if (abstractItemView->model()->rowCount() != arguments.toInt())
+        {
+        qCritical() << "ERROR: Checked abstract item view has "
+          <<  abstractItemView->model()->rowCount() << " rows. Expecting :"
+          << arguments;
         error = true;
         }
       return true;

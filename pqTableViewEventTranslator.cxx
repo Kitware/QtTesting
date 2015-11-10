@@ -32,8 +32,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqTableViewEventTranslator.h"
 
 #include <QTableView>
-#include <QHeaderView>
-
 //-----------------------------------------------------------------------------
 pqTableViewEventTranslator::pqTableViewEventTranslator(QObject* parentObject)
   : Superclass(parentObject)
