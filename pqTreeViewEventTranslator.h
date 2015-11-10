@@ -45,11 +45,12 @@ public:
   pqTreeViewEventTranslator(QObject* parent=0);
   ~pqTreeViewEventTranslator();
 
-  /// Handle QTree speicific events
-  virtual bool translateEvent(QObject* Object, QEvent* Event, int eventType, bool& Error);
-
   /// Connect QTree signals to this class slots
   virtual void connectWidgetToSlots(QAbstractItemView* abstractItemView);
+
+  /// find and set the corrected abstract item view
+  virtual bool findCorrectedAbstractItemView(QObject* object,
+    QAbstractItemView*& abstractItemView) const;
 
 protected slots:
   void onExpanded(const QModelIndex&);

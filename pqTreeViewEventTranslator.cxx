@@ -32,6 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqTreeViewEventTranslator.h"
 #include <QTreeView>
 #include <QHeaderView>
+#include <iostream>
 //-----------------------------------------------------------------------------
 pqTreeViewEventTranslator::pqTreeViewEventTranslator(QObject* parentObject)
   : Superclass(parentObject)
@@ -41,23 +42,6 @@ pqTreeViewEventTranslator::pqTreeViewEventTranslator(QObject* parentObject)
 //-----------------------------------------------------------------------------
 pqTreeViewEventTranslator::~pqTreeViewEventTranslator()
 {
-}
-
-//-----------------------------------------------------------------------------
-bool pqTreeViewEventTranslator::translateEvent(
-  QObject* object, QEvent* event, int eventType, bool& error)
-{
-  QTreeView* treeView = qobject_cast<QTreeView*>(object);
-  if(!treeView)
-    {
-    // mouse events go to the viewport widget
-    treeView = qobject_cast<QTreeView*>(object->parent());
-    }
-  if(!treeView)
-    {
-    return false;
-    }
-  return this->Superclass::translateEvent(object, event, eventType, error);
 }
 
 //-----------------------------------------------------------------------------
@@ -73,7 +57,7 @@ void pqTreeViewEventTranslator::connectWidgetToSlots(QAbstractItemView* abstract
 //-----------------------------------------------------------------------------
 void pqTreeViewEventTranslator::onExpanded(const QModelIndex& index)
 {
-  QAbstractItemView* abstractItemView = qobject_cast<QAbstractItemView*>(this->sender());
+  QTreeView* abstractItemView = qobject_cast<QTreeView*>(this->sender());
 
   // record the check state change if the item is user-checkable.
   emit this->recordEvent(abstractItemView, "expand",
@@ -83,7 +67,7 @@ void pqTreeViewEventTranslator::onExpanded(const QModelIndex& index)
 //-----------------------------------------------------------------------------
 void pqTreeViewEventTranslator::onCollapsed(const QModelIndex& index)
 {
-  QAbstractItemView* abstractItemView = qobject_cast<QAbstractItemView*>(this->sender());
+  QTreeView* abstractItemView = qobject_cast<QTreeView*>(this->sender());
 
   // record the check state change if the item is user-checkable.
   emit this->recordEvent(abstractItemView, "collapse",
@@ -109,4 +93,28 @@ void pqTreeViewEventTranslator::onEnteredCheck(const QModelIndex& item)
   // store item and signal that a specific overlay is ready to be drawn
   this->ModelItemCheck = &item;
   emit this->specificOverlay(visualRect);
+}
+
+//-----------------------------------------------------------------------------
+bool pqTreeViewEventTranslator::findCorrectedAbstractItemView(QObject* object,
+  QAbstractItemView*& abstractItemView) const
+{
+  // Ignore QHeaderView event specifically
+  if (qobject_cast<QHeaderView*>(object))
+    {
+    abstractItemView = NULL;
+    return false;
+    }
+
+  abstractItemView = qobject_cast<QTreeView*>(object);
+  if(! abstractItemView)
+    {
+    // mouse events go to the viewport widget
+    abstractItemView = qobject_cast<QTreeView*>(object->parent());
+    }
+  if(!abstractItemView)
+    {
+    return false;
+    }
+  return true;
 }

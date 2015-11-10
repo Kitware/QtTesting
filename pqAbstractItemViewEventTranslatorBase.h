@@ -50,10 +50,14 @@ public:
   ~pqAbstractItemViewEventTranslatorBase();
 
   /// Overridden to handle events on QAbstractItemView
-  virtual bool translateEvent(QObject* Object, QEvent* Event, int eventType, bool& Error);
+  virtual bool translateEvent(QObject* object, QEvent* event, int eventType, bool& error);
 
   /// Connect the QAbstractItemView signals to this classe slots
   virtual void connectWidgetToSlots(QAbstractItemView* abstractItemView);
+
+  /// find and set the corrected abstract item view
+  virtual bool findCorrectedAbstractItemView(QObject* object,
+    QAbstractItemView*& abstractItemView) const = 0;
 
 protected slots:
   virtual void onClicked(const QModelIndex&);

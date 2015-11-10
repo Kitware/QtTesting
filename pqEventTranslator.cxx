@@ -57,6 +57,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QPainter>
 #include <QMetaProperty>
 #include <QApplication>
+#include <QToolBar>
 
 class pqCheckEventOverlay : public QWidget {
 public:
@@ -424,11 +425,16 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
           }
 
         // Ignore object if specified
-        if(this->Implementation->IgnoredObjects.contains(widget))
+        if (this->Implementation->IgnoredObjects.contains(widget))
           {
           return false;
           }
 
+        // Do not check QToolBar as they can generate buggy overlay
+        if (qobject_cast<QToolBar*>(widget) != NULL)
+          {
+          return false;
+          }
 
         // Mouse Move on a non-previously overlayed widget
         if (event->type() == QEvent::MouseMove

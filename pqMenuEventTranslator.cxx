@@ -59,8 +59,8 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event,
 
   if (menubar)
     {
-    QMouseEvent* e = static_cast<QMouseEvent*>(Event);
-    if (e->button() == Qt::LeftButton)
+    QMouseEvent* e = dynamic_cast<QMouseEvent*>(Event);
+    if (e && e->button() == Qt::LeftButton)
       {
       QAction* action = menubar->actionAt(e->pos());
       if (action && action->menu())

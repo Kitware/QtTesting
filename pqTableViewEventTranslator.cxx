@@ -32,6 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqTableViewEventTranslator.h"
 
 #include <QTableView>
+#include <QHeaderView>
 //-----------------------------------------------------------------------------
 pqTableViewEventTranslator::pqTableViewEventTranslator(QObject* parentObject)
   : Superclass(parentObject)
@@ -41,23 +42,6 @@ pqTableViewEventTranslator::pqTableViewEventTranslator(QObject* parentObject)
 //-----------------------------------------------------------------------------
 pqTableViewEventTranslator::~pqTableViewEventTranslator()
 {
-}
-
-//-----------------------------------------------------------------------------
-bool pqTableViewEventTranslator::translateEvent(
-  QObject* object, QEvent* event, int eventType, bool& error)
-{
-  QTableView* tableView = qobject_cast<QTableView*>(object);
-  if(!tableView)
-    {
-    // mouse events go to the viewport widget
-    tableView = qobject_cast<QTableView*>(object->parent());
-    }
-  if(!tableView)
-    {
-    return false;
-    }
-  return this->Superclass::translateEvent(object, event, eventType, error);
 }
 
 //-----------------------------------------------------------------------------
@@ -79,3 +63,28 @@ void pqTableViewEventTranslator::onEnteredCheck(const QModelIndex& item)
   this->ModelItemCheck = &item;
   emit this->specificOverlay(visualRect);
 }
+
+//-----------------------------------------------------------------------------
+bool pqTableViewEventTranslator::findCorrectedAbstractItemView(QObject* object,
+  QAbstractItemView*& abstractItemView) const
+{
+  // Ignore QHeaderView event specifically
+  if (qobject_cast<QHeaderView*>(object))
+    {
+    abstractItemView = NULL;
+    return false;
+    }
+
+  abstractItemView = qobject_cast<QTableView*>(object);
+  if (!abstractItemView)
+    {
+    // mouse events go to the viewport widget
+    abstractItemView = qobject_cast<QTableView*>(object->parent());
+    }
+  if (!abstractItemView)
+    {
+    return false;
+    }
+  return true;
+}
+

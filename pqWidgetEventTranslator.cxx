@@ -67,8 +67,6 @@ bool pqWidgetEventTranslator::translateEvent(
   return true;
 }
 
-
-
 //-----------------------------------------------------------------------------
 bool pqWidgetEventTranslator::translateEvent(
   QObject* object, QEvent* event, int eventType, bool& error)

@@ -36,12 +36,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QKeyEvent>
 #include <QAbstractItemView>
 #include <QVariant>
+
 //-----------------------------------------------------------------------------
 pqAbstractItemViewEventTranslatorBase::pqAbstractItemViewEventTranslatorBase(QObject* parentObject)
   : Superclass(parentObject)
 {
   this->Editing = false;
-  this->AbstractItemView = NULL;
   this->AbstractItemView = NULL;
   this->ModelItemCheck = NULL;
   this->AbstractItemViewMouseTracking = false;
@@ -53,7 +53,7 @@ pqAbstractItemViewEventTranslatorBase::~pqAbstractItemViewEventTranslatorBase()
 {
   if (this->AbstractItemView != NULL)
     {
-//    this->AbstractItemView->setMouseTracking(this->AbstractItemViewMouseTracking);
+    this->AbstractItemView->setMouseTracking(this->AbstractItemViewMouseTracking);
     }
 }
 
@@ -61,13 +61,9 @@ pqAbstractItemViewEventTranslatorBase::~pqAbstractItemViewEventTranslatorBase()
 bool pqAbstractItemViewEventTranslatorBase::translateEvent(
   QObject* object, QEvent* event, int eventType, bool& error)
 {
-  QAbstractItemView* abstractItemView = qobject_cast<QAbstractItemView*>(object);
-  if(!abstractItemView)
-    {
-    // mouse events go to the viewport widget
-    abstractItemView = qobject_cast<QAbstractItemView*>(object->parent());
-    }
-  if(!abstractItemView)
+  // Recover corrected abstract item view
+  QAbstractItemView* abstractItemView = NULL;
+  if (!this->findCorrectedAbstractItemView(object, abstractItemView) || !abstractItemView)
     {
     return false;
     }
@@ -286,3 +282,4 @@ void pqAbstractItemViewEventTranslatorBase::onViewportEnteredCheck()
   this->ModelItemCheck = NULL;
   emit this->specificOverlay(this->AbstractItemView->rect());
 }
+
