@@ -45,26 +45,28 @@ bool pqTabBarEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
 {
   QTabBar* const object = qobject_cast<QTabBar*>(Object);
   if(!object)
-    return false;
-    
+      return false;
+
   switch(Event->type())
     {
     case QEvent::Enter:
+      {
       if(this->CurrentObject != Object)
         {
         if(this->CurrentObject)
           {
           disconnect(this->CurrentObject, 0, this, 0);
           }
-        
+
         this->CurrentObject = object;
         connect(object, SIGNAL(currentChanged(int)), this, SLOT(indexChanged(int)));
         }
+      return true;
       break;
+      }
     default:
-      break;
+    break;
     }
-
   return this->Superclass::translateEvent(Object, Event, Error);
 }
 

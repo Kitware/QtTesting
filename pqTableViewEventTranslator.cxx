@@ -66,7 +66,7 @@ bool pqTableViewEventTranslator::translateEvent(
 void pqTableViewEventTranslator::onEnteredCheck(const QModelIndex& item)
 {
   // Recover Table View
-  QTableView* tableView = qobject_cast<QTableView*>(this->AbstractItemViewCheck);
+  QTableView* tableView = qobject_cast<QTableView*>(this->AbstractItemView);
 
   // Get a visual rectangle of the item
   QRect visualRect = tableView->visualRect(item);

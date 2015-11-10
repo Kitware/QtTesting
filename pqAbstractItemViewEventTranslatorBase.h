@@ -68,10 +68,10 @@ protected:
   QString getIndexAsString(const QModelIndex& item);
 
   QPointer<QAbstractItemView> AbstractItemView;
-  QPointer<QAbstractItemView> AbstractItemViewCheck;
   const QModelIndex* ModelItemCheck;
   bool Editing;
-  bool AbstractItemViewCheckMouseTracking;
+  bool AbstractItemViewMouseTracking;
+  bool Checking;
   QPoint LastPos;
 
 private:

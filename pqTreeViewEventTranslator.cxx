@@ -94,7 +94,7 @@ void pqTreeViewEventTranslator::onCollapsed(const QModelIndex& index)
 void pqTreeViewEventTranslator::onEnteredCheck(const QModelIndex& item)
 {
   //Recover treeview
-  QTreeView* treeView = qobject_cast<QTreeView*>(this->AbstractItemViewCheck);
+  QTreeView* treeView = qobject_cast<QTreeView*>(this->AbstractItemView);
 
   // Recover a visual rectangle corresponding to the item
   QRect visualRect = treeView->visualRect(item);

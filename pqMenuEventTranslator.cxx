@@ -39,7 +39,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QMenuBar>
 
 pqMenuEventTranslator::pqMenuEventTranslator(QObject* p)
-  : pqWidgetEventTranslator(p)
+: pqWidgetEventTranslator(p)
 {
 }
 
@@ -92,8 +92,9 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event,
         emit recordEvent(menu, "activate", which);
         }
       }
+    return true;
     }
-  
+
   if(Event->type() == QEvent::MouseButtonRelease)
     {
     QMouseEvent* e = static_cast<QMouseEvent*>(Event);
@@ -110,6 +111,7 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event,
         emit recordEvent(menu, "activate", which);
         }
       }
+    return true;
     }
   return this->Superclass::translateEvent(Object, Event, Error);
 }

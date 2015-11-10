@@ -42,17 +42,18 @@ pqAbstractItemViewEventTranslatorBase::pqAbstractItemViewEventTranslatorBase(QOb
 {
   this->Editing = false;
   this->AbstractItemView = NULL;
-  this->AbstractItemViewCheck = NULL;
+  this->AbstractItemView = NULL;
   this->ModelItemCheck = NULL;
-  this->AbstractItemViewCheckMouseTracking = false;
+  this->AbstractItemViewMouseTracking = false;
+  this->Checking = false;
 }
 
 //-----------------------------------------------------------------------------
 pqAbstractItemViewEventTranslatorBase::~pqAbstractItemViewEventTranslatorBase()
 {
-  if (this->AbstractItemViewCheck != NULL)
+  if (this->AbstractItemView != NULL)
     {
-    this->AbstractItemViewCheck->setMouseTracking(this->AbstractItemViewCheckMouseTracking);
+//    this->AbstractItemView->setMouseTracking(this->AbstractItemViewMouseTracking);
     }
 }
 
@@ -88,12 +89,14 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
             this->Editing = false;
             emit this->recordEvent(abstractItemView, "editAccepted",
               QString("%1,%2").arg(indexString, value.toString()));
+            return true;
             break;
             }
           if (ke->key() == Qt::Key_Escape)
             {
             this->Editing = false;
             emit this->recordEvent(abstractItemView, "editCancel", indexString);
+            return true;
             break;
             }
           }
@@ -101,14 +104,17 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
           {
           this->Editing = true;
           emit this->recordEvent(abstractItemView, "edit", indexString);
+          return true;
           break;
           }
         break;
         }
       case QEvent::Enter:
         {
-        if (this->AbstractItemView != abstractItemView)
+        if (this->AbstractItemView != abstractItemView || this->Checking)
           {
+          //Checking flag
+          this->Checking = false;
           if(this->AbstractItemView)
             {
             QObject::disconnect(this->AbstractItemView, 0, this, 0);
@@ -117,6 +123,7 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
           this->connectWidgetToSlots(abstractItemView);
           this->AbstractItemView = abstractItemView;
           }
+        return true;
         break;
         }
       default:
@@ -130,27 +137,31 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
     if (event->type() == QEvent::MouseMove)
       {
       // Entering while checking
-      if (this->AbstractItemViewCheck != abstractItemView)
+      if (this->AbstractItemView != abstractItemView || !this->Checking)
         {
+        //Checking flag
+        this->Checking = true;
+
         // Disconnect precedently check item view
-        if (this->AbstractItemViewCheck != NULL)
+        if (this->AbstractItemView != NULL)
           {
-          this->AbstractItemViewCheck->setMouseTracking(this->AbstractItemViewCheckMouseTracking);
-          QObject::disconnect(this->AbstractItemViewCheck, SIGNAL(entered(const QModelIndex&)),
+          this->AbstractItemView->setMouseTracking(this->AbstractItemViewMouseTracking);
+          QObject::disconnect(this->AbstractItemView, SIGNAL(entered(const QModelIndex&)),
                               this, SLOT(onEnteredCheck(const QModelIndex&)));
           }
 
         // Keep track of checked item view
-        this->AbstractItemViewCheck = abstractItemView;
+        this->AbstractItemView = abstractItemView;
 
         // Set mouse tracking so entered item signal are emitted
-        this->AbstractItemViewCheckMouseTracking = this->AbstractItemViewCheck->hasMouseTracking();
-        this->AbstractItemViewCheck->setMouseTracking(true);
+        this->AbstractItemViewMouseTracking = this->AbstractItemView->hasMouseTracking();
+        this->AbstractItemView->setMouseTracking(true);
 
         // Connect item entered event to the entered check slot
-        QObject::connect(this->AbstractItemViewCheck, SIGNAL(entered(const QModelIndex&)),
+        QObject::connect(this->AbstractItemView, SIGNAL(entered(const QModelIndex&)),
                          this, SLOT(onEnteredCheck(const QModelIndex&)));
         }
+      return true;
       }
     // Clicking while checking, actual check event
     if (event->type() == QEvent::MouseButtonRelease)
@@ -160,6 +171,7 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
                              "modelItemData", QString("%1,%2").arg(indexString).arg(
                                this->ModelItemCheck->data().toString().replace("\t", " ")));
       // Replacing tab by space, as they are not valid in xml
+      return true;
       }
     }
   return this->Superclass::translateEvent(object, event, eventType, error);

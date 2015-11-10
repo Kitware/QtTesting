@@ -69,6 +69,7 @@ bool pqComboBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, b
       connect(combo, SIGNAL(activated(const QString&)), this, SLOT(onStateChanged(const QString&)));
       connect(combo, SIGNAL(editTextChanged(const QString&)), this, SLOT(onStateChanged(const QString&)));
       }
+    return true;
     }
   return this->Superclass::translateEvent(Object, Event, Error);
 }

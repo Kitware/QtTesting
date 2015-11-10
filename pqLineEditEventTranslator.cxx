@@ -84,8 +84,9 @@ bool pqLineEditEventTranslator::translateEvent(QObject* Object, QEvent* Event, b
         {
         emit recordEvent(Object, "key", QString("%1").arg(ke->key()));
         }
-      }
+      return true;
       break;
+      }
     default:
       break;
     }

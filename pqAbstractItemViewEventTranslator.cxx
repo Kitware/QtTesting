@@ -61,12 +61,12 @@ bool pqAbstractItemViewEventTranslator::translateEvent(QObject* Object, QEvent* 
     object = qobject_cast<QAbstractItemView*>(Object->parent());
     }
   if(!object)
-    return false;
+      return false;
 
   // Don't try to record events for QComboBox implementation details
   if(QString(object->metaObject()->className()) == "QComboBoxListView")
-    return false;
-    
+      return false;
+
   switch(Event->type())
     {
     case QEvent::KeyPress:
@@ -135,6 +135,8 @@ bool pqAbstractItemViewEventTranslator::translateEvent(QObject* Object, QEvent* 
           }
         emit recordEvent(object, "mouseRelease", info);
         }
+      return true;
+      break;
       }
     case QEvent::Wheel:
       {
@@ -162,10 +164,11 @@ bool pqAbstractItemViewEventTranslator::translateEvent(QObject* Object, QEvent* 
                               .arg(relPt.y())
                               .arg(idxStr));
         }
+      return true;
+      break;
       }
-      break;
     default:
-      break;
+    break;
     }
   return this->Superclass::translateEvent(Object, Event, Error);
 }

@@ -53,7 +53,7 @@ bool pqBasicWidgetEventTranslator::translateEvent(QObject* Object,
 {
   QWidget* const object = qobject_cast<QWidget*>(Object);
   if(!object)
-    return false;
+      return false;
 
   switch(Event->type())
     {
@@ -64,8 +64,9 @@ bool pqBasicWidgetEventTranslator::translateEvent(QObject* Object,
         {
         emit recordEvent(object, "key", QString::number(keyEvent->key()));
         }
-      }
+      return true;
       break;
+      }
     case QEvent::MouseButtonPress:
     case QEvent::MouseButtonDblClick:
     case QEvent::MouseButtonRelease:
@@ -89,7 +90,7 @@ bool pqBasicWidgetEventTranslator::translateEvent(QObject* Object,
         }
       if(Event->type() == QEvent::MouseButtonDblClick)
         {
-          emit recordEvent(object, "mouseDblClick", info);
+        emit recordEvent(object, "mouseDblClick", info);
         }
       else if(Event->type() == QEvent::MouseButtonRelease)
         {
@@ -99,8 +100,9 @@ bool pqBasicWidgetEventTranslator::translateEvent(QObject* Object,
           }
         emit recordEvent(object, "mouseRelease", info);
         }
-      }
+      return true;
       break;
+      }
     case QEvent::Wheel:
       {
       if(qobject_cast<QScrollBar*>(Object))
@@ -119,10 +121,11 @@ bool pqBasicWidgetEventTranslator::translateEvent(QObject* Object,
                                 .arg(wheelEvent->y()));
           }
         }
+      return true;
+      break;
       }
-      break;
     default:
-      break;
+    break;
     }
   return this->Superclass::translateEvent(Object, Event, Error);
 }
