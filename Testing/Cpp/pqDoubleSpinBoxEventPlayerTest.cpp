@@ -37,6 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // QtTesting includes
 #include "pqTestUtility.h"
+#include "pqEventTypes.h"
 
 #include "pqTest.h"
 
@@ -110,9 +111,9 @@ void pqDoubleSpinBoxEventPlayerTester::testPlayBackCommandSetDouble()
   QCOMPARE(error, false);
   QCOMPARE(this->DoubleSpinBox->value(), result);
 
-  this->TestUtility->eventPlayer()->playCheckEvent(
+  this->TestUtility->eventPlayer()->playEvent(
       QString("doubleSpinBoxTest"), QString("value"),
-      QString::number(result), error);
+      QString::number(result), pqEventTypes::CHECK_EVENT, error);
 
   QCOMPARE(error, false);
   QCOMPARE(spy.count(), count);

@@ -55,7 +55,6 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QSet>
 #include <QVector>
 #include <QPainter>
-#include <QMetaProperty>
 #include <QApplication>
 #include <QToolBar>
 
@@ -453,21 +452,6 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
               }
             }
 
-          // No valid translator, use user meta propperty
-          if (!validTranslator)
-            {
-            const QMetaProperty metaProp = widget->metaObject()->userProperty();
-            if (!metaProp.isValid() && qobject_cast<QWidget*>(widget->parent()) != NULL)
-              {
-              // MouseEvent can be received by the viewport
-              const QMetaProperty metaProp = widget->parent()->metaObject()->userProperty();
-              }
-            if (metaProp.isValid())
-              {
-              validTranslator = true;
-              }
-            }
-
           // Draw overlay
           this->Implementation->hideOverlay();
 
@@ -498,7 +482,7 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
               return false;
               }
 
-            // Set the validity of the overlay, via metaProp or valid translator
+            // Set the validity of the overlay
             this->Implementation->CheckOverlay->Valid = validTranslator;
 
             // Set parent of the overlay to be parent of the overlayed widget
@@ -564,30 +548,9 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
               }
             }
 
-          //No Translators accepted the check event, use meta prop
-          const QMetaProperty metaProp = widget->metaObject()->userProperty();
-          if (!metaProp.isValid() && widget->parent() != NULL)
-            {
-            // MouseEvent can be received by the viewport, so try the parent widget
-            const QMetaProperty metaProp = widget->parent()->metaObject()->userProperty();
-            widget = qobject_cast<QWidget*>(widget->parent());
-            }
-
-          if (metaProp.isValid() && widget)
-            {
-            // Recover meto prop name
-            QString propName = metaProp.name();
-
-            // Record check event
-            onRecordEvent(pqEventTypes::CHECK_EVENT, widget, propName, widget->property(propName.toAscii().data()).toString());
-            return true;
-            }
-          else
-            {
-            // Inform user trying to check uncheckable widget
-            qWarning() << "Error checking an event for object, widget type not supported.";
-            qWarning() << "Name of the widget:" << widget->objectName() << ". Type of the widget:" << widget->metaObject()->className();
-            }
+          // Cannot check widget , Inform user trying to check uncheckable widget
+          qWarning() << "Error checking an event for object, widget type not supported.";
+          qWarning() << "Name of the widget:" << widget->objectName() << ". Type of the widget:" << widget->metaObject()->className();
           }
         // Block all input events, so the UI is static but still drawn.
         // Except for MouseMove

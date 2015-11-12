@@ -150,6 +150,16 @@ void pqEventPlayer::playEvent(const QString& objectString,
                               const QString& arguments,
                               bool& error)
 {
+  this->playEvent(objectString, command, arguments, pqEventTypes::EVENT, error);
+}
+
+// ----------------------------------------------------------------------------
+void pqEventPlayer::playEvent(const QString& objectString,
+                              const QString& command,
+                              const QString& arguments,
+                              int eventType,
+                              bool& error)
+{
   emit this->eventAboutToBePlayed(objectString, command, arguments);
   // If we can't find an object with the right name, we're done ...
   QObject* const object = pqObjectNaming::GetObject(objectString);
@@ -188,7 +198,7 @@ void pqEventPlayer::playEvent(const QString& objectString,
     {
     for(int i = 0; i != this->Players.size(); ++i)
       {
-      accepted = this->Players[i]->playEvent(object, command, arguments, pqEventTypes::EVENT, tmpError);
+      accepted = this->Players[i]->playEvent(object, command, arguments, eventType, tmpError);
       if(accepted)
         {
         break;
@@ -212,8 +222,9 @@ void pqEventPlayer::playEvent(const QString& objectString,
   if(accepted && tmpError)
     {
     QString errorMessage =
-        QString("Event error %1 object %2\n")
-          .arg(command, object ? object->objectName() : objectString);
+        QString("Event error %1 object %2 with args:%3\n")
+          .arg(command, object ? object->objectName() : objectString,
+               arguments);
     qCritical() << errorMessage;
     emit this->errorMessage(errorMessage);
     error = true;
@@ -222,71 +233,6 @@ void pqEventPlayer::playEvent(const QString& objectString,
 
   // The event was handled successfully ...
   emit this->eventPlayed(objectString, command, arguments);
-  error = false;
-}
-
-// ----------------------------------------------------------------------------
-void pqEventPlayer::playCheckEvent(const QString& objectString,
-                                   const QString& property,
-                                   const QString& arguments,
-                                   bool& error)
-{
-  // Inform world about playing event
-  emit this->eventAboutToBePlayed(objectString, property, arguments);
-
-  // Recover QObject from it's name
-  QObject* const object = pqObjectNaming::GetObject(objectString);
-
-  // Check for object existence
-  if(!object)
-    {
-    qCritical() << pqObjectNaming::lastErrorMessage();
-    emit this->errorMessage(pqObjectNaming::lastErrorMessage());
-    error = true;
-    return;
-    }
-
-  // Try to play check event using players
-  for(int i = 0; i != this->Players.size(); ++i)
-    {
-    if (this->Players[i]->playEvent(object, property, arguments, pqEventTypes::CHECK_EVENT, error))
-      {
-      if (error)
-        {
-        QString errorMessage = "Error processing " + property + " for " + objectString;
-        qCritical() << errorMessage.toAscii().data();
-        emit this->errorMessage(errorMessage.toAscii().data());
-        }
-      return;
-      }
-    }
-
-  // Recover QProperty
-  QVariant propertyValue = object->property(property.toAscii().data());
-
-  // Check it is valid
-  if (!propertyValue.isValid())
-    {
-    QString errorMessage = objectString + " has no valid property named:" + property;
-    qCritical() << errorMessage.toAscii().data();
-    emit this->errorMessage(errorMessage.toAscii().data());
-    error = true;
-    return;
-    }
-
-  // Check property value
-  if (propertyValue.toString() != arguments)
-    {
-    QString errorMessage = objectString + " property value is: " + propertyValue.toString()
-      + ". Expecting: "+ arguments + ".";
-    qCritical() << errorMessage.toAscii().data();
-    emit this->errorMessage(errorMessage.toAscii().data());
-    error = true;
-    return;
-    }
-
-  // The check event was correctly played.
-  emit this->eventPlayed(objectString, property, arguments);
   error = false;
 }
 

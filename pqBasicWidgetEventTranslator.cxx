@@ -37,6 +37,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QKeyEvent>
 #include <QScrollBar>
 #include <QWidget>
+#include <QMetaProperty>
+
+#include "pqEventTypes.h"
 
 pqBasicWidgetEventTranslator::pqBasicWidgetEventTranslator(QObject* p)
   : pqWidgetEventTranslator(p)
@@ -47,86 +50,130 @@ pqBasicWidgetEventTranslator::~pqBasicWidgetEventTranslator()
 {
 }
 
-bool pqBasicWidgetEventTranslator::translateEvent(QObject* Object, 
-                                                  QEvent* Event, 
-                                                  bool& Error)
+bool pqBasicWidgetEventTranslator::translateEvent(QObject* object, 
+                                                  QEvent* event,
+                                                  int eventType, 
+                                                  bool& error)
 {
-  QWidget* const object = qobject_cast<QWidget*>(Object);
-  if(!object)
+  QWidget* widget = qobject_cast<QWidget*>(object);
+  if(!widget)
       return false;
 
-  switch(Event->type())
+  if (eventType == pqEventTypes::EVENT)
     {
-    case QEvent::KeyPress:
+    switch(event->type())
       {
-      QKeyEvent* keyEvent = static_cast<QKeyEvent*>(Event);
-      if(qobject_cast<QDialog*>(Object))
+      case QEvent::KeyPress:
         {
-        emit recordEvent(object, "key", QString::number(keyEvent->key()));
-        }
-      return true;
-      break;
-      }
-    case QEvent::MouseButtonPress:
-    case QEvent::MouseButtonDblClick:
-    case QEvent::MouseButtonRelease:
-      {
-      QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(Event);
-      QString info = QString("%1,%2,%3,%4,%5")
-        .arg(mouseEvent->button())
-        .arg(mouseEvent->buttons())
-        .arg(mouseEvent->modifiers())
-        .arg(mouseEvent->x())
-        .arg(mouseEvent->y());
-
-      if(Event->type() != QEvent::MouseButtonRelease)
-        {
-        this->LastPos = mouseEvent->pos();
-        }
-
-      if(Event->type() == QEvent::MouseButtonPress)
-        {
-        emit recordEvent(object, "mousePress", info);
-        }
-      if(Event->type() == QEvent::MouseButtonDblClick)
-        {
-        emit recordEvent(object, "mouseDblClick", info);
-        }
-      else if(Event->type() == QEvent::MouseButtonRelease)
-        {
-        if(this->LastPos != mouseEvent->pos())
+        QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
+        if(qobject_cast<QDialog*>(object))
           {
-          emit recordEvent(object, "mouseMove", info);
+          emit recordEvent(widget, "key", QString::number(keyEvent->key()));
           }
-        emit recordEvent(object, "mouseRelease", info);
+        return true;
+        break;
         }
-      return true;
-      break;
-      }
-    case QEvent::Wheel:
-      {
-      if(qobject_cast<QScrollBar*>(Object))
+      case QEvent::MouseButtonPress:
+      case QEvent::MouseButtonDblClick:
+      case QEvent::MouseButtonRelease:
         {
-        QWheelEvent* wheelEvent = dynamic_cast<QWheelEvent*>(Event);
-        if(wheelEvent)
+        QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+        QString info = QString("%1,%2,%3,%4,%5")
+          .arg(mouseEvent->button())
+         .arg(mouseEvent->buttons())
+          .arg(mouseEvent->modifiers())
+          .arg(mouseEvent->x())
+          .arg(mouseEvent->y());
+
+        if(event->type() != QEvent::MouseButtonRelease)
           {
-          int buttons = wheelEvent->buttons();
-          int modifiers = wheelEvent->modifiers();
-          int numStep = wheelEvent->delta();
-          emit emit recordEvent(Object, "mouseWheel", QString("%1,%2,%3,%4,%5")
-                                .arg(numStep)
-                                .arg(buttons)
-                                .arg(modifiers)
-                                .arg(wheelEvent->x())
-                                .arg(wheelEvent->y()));
+          this->LastPos = mouseEvent->pos();
           }
+
+        if(event->type() == QEvent::MouseButtonPress)
+          {
+          emit recordEvent(widget, "mousePress", info);
+          }
+        if(event->type() == QEvent::MouseButtonDblClick)
+          {
+          emit recordEvent(widget, "mouseDblClick", info);
+          }
+        else if(event->type() == QEvent::MouseButtonRelease)
+          {
+          if(this->LastPos != mouseEvent->pos())
+            {
+            emit recordEvent(widget, "mouseMove", info);
+            }
+          emit recordEvent(widget, "mouseRelease", info);
+          }
+        return true;
+        break;
         }
-      return true;
+      case QEvent::Wheel:
+        {
+        if(qobject_cast<QScrollBar*>(object))
+          {
+          QWheelEvent* wheelEvent = dynamic_cast<QWheelEvent*>(event);
+          if(wheelEvent)
+            {
+            int buttons = wheelEvent->buttons();
+            int modifiers = wheelEvent->modifiers();
+            int numStep = wheelEvent->delta();
+            emit recordEvent(object, "mouseWheel", QString("%1,%2,%3,%4,%5")
+                             .arg(numStep)
+                             .arg(buttons)
+                             .arg(modifiers)
+                             .arg(wheelEvent->x())
+                             .arg(wheelEvent->y()));
+            }
+          }
+        return true;
+        break;
+        }
+      default:
       break;
       }
-    default:
-    break;
     }
-  return this->Superclass::translateEvent(Object, Event, Error);
+  else if (eventType == pqEventTypes::CHECK_EVENT)
+    {
+    if (event->type() == QEvent::MouseMove)
+      {
+      // Check for available meta prop
+      const QMetaProperty metaProp = widget->metaObject()->userProperty();
+      if (!metaProp.isValid() && qobject_cast<QWidget*>(widget->parent()) != NULL)
+        {
+        // MouseEvent can be received by the viewport
+        const QMetaProperty metaProp = widget->parent()->metaObject()->userProperty();
+        }
+      if (metaProp.isValid())
+        {
+        return true;
+        }
+      }
+
+    // Clicking while checking, actual check event
+    if (event->type() == QEvent::MouseButtonRelease)
+      {
+      //Generic Meta prop check
+      const QMetaProperty metaProp = widget->metaObject()->userProperty();
+      if (!metaProp.isValid() && widget->parent() != NULL)
+        {
+        // MouseEvent can be received by the viewport, so try the parent widget
+        const QMetaProperty metaProp = widget->parent()->metaObject()->userProperty();
+        widget = qobject_cast<QWidget*>(widget->parent());
+        }
+
+      if (metaProp.isValid() && widget)
+        {
+        // Recover meto prop name
+        QString propName = metaProp.name();
+
+        // Record check event
+        emit recordEvent(pqEventTypes::CHECK_EVENT, widget, propName, widget->property(propName.toAscii().data()).toString());
+        return true;
+        }
+      }
+    }
+  return this->Superclass::translateEvent(object, event, eventType, error);
 }
 
