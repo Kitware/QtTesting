@@ -314,40 +314,41 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
 
     QWidget* widget = qobject_cast<QWidget*>(object);
 
-    // mouse events are propagated to parents
-    // our event translators/players don't quite like that,
-    // so lets consume those extra ones
-    if(event->type() == QEvent::MouseButtonPress ||
-       event->type() == QEvent::MouseButtonDblClick ||
-       event->type() == QEvent::MouseMove ||
-       event->type() == QEvent::Enter ||
-       event->type() == QEvent::Leave ||
-       event->type() == QEvent::MouseButtonRelease ||
-       event->type() == QEvent::ContextMenu)
-      {
-      if(!this->Implementation->MouseParents.empty() &&
-         this->Implementation->MouseParents.first() == object)
-        {
-        // right on track
-        this->Implementation->MouseParents.removeFirst();
-        return false;
-        }
-
-      // find the chain of parent that will get this mouse event
-      this->Implementation->MouseParents.clear();
-      for(QWidget* w = widget->parentWidget(); w; w = w->parentWidget())
-        {
-        this->Implementation->MouseParents.append(w);
-        if(w->isWindow() || w->testAttribute(Qt::WA_NoMousePropagation))
-          {
-          break;
-          }
-        }
-      }
-
-    // Checking mode
     if (widget != NULL)
       {
+
+      // mouse events are propagated to parents
+      // our event translators/players don't quite like that,
+      // so lets consume those extra ones
+      if(event->type() == QEvent::MouseButtonPress ||
+         event->type() == QEvent::MouseButtonDblClick ||
+         event->type() == QEvent::MouseMove ||
+         event->type() == QEvent::Enter ||
+         event->type() == QEvent::Leave ||
+         event->type() == QEvent::MouseButtonRelease ||
+         event->type() == QEvent::ContextMenu)
+        {
+        if(!this->Implementation->MouseParents.empty() &&
+           this->Implementation->MouseParents.first() == object)
+          {
+          // right on track
+          this->Implementation->MouseParents.removeFirst();
+          return false;
+          }
+
+        // find the chain of parent that will get this mouse event
+        this->Implementation->MouseParents.clear();
+        for(QWidget* w = widget->parentWidget(); w; w = w->parentWidget())
+          {
+          this->Implementation->MouseParents.append(w);
+          if(w->isWindow() || w->testAttribute(Qt::WA_NoMousePropagation))
+            {
+            break;
+            }
+          }
+        }
+
+      // Checking mode
       if(this->Implementation->Checking)
         {
         // In Gl Case, parentless widget is not transparent to mouse event
