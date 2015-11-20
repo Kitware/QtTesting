@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -40,19 +40,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QPushButton>
 #include <QToolButton>
 
-#include <iostream>
-
 pqAbstractButtonEventTranslator::pqAbstractButtonEventTranslator(QObject* p)
   : pqWidgetEventTranslator(p)
 {
   this->LastMouseEvent = 0;
 }
 
-bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& /*Error*/)
+bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& Error)
 {
   QAbstractButton* const object = qobject_cast<QAbstractButton*>(Object);
   if(!object)
-    return false;
+      return false;
   switch(Event->type())
     {
     case QEvent::KeyPress:
@@ -62,30 +60,32 @@ bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Ev
         {
         onActivate(object);
         }
-      }
+      return true;
       break;
+      }
     case QEvent::MouseButtonPress:
       {
       QMouseEvent* const e = static_cast<QMouseEvent*>(Event);
       this->LastMouseEvent = e;
       QPushButton* pushButton = qobject_cast<QPushButton*>(object);
-      if(pushButton && 
-         e->button() == Qt::LeftButton && 
+      if(pushButton &&
+         e->button() == Qt::LeftButton &&
          object->rect().contains(e->pos()) &&
          pushButton->menu())
         {
         onActivate(object);
         }
       QToolButton* toolButton = qobject_cast<QToolButton*>(object);
-      if(toolButton && 
-         e->button() == Qt::LeftButton && 
+      if(toolButton &&
+         e->button() == Qt::LeftButton &&
          object->rect().contains(e->pos()) &&
          toolButton->menu())
         {
         onActivate(object);
         }
-      }  
+      return true;
       break;
+      }
     case QEvent::Timer:
       {
       if (this->LastMouseEvent &&
@@ -98,8 +98,9 @@ bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Ev
           emit recordEvent(object, "longActivate", "");
           }
         }
-      }
+      return true;
       break;
+      }
     case QEvent::MouseButtonRelease:
       {
       QMouseEvent* const e = static_cast<QMouseEvent*>(Event);
@@ -108,13 +109,13 @@ bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Ev
         {
         onActivate(object);
         }
+      return true;
+      break;
       }
-      break;
     default:
-      break;
+    break;
     }
-      
-  return true;
+  return this->Superclass::translateEvent(Object, Event, Error);
 }
 
 void pqAbstractButtonEventTranslator::onActivate(QAbstractButton* actualObject)

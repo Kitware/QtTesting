@@ -126,12 +126,15 @@ public:
   /// give a filename convert from one of the data directories
   QString convertFromDataDirectory(const QString& file);
 
+  const QString filename(){return this->Filename;};
+
 public slots:
   bool playTests(const QString& filename);
   void openPlayerDialog();
 
   void stopTests();
   void stopRecords(int value);
+  void pauseRecords(bool value);
 
   void onRecordStopped();
 
@@ -153,6 +156,7 @@ protected:
   pqEventTranslator   Translator;
   bool                PlayingTest;
 
+  QString             Filename;
   QIODevice*          File;
   QString             FileSuffix;
 

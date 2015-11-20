@@ -1,9 +1,9 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pq3DViewEventPlayer.h
+   Module:    pqTableViewEventTranslator.h
 
-   Copyright (c) 2005-2008 Sandia Corporation, Kitware Inc.
+   Copyright (c) 2005,2006 Sandia Corporation, Kitware Inc.
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
@@ -28,37 +28,34 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-=========================================================================*/
+========================================================================*/
+#ifndef __pqTableViewEventTranslator_h
+#define __pqTableViewEventTranslator_h
 
-#ifndef _pq3DViewEventPlayer_h
-#define _pq3DViewEventPlayer_h
+#include "pqAbstractItemViewEventTranslatorBase.h"
 
-#include "pqWidgetEventPlayer.h"
-
-/**
-Concrete implementation of pqWidgetEventPlayer that handles playback of "activate" events for 3d views.
-It is not registered by default, and user can register with their own 3d view type.
-
-\sa pqEventPlayer
-*/
-class QTTESTING_EXPORT pq3DViewEventPlayer :
-  public pqWidgetEventPlayer
+/// Event recorder for QTableView. Records the toggling of the check states for
+/// Table widget items. The recorded state can be played back using
+/// pqTableViewEventPlayer.
+class QTTESTING_EXPORT pqTableViewEventTranslator : public pqAbstractItemViewEventTranslatorBase
 {
   Q_OBJECT
-  typedef pqWidgetEventPlayer Superclass;
-
+  typedef pqAbstractItemViewEventTranslatorBase Superclass;
 public:
-  pq3DViewEventPlayer(const QByteArray& classname, QObject* p = 0);
+  pqTableViewEventTranslator(QObject* parent=0);
+  ~pqTableViewEventTranslator();
 
-  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error);
+  /// find and set the corrected abstract item view
+  virtual bool findCorrectedAbstractItemView(QObject* object,
+    QAbstractItemView*& abstractItemView) const;
 
-protected:
-  QByteArray mClassType;
+protected slots:
+  /// Compute a visual rectangle for the item and signal it
+  void onEnteredCheck(const QModelIndex&);
 
 private:
-
-  pq3DViewEventPlayer(const pq3DViewEventPlayer&);
-  pq3DViewEventPlayer& operator=(const pq3DViewEventPlayer&);
+  pqTableViewEventTranslator(const pqTableViewEventTranslator&); // Not implemented.
+  void operator=(const pqTableViewEventTranslator&); // Not implemented.
 };
 
-#endif // !_pq3DViewEventPlayer_h
+#endif

@@ -92,14 +92,22 @@ public slots:
 
   void start();
   void stop(int value);
-  void pause(bool);
+
+  // Pause the recording if value is False
+  // Keep recording if value is True
+  void unpause(bool value);
+
+  // Pause the recording if value is True
+  // Keep recording if value is False
+  void pause(bool value);
+
+  void check(bool value);
 
 protected:
   pqEventObserver*    ActiveObserver;
   pqEventTranslator*  ActiveTranslator;
   QIODevice*          File;
 
-  bool                Recording;
   bool                ContinuousFlush;
   QTextStream         Stream;
 };

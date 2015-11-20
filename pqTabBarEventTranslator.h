@@ -47,6 +47,7 @@ class QTTESTING_EXPORT pqTabBarEventTranslator :
   public pqWidgetEventTranslator
 {
   Q_OBJECT
+  typedef pqWidgetEventTranslator Superclass;
   
 public:
   pqTabBarEventTranslator(QObject* p=0);

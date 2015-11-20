@@ -61,9 +61,11 @@ public:
 
 public slots:
   virtual void onRecordEvent(
+    const int& eventType,
     const QString& Widget,
     const QString& Command,
-    const QString& Arguments) = 0;
+    const QString& Arguments)=0;
+
 
 signals:
   void eventRecorded(const QString& Widget,

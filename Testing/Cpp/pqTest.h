@@ -74,13 +74,23 @@ public:
   QString Text;
 
 public slots:
-  virtual void onRecordEvent(const QString& widget,
+  virtual void onRecordEvent(const int& eventType,
+                             const QString& widget,
                              const QString& command,
                              const QString& arguments)
   {
+  if (eventType == pqEventTypes::CHECK_EVENT)
+    {
+    this->Text.append(QString("Check, %1, %2, %3#").arg(widget,
+                                          command,
+                                          arguments));
+    }
+  else
+    {
     this->Text.append(QString("%1, %2, %3#").arg(widget,
                                           command,
                                           arguments));
+    }
   }
 };
 
@@ -101,7 +111,8 @@ protected:
     return;
     }
 
-  int getNextEvent(QString& /*widget*/,
+  int getNextEvent(int& /*eventType*/,
+                   QString& /*widget*/,
                    QString& /*command*/,
                    QString& /*arguments*/)
     {

@@ -60,6 +60,7 @@ pqTestUtility::pqTestUtility(QObject* p)
 {
   this->PlayingTest = false;
 
+  this->Filename = "";
   this->File = 0;
   this->FileSuffix = QString();
 
@@ -193,6 +194,12 @@ void pqTestUtility::stopRecords(int value)
 }
 
 //-----------------------------------------------------------------------------
+void pqTestUtility::pauseRecords(bool value)
+{
+  this->Recorder.pause(value);
+}
+
+//-----------------------------------------------------------------------------
 void pqTestUtility::onRecordStopped()
 {
   QTemporaryFile* file = qobject_cast<QTemporaryFile*>(this->File);
@@ -250,6 +257,7 @@ bool pqTestUtility::playTests(const QStringList& filenames)
   bool success = true;
   foreach (QString filename, filenames)
     {
+    this->Filename = filename;
     if(!this->playingTest())
       {
       break;
@@ -280,6 +288,7 @@ bool pqTestUtility::playTests(const QStringList& filenames)
       }
     }
 
+  this->Filename = "";
   this->PlayingTest = false;
   emit this->playbackStopped();
 
@@ -342,6 +351,7 @@ void pqTestUtility::recordTests()
 //-----------------------------------------------------------------------------
 void pqTestUtility::recordTests(const QString& filename)
 {
+  this->Filename = filename;
   this->File = new QFile(filename);
   QFileInfo info(filename);
   this->FileSuffix = info.completeSuffix();

@@ -46,6 +46,7 @@ class QTTESTING_EXPORT pqAbstractItemViewEventTranslator :
   public pqWidgetEventTranslator
 {
   Q_OBJECT
+  typedef pqWidgetEventTranslator Superclass;
   
 public:
   pqAbstractItemViewEventTranslator(QObject* p=0);

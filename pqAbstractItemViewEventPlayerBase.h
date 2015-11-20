@@ -1,13 +1,13 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pqBasicWidgetEventPlayer.h
+   Module:    pqAbstractItemViewEventPlayerBase.h
 
-   Copyright (c) 2005-2008 Sandia Corporation, Kitware Inc.
+   Copyright (c) 2005,2006 Sandia Corporation, Kitware Inc.
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -28,34 +28,39 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-=========================================================================*/
-
-#ifndef _pqBasicWidgetEventPlayer_h
-#define _pqBasicWidgetEventPlayer_h
+========================================================================*/
+#ifndef __pqAbstractItemViewEventPlayerBase_h
+#define __pqAbstractItemViewEventPlayerBase_h
 
 #include "pqWidgetEventPlayer.h"
+#include <QModelIndex>
 
-/**
-Concrete implementation of pqWidgetEventPlayer that handles playback of "activate" events for buttons and menus.
+class QAbstractItemView;
 
-\sa pqEventPlayer
-*/
-class pqBasicWidgetEventPlayer :
-  public pqWidgetEventPlayer
+/// pqAbstractItemViewEventPlayerBase is a player for QAbstractItemViewWidget. Plays back the state
+/// recorded using pQAbstractItemViewEventTranslatorBase.
+class QTTESTING_EXPORT pqAbstractItemViewEventPlayerBase : public pqWidgetEventPlayer
 {
   Q_OBJECT
   typedef pqWidgetEventPlayer Superclass;
-
 public:
-  pqBasicWidgetEventPlayer(QObject* p=0);
+  pqAbstractItemViewEventPlayerBase(QObject* parent=0);
+  ~pqAbstractItemViewEventPlayerBase()=0;
 
-  bool playEvent(QObject* object, const QString& command, 
+  /// Play an event on a QAbstractViewItem
+  bool playEvent(QObject* object, const QString& command,
                  const QString& arguments, int eventType, bool& error);
 
+protected:
+  /// Get index using a previously recorded string
+  static QModelIndex GetIndex(const QString& str_index, QAbstractItemView* abstractItemView, bool &error);
+
+  /// Get data string using a previously recorded string
+  static QString GetDataString(const QString& str_index, bool &error);
+
 private:
-  pqBasicWidgetEventPlayer(const pqBasicWidgetEventPlayer&);
-  pqBasicWidgetEventPlayer& operator=(const pqBasicWidgetEventPlayer&);
+  pqAbstractItemViewEventPlayerBase(const pqAbstractItemViewEventPlayerBase&); // Not implemented.
+  void operator=(const pqAbstractItemViewEventPlayerBase&); // Not implemented.
 };
 
-#endif // !_pqBasicWidgetEventPlayer_h
-
+#endif

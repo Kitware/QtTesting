@@ -48,6 +48,7 @@ class QTTESTING_EXPORT pqNativeFileDialogEventTranslator :
   public pqWidgetEventTranslator
 {
   Q_OBJECT
+  typedef pqWidgetEventTranslator Superclass;
 
 public:
   pqNativeFileDialogEventTranslator(pqTestUtility* util, QObject* p=0);
