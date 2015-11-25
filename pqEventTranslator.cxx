@@ -75,7 +75,7 @@ struct pqEventTranslator::pqImplementation
   /// Stores the working set of widget translators  
   QList<pqWidgetEventTranslator*> Translators;
   /// Stores the set of objects that should be ignored when translating events
-  QSet<QObject*> IgnoredObjects;
+  QMap<QObject*, QRegExp> IgnoredObjects;
 
   // list of widgets for which mouse propagation will happen
   // we'll only translate the first and ignore the rest
@@ -218,9 +218,9 @@ pqEventComment* pqEventTranslator::eventComment() const
 }
 
 // ----------------------------------------------------------------------------
-void pqEventTranslator::ignoreObject(QObject* Object)
+void pqEventTranslator::ignoreObject(QObject* object, QRegExp commandFilter)
 {
-  this->Implementation->IgnoredObjects.insert(Object);
+  this->Implementation->IgnoredObjects.insert(object, commandFilter);
 }
 
 // ----------------------------------------------------------------------------
@@ -283,7 +283,13 @@ void pqEventTranslator::onRecordEvent(QObject* Object,
                                       const QString& Arguments)
 {
   if(this->Implementation->IgnoredObjects.contains(Object))
-    return;
+  {
+    QRegExp commandFilter = this->Implementation->IgnoredObjects.value(Object);
+    if(Command.contains(commandFilter))
+    {
+      return;
+    }
+  }
 
   QString name;
   // When sender is pqEventObject, the Object name can be NULL.

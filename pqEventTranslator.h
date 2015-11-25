@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "QtTestingExport.h"
 #include <QObject>
+#include <QRegExp>
 
 class pqEventComment;
 class pqTestUtility;
@@ -83,9 +84,10 @@ public:
   pqEventComment* eventComment() const;
 
   /// Adds a Qt object to a list of objects that should be ignored when
-  /// translating events (useful to prevent recording UI events from being
+  /// translating events which command is equivalent to the regexp
+  /// (useful to prevent recording UI events from being
   /// captured as part of the recording)
-  void ignoreObject(QObject* Object);
+  void ignoreObject(QObject* object, QRegExp commandFilter = QRegExp("*", Qt::CaseInsensitive, QRegExp::Wildcard));
 
   /// start listening to the GUI and translating events
   void start();
