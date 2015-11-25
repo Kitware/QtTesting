@@ -59,6 +59,7 @@ pqTestUtility::pqTestUtility(QObject* p)
   : QObject(p)
 {
   this->PlayingTest = false;
+  this->RecordWithDialog = true;
 
   this->File = 0;
   this->FileSuffix = QString();
@@ -316,25 +317,28 @@ void pqTestUtility::recordTests()
   QObject::connect(&this->Recorder, SIGNAL(stopped()),
                    this, SLOT(onRecordStopped()), Qt::UniqueConnection);
 
-  if (QApplication::activeWindow())
-    {
-    pqRecordEventsDialog* dialog = new pqRecordEventsDialog(&this->Recorder,
-                                          this,
-                                          QApplication::activeWindow());
-    dialog->setAttribute(Qt::WA_QuitOnClose, false);
+  if (this->RecordWithDialog)
+  {
+    if (QApplication::activeWindow())
+      {
+      pqRecordEventsDialog* dialog = new pqRecordEventsDialog(&this->Recorder,
+                                            this,
+                                            QApplication::activeWindow());
+      dialog->setAttribute(Qt::WA_QuitOnClose, false);
 
-    QRect rectApp = QApplication::activeWindow()->geometry();
-    QRect rectDialog(QPoint(rectApp.left(),
-                            rectApp.bottom() - dialog->sizeHint().height()),
-                     QSize(dialog->geometry().width(), dialog->sizeHint().height()));
+      QRect rectApp = QApplication::activeWindow()->geometry();
+      QRect rectDialog(QPoint(rectApp.left(),
+                              rectApp.bottom() - dialog->sizeHint().height()),
+                       QSize(dialog->geometry().width(), dialog->sizeHint().height()));
 
-    dialog->setGeometry(rectDialog);
-    dialog->show();
-    }
-  else
-    {
-    qWarning() << "No acive windows has been found";
-    }
+      dialog->setGeometry(rectDialog);
+      dialog->show();
+      }
+    else
+      {
+      qWarning() << "No active windows has been found";
+      }
+  }
 
   this->Recorder.recordEvents(&this->Translator, observer, this->File, true);
 }
@@ -491,4 +495,16 @@ QString pqTestUtility::convertFromDataDirectory(const QString& file)
       }
     }
   return filename;
+}
+
+//-----------------------------------------------------------------------------
+bool pqTestUtility::recordWithDialog() const
+{
+  return this->RecordWithDialog;
+}
+
+//-----------------------------------------------------------------------------
+void pqTestUtility::setRecordWithDialog(bool withDialog)
+{
+  this->RecordWithDialog = withDialog;
 }

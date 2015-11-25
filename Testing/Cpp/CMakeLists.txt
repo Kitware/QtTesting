@@ -3,6 +3,7 @@ include(../CMake/qtTestingMacroGenerateMocs.cmake)
 set(KIT ${PROJECT_NAME})
 
 set(TEST_SOURCES
+  pqAbstractButtonEventTranslatorTest.cpp
   pqEventPlayerTest.cpp
   pqEventRecorderTest.cpp
   pqEventTranslatorTest.cpp
@@ -49,6 +50,7 @@ endmacro()
 #
 # Add Tests
 #
+SIMPLE_TEST( pqAbstractButtonEventTranslatorTest )
 SIMPLE_TEST( pqEventPlayerTest )
 SIMPLE_TEST( pqEventRecorderTest )
 SIMPLE_TEST( pqDoubleSpinBoxEventPlayerTest )
