@@ -56,13 +56,15 @@ public:
   
   virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
 
+protected:
+  virtual void onActivate(QAbstractButton*);
+  virtual bool hasMenu(QAbstractButton* actualObject) const;
+
+  QEvent::Type LastMouseEventType;
+
 private:
   pqAbstractButtonEventTranslator(const pqAbstractButtonEventTranslator&);
   pqAbstractButtonEventTranslator& operator=(const pqAbstractButtonEventTranslator&);
-
-  void onActivate(QAbstractButton*);
-
-  QMouseEvent* LastMouseEvent;
 };
 
 #endif // !_pqAbstractButtonEventTranslator_h

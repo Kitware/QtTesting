@@ -45,19 +45,25 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 pqAbstractButtonEventTranslator::pqAbstractButtonEventTranslator(QObject* p)
   : pqWidgetEventTranslator(p)
 {
-  this->LastMouseEvent = 0;
+  this->LastMouseEventType = QEvent::None;
 }
 
 bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& /*Error*/)
 {
   QAbstractButton* const object = qobject_cast<QAbstractButton*>(Object);
   if(!object)
+    {
     return false;
+    }
+  QPushButton* pushButton = qobject_cast<QPushButton*>(object);
+  QToolButton* toolButton = qobject_cast<QToolButton*>(object);
+  bool withMenu = (pushButton && pushButton->menu()) ||
+                  (toolButton && (toolButton->menu() || toolButton->defaultAction() && toolButton->defaultAction()->menu()));
   switch(Event->type())
     {
     case QEvent::KeyPress:
       {
-      QKeyEvent* const e = static_cast<QKeyEvent*>(Event);
+      QKeyEvent* const e = dynamic_cast<QKeyEvent*>(Event);
       if(e->key() == Qt::Key_Space)
         {
         onActivate(object);
@@ -66,21 +72,12 @@ bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Ev
       break;
     case QEvent::MouseButtonPress:
       {
-      QMouseEvent* const e = static_cast<QMouseEvent*>(Event);
-      this->LastMouseEvent = e;
-      QPushButton* pushButton = qobject_cast<QPushButton*>(object);
-      if(pushButton && 
-         e->button() == Qt::LeftButton && 
+      QMouseEvent* const e = dynamic_cast<QMouseEvent*>(Event);
+      this->LastMouseEventType = Event->type();
+      // Menus are opened on mouse press
+      if(e->button() == Qt::LeftButton &&
          object->rect().contains(e->pos()) &&
-         pushButton->menu())
-        {
-        onActivate(object);
-        }
-      QToolButton* toolButton = qobject_cast<QToolButton*>(object);
-      if(toolButton && 
-         e->button() == Qt::LeftButton && 
-         object->rect().contains(e->pos()) &&
-         toolButton->menu())
+         this->hasMenu(object))
         {
         onActivate(object);
         }
@@ -88,23 +85,30 @@ bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Ev
       break;
     case QEvent::Timer:
       {
-      if (this->LastMouseEvent &&
-          this->LastMouseEvent->type() == QEvent::MouseButtonPress)
+      if (this->LastMouseEventType == QEvent::MouseButtonPress)
         {
         QToolButton* tButton = qobject_cast<QToolButton*>(object);
         if(tButton &&
            tButton->popupMode() == QToolButton::DelayedPopup)
           {
           emit recordEvent(object, "longActivate", "");
+          // Tell comming mouse button release to not record activate.
+          this->LastMouseEventType = QEvent::None;
           }
         }
       }
       break;
     case QEvent::MouseButtonRelease:
       {
-      QMouseEvent* const e = static_cast<QMouseEvent*>(Event);
-      this->LastMouseEvent = e;
-      if(e->button() == Qt::LeftButton && object->rect().contains(e->pos()))
+      bool lastEventWasMouseButtonPress =
+        this->LastMouseEventType == QEvent::MouseButtonPress;
+      QMouseEvent* const e = dynamic_cast<QMouseEvent*>(Event);
+      this->LastMouseEventType = Event->type();
+      // Buttons are activated on mouse release. Menus should already be recorded.
+      if (e->button() == Qt::LeftButton
+          && object->rect().contains(e->pos())
+          && !this->hasMenu(object)
+          && lastEventWasMouseButtonPress)
         {
         onActivate(object);
         }
@@ -130,15 +134,27 @@ void pqAbstractButtonEventTranslator::onActivate(QAbstractButton* actualObject)
     const bool new_value = !actualObject->isChecked();
     emit recordEvent(object, "set_boolean", new_value ? "true" : "false");
     }
-  else if(tb)
-    {
-    if (!tb->menu())
-      {
-      emit recordEvent(tb, "activate", "");
-      }
-    }
   else
     {
     emit recordEvent(object, "activate", "");
     }
+}
+
+bool pqAbstractButtonEventTranslator::hasMenu(QAbstractButton* button) const
+{
+  bool hasMenu = false;
+  QPushButton* pushButton = qobject_cast<QPushButton*>(button);
+  if (pushButton)
+  {
+    hasMenu = pushButton->menu() != 0;
+  }
+  QToolButton* toolButton = qobject_cast<QToolButton*>(button);
+  if (toolButton)
+  {
+    hasMenu = toolButton->menu() != 0
+      || (toolButton->defaultAction()
+          && toolButton->defaultAction()->menu() != 0);
+    hasMenu = hasMenu && toolButton->popupMode() != QToolButton::ToolButtonPopupMode::DelayedPopup;
+  }
+  return hasMenu;
 }
