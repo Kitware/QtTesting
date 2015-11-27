@@ -85,7 +85,11 @@ void pqAbstractButtonEventTranslatorTester::init()
   this->ToolButton->resize(200,200);
 
   this->ToolButton->show();
+#if QT_VERSION < QT_VERSION_CHECK(5, 3, 0)
+  QTest::qWaitForWindowShown(this->ToolButton);
+#else
   QTest::qWaitForWindowExposed(this->ToolButton);
+#endif
 
   // Start to record events
   this->TestUtility->recordTestsBySuffix("xml");
@@ -100,7 +104,7 @@ void pqAbstractButtonEventTranslatorTester::cleanup()
 {
   this->EventObserver->Text = QString();
   this->TestUtility->stopRecords(0);
-  this->ToolButton->deleteLater();
+  delete this->ToolButton;
   this->ToolButton = 0;
 }
 
@@ -177,8 +181,8 @@ void pqAbstractButtonEventTranslatorTester::testToolButton_data()
   //QTest::newRow("fail") << 2 << false << false << true << false<< "toolButton, activate, #";
   for (int i = 0; i < 0x20; ++i)
   {
-    int popup = i & 0x01 ? QToolButton::ToolButtonPopupMode::DelayedPopup :
-      QToolButton::ToolButtonPopupMode::InstantPopup;
+    int popup = i & 0x01 ? QToolButton::DelayedPopup :
+      QToolButton::InstantPopup;
     const bool withDefaultAction = i & 0x02;
     const bool checkable = i & 0x04;
     const bool withMenu = i & 0x08;
@@ -193,7 +197,7 @@ void pqAbstractButtonEventTranslatorTester::testToolButton_data()
         .arg(longClick);
 
     bool longActivate = withMenu
-      && popup == QToolButton::ToolButtonPopupMode::DelayedPopup
+      && popup == QToolButton::DelayedPopup
       && longClick;
     QString recordEmitted = QString("toolButton%1, %2, %3#")
       .arg(withDefaultAction && !longActivate ? "/action" : "")
