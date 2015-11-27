@@ -221,27 +221,29 @@ QObject* pqObjectNaming::GetObject(const QString& Name)
     const QObjectList& children = result ? result->children() : QObjectList();
     
     result = 0;
+    QString objectName = names[j];
     for(int k = 0; k != children.size(); ++k)
       {
       QObject* child = children[k];
       const QString name = InternalGetName(*child);
       const QString alt_name = InternalGetNameAsUnnamed(*child);
-      
-      if(name == names[j] || alt_name == names[j])
+
+      if(name == objectName || alt_name == objectName)
         {
         result = child;
         lastObject = child;
         break;
         }
-      }
 
-    // if there is a real name, also allow skipping generations
-    // in the hierarchy to find a child
-    if(result == 0)
-      {
-      if(!names[j].isEmpty() && names[j].at(0).isDigit())
+      // Sometimes, when playing, widget are visible when they were not during recording,
+      // try again with visibility at 1.
+      if (k == children.size() - 1 &&
+          result == 0 &&
+          !objectName.isEmpty() &&
+          objectName[0] == '0')
         {
-        result = result->findChild<QObject*>(names[j]);
+        objectName[0] = '1';
+        k = 0;
         }
       }
     }
