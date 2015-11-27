@@ -58,6 +58,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QApplication>
 #include <QToolBar>
 
+// Check Overlay class
 class pqCheckEventOverlay : public QWidget {
 public:
   pqCheckEventOverlay(QWidget * parent = 0) : QWidget(parent) {
@@ -69,10 +70,20 @@ public:
     this->setObjectName("Overlay");
   }
 
+  // true if the overlayed widget can be checked, false otherwise
   bool Valid;
+
+  // true if the overlayed widget in an opengl widget, false otherwise
   bool GlWidget;
+
+  // true if the size of the overlay is specifically defined
+  // via resize slot, false otherwise
   bool Specific;
+
+  // Static overlauy margin
   static const int OVERLAY_MARGIN = 2;
+
+  // Static overlay pen width
   static const int OVERLAY_PEN_WIDTH = 5;
 
 protected:
@@ -86,7 +97,8 @@ protected:
       pen.setColor(Qt::green);
       }
     p.setPen(pen);
-    // -2 for the line width
+
+    // Remove the margins to draw
     p.drawRect(0, 0, width()-pqCheckEventOverlay::OVERLAY_MARGIN, height()-pqCheckEventOverlay::OVERLAY_MARGIN);
   }
 };
@@ -118,8 +130,13 @@ struct pqEventTranslator::pqImplementation
 
   void hideOverlay()
     {
+    // Hide the overlay
     this->CheckOverlay->hide();
+
+    // Nullfied it's parent
     this->CheckOverlay->setParent(NULL);
+
+    // Set the overlayed widget to null
     this->CheckOverlayWidgetOn = NULL;
     }
 
@@ -133,9 +150,16 @@ struct pqEventTranslator::pqImplementation
   // we'll only translate the first and ignore the rest
   QList<QWidget*> MouseParents;
 
+  // Checking Flag
   bool Checking;
+
+  // Recording flag
   bool Recording;
+
+  // Pointer to the overlay
   QPointer<pqCheckEventOverlay> CheckOverlay;
+
+  // Pointer to the overlayed widget
   QPointer<QWidget> CheckOverlayWidgetOn;
 };
 
@@ -312,8 +336,8 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
       }
 #endif
 
+    // Only widgets
     QWidget* widget = qobject_cast<QWidget*>(object);
-
     if (widget != NULL)
       {
 
@@ -356,7 +380,7 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
         // (before ignoredObjects)
         // TODO : use mask instead
 
-        // This is relevant only if :
+        // Look behind the overlay widget, this is relevant only if :
         // There is already an overlay drawn
         // This is the gl case
         // This is a mouse event we manage
@@ -644,7 +668,7 @@ void pqEventTranslator::check(bool value)
 {
   this->Implementation->Checking = value;
 
-  // Hide avoerlay when not checking
+  // Hide overlay when not checking
   if(!value)
     {
     this->Implementation->hideOverlay();
@@ -656,7 +680,7 @@ void pqEventTranslator::record(bool value)
 {
   this->Implementation->Recording = value;
 
-  // Hide avoerlay when not recording
+  // Hide overlay when not recording
   if(!value)
     {
     this->Implementation->hideOverlay();

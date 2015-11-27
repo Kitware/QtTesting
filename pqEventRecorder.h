@@ -101,6 +101,8 @@ public slots:
   // Keep recording if value is False
   void pause(bool value);
 
+  // Set/Unset the recorder into Check mode
+  // Connection signal into the correct slots
   void check(bool value);
 
 protected:

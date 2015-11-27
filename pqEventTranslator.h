@@ -114,8 +114,13 @@ signals:
   void stopped();
 
 private slots:
+  // Slot called when recording an event
   void onRecordEvent(int eventType, QObject* Object, const QString& Command, const QString& Arguments);
+
+  // Legacy convenient slot for pqEventTypes::EVENT events
   void onRecordEvent(QObject* Object, const QString& Command, const QString& Arguments);
+
+  // Slots called when widget request a specific size for the check overlay
   void setOverlayGeometry(const QRect& geometry, bool specific = true);
 
 private:
