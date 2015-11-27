@@ -80,7 +80,6 @@ bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Ev
         {
         onActivate(object);
         }
-      }  
       return true;
       break;
       }
@@ -156,7 +155,7 @@ bool pqAbstractButtonEventTranslator::hasMenu(QAbstractButton* button) const
     hasMenu = toolButton->menu() != 0
       || (toolButton->defaultAction()
           && toolButton->defaultAction()->menu() != 0);
-    hasMenu = hasMenu && toolButton->popupMode() != QToolButton::ToolButtonPopupMode::DelayedPopup;
+    hasMenu = hasMenu && toolButton->popupMode() != QToolButton::DelayedPopup;
   }
   return hasMenu;
 }
