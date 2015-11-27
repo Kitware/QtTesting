@@ -38,6 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QSpinBox>
 #include <QTextDocument>
 #include <QTextEdit>
+#include <QPlainTextEdit>
 #include <QKeyEvent>
 
 #include "pqEventTypes.h"
@@ -52,14 +53,16 @@ bool pqLineEditEventTranslator::translateEvent(QObject* object, QEvent* event, i
   QObject* tmpObject = object;
   QLineEdit* leObject = qobject_cast<QLineEdit*>(object);
   QTextEdit* teObject = qobject_cast<QTextEdit*>(object);
-  if(!leObject && !teObject && object->parent() != NULL)
+  QPlainTextEdit* pteObject = qobject_cast<QPlainTextEdit*>(object);
+  if(!leObject && !teObject && !pteObject && object->parent() != NULL)
     {
     // MouseEvent can be received by viewport
     tmpObject = object->parent();
     leObject = qobject_cast<QLineEdit*>(tmpObject);
     teObject = qobject_cast<QTextEdit*>(tmpObject);
+    pteObject = qobject_cast<QPlainTextEdit*>(tmpObject);
     }
-  if(!leObject && !teObject)
+  if(!leObject && !teObject && !pteObject)
     {
     return false;
     }
@@ -89,6 +92,11 @@ bool pqLineEditEventTranslator::translateEvent(QObject* object, QEvent* event, i
             {
             emit recordEvent(tmpObject, "set_string", teObject->document()->toPlainText());
             }
+          else if (pteObject)
+            {
+            emit recordEvent(tmpObject, "set_string", pteObject->document()->toPlainText());
+            }
+
           }
         // if we record F2 event, will cause some issue with the TreeView
         // Need test to know if we need to record those events
@@ -106,7 +114,7 @@ bool pqLineEditEventTranslator::translateEvent(QObject* object, QEvent* event, i
   else if (eventType == pqEventTypes::CHECK_EVENT)
     {
     // TextEdit only, LineEdit does not need specific check
-    if (teObject != NULL)
+    if (teObject != NULL || pteObject != NULL)
       {
       if (event->type() == QEvent::MouseMove)
         {
@@ -115,8 +123,16 @@ bool pqLineEditEventTranslator::translateEvent(QObject* object, QEvent* event, i
       // Clicking while checking, actual check event
       if (event->type() == QEvent::MouseButtonRelease)
         {
-        emit this->recordEvent(pqEventTypes::CHECK_EVENT, teObject,
-          "html", teObject->toHtml());
+        if(teObject != NULL)
+          {
+          emit this->recordEvent(pqEventTypes::CHECK_EVENT, teObject,
+                                 "plainText", teObject->toPlainText().replace("\t", " "));
+          }
+        else /* if (pteObject != NULL)*/
+          {
+          emit this->recordEvent(pqEventTypes::CHECK_EVENT, pteObject,
+                                 "plainText", pteObject->toPlainText().replace("\t", " "));
+          }
         return true;
         }
       }

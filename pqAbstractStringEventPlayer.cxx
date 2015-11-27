@@ -37,6 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QtDebug>
 #include <QTextDocument>
 #include <QTextEdit>
+#include <QPlainTextEdit>
 
 #include "pqObjectNaming.h"
 
@@ -81,6 +82,14 @@ bool pqAbstractStringEventPlayer::playEvent(QObject* Object, const QString& Comm
     }
 
   if (QTextEdit* const object = qobject_cast<QTextEdit*>(Object))
+    {
+    object->setFocus(Qt::OtherFocusReason);
+    object->document()->setPlainText(value);
+    object->clearFocus();
+    return true;
+    }
+
+  if (QPlainTextEdit* const object = qobject_cast<QPlainTextEdit*>(Object))
     {
     object->setFocus(Qt::OtherFocusReason);
     object->document()->setPlainText(value);
