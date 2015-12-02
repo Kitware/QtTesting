@@ -54,7 +54,7 @@ bool pqLineEditEventTranslator::translateEvent(QObject* object, QEvent* event, i
   QLineEdit* leObject = qobject_cast<QLineEdit*>(object);
   QTextEdit* teObject = qobject_cast<QTextEdit*>(object);
   QPlainTextEdit* pteObject = qobject_cast<QPlainTextEdit*>(object);
-  if(!leObject && !teObject && object->parent() != NULL)
+  if(!leObject && !teObject && !pteObject && object->parent() != NULL)
     {
     // MouseEvent can be received by viewport
     tmpObject = object->parent();
