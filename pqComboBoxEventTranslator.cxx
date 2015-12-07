@@ -66,8 +66,8 @@ bool pqComboBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, b
       
       this->CurrentObject = Object;
       connect(combo, SIGNAL(destroyed(QObject*)), this, SLOT(onDestroyed(QObject*)));
-      connect(combo, SIGNAL(activated(const QString&)), this, SLOT(onStateChanged(const QString&)));
-      connect(combo, SIGNAL(editTextChanged(const QString&)), this, SLOT(onStateChanged(const QString&)));
+      connect(combo, SIGNAL(activated(const QString&)), this, SLOT(onActivated(const QString&)));
+      connect(combo, SIGNAL(editTextChanged(const QString&)), this, SLOT(onEditTextChanged(const QString&)));
       }
     return true;
     }
@@ -79,7 +79,12 @@ void pqComboBoxEventTranslator::onDestroyed(QObject* /*Object*/)
   this->CurrentObject = 0;
 }
 
-void pqComboBoxEventTranslator::onStateChanged(const QString& State)
+void pqComboBoxEventTranslator::onActivated(const QString& text)
 {
-  emit recordEvent(this->CurrentObject, "set_string", State);
+  emit recordEvent(this->CurrentObject, "activated", text);
+}
+
+void pqComboBoxEventTranslator::onEditTextChanged(const QString& text)
+{
+  emit recordEvent(this->CurrentObject, "editTextChanged", text);
 }

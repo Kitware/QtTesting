@@ -40,6 +40,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqAbstractMiscellaneousEventPlayer.h"
 #include "pqAbstractStringEventPlayer.h"
 #include "pqBasicWidgetEventPlayer.h"
+#include "pqComboBoxEventPlayer.h"
 #include "pqCommentEventPlayer.h"
 #include "pqObjectNaming.h"
 #include "pqTabBarEventPlayer.h"
@@ -75,6 +76,7 @@ void pqEventPlayer::addDefaultWidgetEventPlayers(pqTestUtility* util)
   addWidgetEventPlayer(new pqAbstractItemViewEventPlayer());
   addWidgetEventPlayer(new pqAbstractStringEventPlayer());
   addWidgetEventPlayer(new pqTabBarEventPlayer());
+  addWidgetEventPlayer(new pqComboBoxEventPlayer());
   addWidgetEventPlayer(new pqTreeViewEventPlayer());
   addWidgetEventPlayer(new pqTableViewEventPlayer());
   addWidgetEventPlayer(new pqAbstractMiscellaneousEventPlayer());

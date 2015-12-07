@@ -1,9 +1,9 @@
 /*=========================================================================
 
    Program: ParaView
-   Module:    pqComboBoxEventTranslator.h
+   Module:    pqComboBoxEventPlayer.h
 
-   Copyright (c) 2005-2008 Sandia Corporation, Kitware Inc.
+   Copyright (c) 2005,2006 Sandia Corporation, Kitware Inc.
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
@@ -28,41 +28,35 @@ LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
 NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
-=========================================================================*/
+========================================================================*/
+#ifndef __pqComboBoxEventPlayer_h
+#define __pqComboBoxEventPlayer_h
 
-#ifndef _pqComboBoxEventTranslator_h
-#define _pqComboBoxEventTranslator_h
+#include "pqWidgetEventPlayer.h"
 
-#include "pqWidgetEventTranslator.h"
-
-/**
-Translates low-level Qt events into high-level ParaView events that can be recorded as test cases.
-
-\sa pqEventTranslator
-*/
-
-class QTTESTING_EXPORT pqComboBoxEventTranslator :
-  public pqWidgetEventTranslator
+/// pqComboBoxEventPlayer is a player for QComboBoxWidget. Plays back the state
+/// recorded using pqComboBoxEventTranslator.
+class QTTESTING_EXPORT pqComboBoxEventPlayer : public pqWidgetEventPlayer
 {
   Q_OBJECT
-  typedef pqWidgetEventTranslator Superclass;
-
+  typedef pqWidgetEventPlayer Superclass;
 public:
-  pqComboBoxEventTranslator(QObject* p=0);
+  pqComboBoxEventPlayer(QObject* parent=0);
+  ~pqComboBoxEventPlayer();
 
-  virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
+  /// Play an event on a QComboBox
+  bool playEvent(QObject* object, const QString& command,
+                 const QString& arguments, int eventType, bool& error);
+
+signals:
+#if QT_VERSION < 0x050000
+  // Transition signal to call combo box activated signal
+  void activated(int index);
+#endif
 
 private:
-  pqComboBoxEventTranslator(const pqComboBoxEventTranslator&);
-  pqComboBoxEventTranslator& operator=(const pqComboBoxEventTranslator&);
-
-  QObject* CurrentObject;
-
-private slots:
-  void onDestroyed(QObject*);
-  void onActivated(const QString&);
-  void onEditTextChanged(const QString&);
+  pqComboBoxEventPlayer(const pqComboBoxEventPlayer&); // Not implemented.
+  void operator=(const pqComboBoxEventPlayer&); // Not implemented.
 };
 
-#endif // !_pqComboBoxEventTranslator_h
-
+#endif
