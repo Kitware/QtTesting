@@ -126,6 +126,7 @@ SET(MOC_SRCS
   pqBasicWidgetEventPlayer.h
   pqBasicWidgetEventTranslator.h
   pqComboBoxEventTranslator.h
+  pqComboBoxEventPlayer.h
   pqCommentEventPlayer.h
   pqDoubleSpinBoxEventTranslator.h
   pqEventComment.h
@@ -210,6 +211,7 @@ SET(QtTesting_SOURCES
   pqBasicWidgetEventPlayer.cxx
   pqBasicWidgetEventTranslator.cxx
   pqComboBoxEventTranslator.cxx
+  pqComboBoxEventPlayer.cxx
   pqCommentEventPlayer.cxx
   pqDoubleSpinBoxEventTranslator.cxx
   pqEventComment.cxx
@@ -259,6 +261,7 @@ SET(QtTesting_DEVEL_HEADERS
   pqBasicWidgetEventPlayer.h
   pqBasicWidgetEventTranslator.h
   pqComboBoxEventTranslator.h
+  pqComboBoxEventPlayer.h
   pqCommentEventPlayer.h
   pqDoubleSpinBoxEventTranslator.h
   pqEventComment.h
