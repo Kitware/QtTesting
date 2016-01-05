@@ -377,6 +377,7 @@ void pqPlayBackEventsDialog::onStarted(const QString& filename)
   this->Implementation->Ui.logBrowser->append(QString("Start file : %1").arg(
                                                 infoFile.fileName()));
   QTextStream stream(&file);
+  stream.setCodec("UTF-8");
   this->Implementation->Ui.currentFileLabel->setText(infoFile.fileName());
   while(!stream.atEnd())
     {

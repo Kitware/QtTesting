@@ -178,6 +178,9 @@ void pqEventRecorder::start()
   // Set the device
   this->Stream.setDevice(this->File);
 
+  // Set UTF8 Codec
+  this->Stream.setCodec("UTF-8");
+
   // Set the Stream to the Observer
   this->ActiveObserver->setStream(&this->Stream);
 
