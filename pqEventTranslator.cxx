@@ -43,13 +43,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqEventComment.h"
 #include "pqEventTypes.h"
 #include "pqLineEditEventTranslator.h"
+#include "pqListViewEventTranslator.h"
 #include "pqMenuEventTranslator.h"
 #include "pqNativeFileDialogEventTranslator.h"
 #include "pqObjectNaming.h"
 #include "pqSpinBoxEventTranslator.h"
 #include "pqTabBarEventTranslator.h"
-#include "pqTreeViewEventTranslator.h"
 #include "pqTableViewEventTranslator.h"
+#include "pqTreeViewEventTranslator.h"
 
 #include <QCoreApplication>
 #include <QtDebug>
@@ -168,6 +169,7 @@ void pqEventTranslator::addDefaultWidgetEventTranslators(pqTestUtility* util)
   addWidgetEventTranslator(new pqTabBarEventTranslator());
   addWidgetEventTranslator(new pqTreeViewEventTranslator());
   addWidgetEventTranslator(new pqTableViewEventTranslator());
+  addWidgetEventTranslator(new pqListViewEventTranslator());
   addWidgetEventTranslator(new pq3DViewEventTranslator("QGLWidget"));
   addWidgetEventTranslator(new pqNativeFileDialogEventTranslator(util));
 }
@@ -531,6 +533,10 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
           // Cannot check widget , Inform user trying to check uncheckable widget
           qWarning() << "Error checking an event for object, widget type not supported.";
           qWarning() << "Name of the widget:" << widget->objectName() << ". Type of the widget:" << widget->metaObject()->className();
+          if (widget->parent() != NULL)
+            {
+            qWarning() << "Type of parent widget:" << widget->parent()->metaObject()->className();
+            }
           }
         // Block all input events, so the UI is static but still drawn.
         // Except for MouseMove

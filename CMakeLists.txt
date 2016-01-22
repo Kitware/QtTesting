@@ -126,6 +126,8 @@ SET(MOC_SRCS
   pqEventSource.h
   pqEventTranslator.h
   pqLineEditEventTranslator.h
+  pqListViewEventPlayer.h
+  pqListViewEventTranslator.h
   pqMenuEventTranslator.h
   pqNativeFileDialogEventPlayer.h
   pqNativeFileDialogEventTranslator.h
@@ -211,6 +213,8 @@ SET(QtTesting_SOURCES
   pqEventRecorder.cxx
   pqEventTranslator.cxx
   pqLineEditEventTranslator.cxx
+  pqListViewEventPlayer.cxx
+  pqListViewEventTranslator.cxx
   pqMenuEventTranslator.cxx
   pqNativeFileDialogEventPlayer.cxx
   pqNativeFileDialogEventTranslator.cxx
@@ -264,6 +268,8 @@ SET(QtTesting_DEVEL_HEADERS
   pqEventTranslator.h
   pqEventTypes.h
   pqLineEditEventTranslator.h
+  pqListViewEventPlayer.h
+  pqListViewEventTranslator.h
   pqMenuEventTranslator.h
   pqNativeFileDialogEventPlayer.h
   pqNativeFileDialogEventTranslator.h
