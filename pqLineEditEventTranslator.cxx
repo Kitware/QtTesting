@@ -126,7 +126,7 @@ bool pqLineEditEventTranslator::translateEvent(QObject* object, QEvent* event, i
         if(teObject != NULL)
           {
           emit this->recordEvent(pqEventTypes::CHECK_EVENT, teObject,
-                                 "html", teObject->toHtml().replace("\t", " "));
+                                 "plainText", teObject->toPlainText().replace("\t", " "));
           }
         else /* if (pteObject != NULL)*/
           {
