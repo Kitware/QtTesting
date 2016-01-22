@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqAbstractActivateEventPlayer.h"
 #include "pqAbstractBooleanEventPlayer.h"
 #include "pqAbstractDoubleEventPlayer.h"
+#include "pq3DViewEventPlayer.h"
 #include "pqAbstractIntEventPlayer.h"
 #include "pqAbstractItemViewEventPlayer.h"
 #include "pqAbstractMiscellaneousEventPlayer.h"
@@ -42,12 +43,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqBasicWidgetEventPlayer.h"
 #include "pqComboBoxEventPlayer.h"
 #include "pqCommentEventPlayer.h"
+#include "pqListViewEventPlayer.h"
+#include "pqNativeFileDialogEventPlayer.h"
 #include "pqObjectNaming.h"
 #include "pqTabBarEventPlayer.h"
-#include "pqTreeViewEventPlayer.h"
 #include "pqTableViewEventPlayer.h"
-#include "pqNativeFileDialogEventPlayer.h"
-#include "pq3DViewEventPlayer.h"
+#include "pqTreeViewEventPlayer.h"
 #include "pqEventTypes.h"
 
 #include <QApplication>
@@ -79,6 +80,7 @@ void pqEventPlayer::addDefaultWidgetEventPlayers(pqTestUtility* util)
   addWidgetEventPlayer(new pqComboBoxEventPlayer());
   addWidgetEventPlayer(new pqTreeViewEventPlayer());
   addWidgetEventPlayer(new pqTableViewEventPlayer());
+  addWidgetEventPlayer(new pqListViewEventPlayer());
   addWidgetEventPlayer(new pqAbstractMiscellaneousEventPlayer());
   addWidgetEventPlayer(new pq3DViewEventPlayer("QGLWidget"));
   addWidgetEventPlayer(new pqNativeFileDialogEventPlayer(util));
