@@ -15,18 +15,14 @@ ENDIF()
 IF(QtTesting_QT_VERSION VERSION_GREATER "4")
   IF(NOT Qt5Test_FOUND)
     FIND_PACKAGE(Qt5Widgets REQUIRED)
-    FIND_PACKAGE(Qt5Test REQUIRED)
     ADD_DEFINITIONS(
       ${Qt5Widgets_DEFINITIONS}
-      ${Qt5Test_DEFINITIONS}
       )
     INCLUDE_DIRECTORIES(
       ${Qt5Widgets_INCLUDE_DIRS}
-      ${Qt5Test_INCLUDE_DIRS}
       )
     SET(QT_LIBRARIES
       ${Qt5Widgets_LIBRARIES}
-      ${Qt5Test_LIBRARIES}
       )
   ENDIF()
 ELSE()
