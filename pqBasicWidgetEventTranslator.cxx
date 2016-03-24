@@ -35,9 +35,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QDialog>
 #include <QEvent>
 #include <QKeyEvent>
+#include <QMetaProperty>
 #include <QScrollBar>
 #include <QWidget>
-#include <QMetaProperty>
 
 #include "pqEventTypes.h"
 
@@ -59,7 +59,7 @@ bool pqBasicWidgetEventTranslator::translateEvent(QObject* object,
   if(!widget)
       return false;
 
-  if (eventType == pqEventTypes::EVENT)
+  if (eventType == pqEventTypes::ACTION_EVENT)
     {
     switch(event->type())
       {
@@ -169,7 +169,7 @@ bool pqBasicWidgetEventTranslator::translateEvent(QObject* object,
         QString propName = metaProp.name();
 
         // Record check event
-        emit recordEvent(pqEventTypes::CHECK_EVENT, widget, propName, widget->property(propName.toAscii().data()).toString().replace("\t", " "));
+        emit recordEvent(widget, propName, widget->property(propName.toUtf8().data()).toString().replace("\t", " "), pqEventTypes::CHECK_EVENT);
         return true;
         }
       }

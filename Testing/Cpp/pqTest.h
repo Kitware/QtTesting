@@ -74,10 +74,10 @@ public:
   QString Text;
 
 public slots:
-  virtual void onRecordEvent(const int& eventType,
-                             const QString& widget,
+  virtual void onRecordEvent(const QString& widget,
                              const QString& command,
-                             const QString& arguments)
+                             const QString& arguments,
+                             const int& eventType)
   {
   if (eventType == pqEventTypes::CHECK_EVENT)
     {
@@ -111,10 +111,10 @@ protected:
     return;
     }
 
-  int getNextEvent(int& /*eventType*/,
-                   QString& /*widget*/,
+  int getNextEvent(QString& /*widget*/,
                    QString& /*command*/,
-                   QString& /*arguments*/)
+                   QString& /*arguments*/,
+                   int& /*eventType*/)
     {
     return 0;
     }

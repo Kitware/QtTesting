@@ -34,16 +34,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QDebug>
 #include <QFile>
 #include <QFileDialog>
+#include <QPushButton>
 #include <QTextStream>
 #include <QTimer>
-#include <QPushButton>
 
 // QtTesting includes
 #include "pqEventComment.h"
 #include "pqEventRecorder.h"
+#include "pqEventTypes.h"
 #include "pqRecordEventsDialog.h"
 #include "pqTestUtility.h"
-#include "pqEventTypes.h"
 
 #include "ui_pqRecordEventsDialog.h"
 
@@ -141,10 +141,10 @@ void pqRecordEventsDialog::done(int value)
 }
 
 // ----------------------------------------------------------------------------
-void pqRecordEventsDialog::onEventRecorded(int eventType,
-                                           const QString& widget,
+void pqRecordEventsDialog::onEventRecorded(const QString& widget,
                                            const QString& command,
-                                           const QString& argument)
+                                           const QString& argument,
+                                           int eventType)
 {
   if (!this->Implementation->Recorder->isRecording())
     {

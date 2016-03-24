@@ -59,20 +59,20 @@ void pqTreeViewEventTranslator::connectWidgetToSlots(QAbstractItemView* abstract
 //-----------------------------------------------------------------------------
 void pqTreeViewEventTranslator::onExpanded(const QModelIndex& index)
 {
-  QTreeView* abstractItemView = qobject_cast<QTreeView*>(this->sender());
+  QTreeView* treeView = qobject_cast<QTreeView*>(this->sender());
 
   // record the check state change if the item is user-checkable.
-  emit this->recordEvent(abstractItemView, "expand",
+  emit this->recordEvent(treeView, "expand",
     this->getIndexAsString(index));
 }
 
 //-----------------------------------------------------------------------------
 void pqTreeViewEventTranslator::onCollapsed(const QModelIndex& index)
 {
-  QTreeView* abstractItemView = qobject_cast<QTreeView*>(this->sender());
+  QTreeView* treeView = qobject_cast<QTreeView*>(this->sender());
 
   // record the check state change if the item is user-checkable.
-  emit this->recordEvent(abstractItemView, "collapse",
+  emit this->recordEvent(treeView, "collapse",
     this->getIndexAsString(index));
 }
 
@@ -98,25 +98,19 @@ void pqTreeViewEventTranslator::onEnteredCheck(const QModelIndex& item)
 }
 
 //-----------------------------------------------------------------------------
-bool pqTreeViewEventTranslator::findCorrectedAbstractItemView(QObject* object,
-  QAbstractItemView*& abstractItemView) const
+QAbstractItemView* pqTreeViewEventTranslator::findCorrectedAbstractItemView(QObject* object) const
 {
   // Ignore QHeaderView event specifically
   if (qobject_cast<QHeaderView*>(object))
     {
-    abstractItemView = NULL;
-    return false;
+    return NULL;
     }
 
-  abstractItemView = qobject_cast<QTreeView*>(object);
+  QAbstractItemView* abstractItemView = qobject_cast<QTreeView*>(object);
   if(! abstractItemView)
     {
     // mouse events go to the viewport widget
     abstractItemView = qobject_cast<QTreeView*>(object->parent());
     }
-  if(!abstractItemView)
-    {
-    return false;
-    }
-  return true;
+  return abstractItemView;
 }

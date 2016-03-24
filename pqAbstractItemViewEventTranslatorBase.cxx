@@ -62,8 +62,8 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
   QObject* object, QEvent* event, int eventType, bool& error)
 {
   // Recover corrected abstract item view
-  QAbstractItemView* abstractItemView = NULL;
-  if (!this->findCorrectedAbstractItemView(object, abstractItemView) || !abstractItemView)
+  QAbstractItemView* abstractItemView = this->findCorrectedAbstractItemView(object);
+  if (!abstractItemView)
     {
     return false;
     }
@@ -74,7 +74,7 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
     return false;
     }
 
-  if (eventType == pqEventTypes::EVENT)
+  if (eventType == pqEventTypes::ACTION_EVENT)
     {
     switch(event->type())
       {
@@ -176,16 +176,16 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
       if (this->ModelItemCheck != NULL)
         {
         QString indexString = this->getIndexAsString(*this->ModelItemCheck);
-        emit this->recordEvent(pqEventTypes::CHECK_EVENT, abstractItemView,
-          "modelItemData", QString("%1,%2").arg(indexString).arg(
+        emit this->recordEvent(abstractItemView, "modelItemData", QString("%1,%2").arg(indexString).arg(
             // Replacing tab by space, as they are not valid in xml
-            this->ModelItemCheck->data().toString().replace("\t", " ")));
+            this->ModelItemCheck->data().toString().replace("\t", " ")),
+          pqEventTypes::CHECK_EVENT);
         }
       // Abstract Item View nb row check
       else
         {
-        emit this->recordEvent(pqEventTypes::CHECK_EVENT, abstractItemView,
-          "modelRowCount", QString::number(abstractItemView->model()->rowCount()));
+        emit this->recordEvent(abstractItemView, "modelRowCount",
+          QString::number(abstractItemView->model()->rowCount()), pqEventTypes::CHECK_EVENT);
         }
       return true;
       }
@@ -270,11 +270,8 @@ QString pqAbstractItemViewEventTranslatorBase::getIndexAsString(const QModelInde
 //-----------------------------------------------------------------------------
 void pqAbstractItemViewEventTranslatorBase::onCurrentChanged(const QModelIndex& index)
 {
-  if (this->AbstractItemView)
-    {
-    emit this->recordEvent(this->AbstractItemView,
-      "setCurrent", this->getIndexAsString(index));
-    }
+  emit this->recordEvent(this->AbstractItemView,
+    "setCurrent", this->getIndexAsString(index));
 }
 
 //-----------------------------------------------------------------------------

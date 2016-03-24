@@ -55,7 +55,7 @@ public:
 
 private slots:
   virtual void done(int);
-  void onEventRecorded(int eventType, const QString&, const QString&, const QString&);
+  void onEventRecorded(const QString&, const QString&, const QString&, int eventType);
 
   void addComment();
 

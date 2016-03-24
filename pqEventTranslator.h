@@ -107,7 +107,7 @@ signals:
   /// This signal will be emitted every time a translator generates a
   /// high-level ParaView event.  Observers should connect to this signal
   /// to serialize high-level events.
-  void recordEvent(int eventType, const QString& Object, const QString& Command, const QString& Arguments);
+  void recordEvent(const QString& Object, const QString& Command, const QString& Arguments, int eventType);
 
   /// this signals when recording starts
   void started();
@@ -117,9 +117,9 @@ signals:
 
 private slots:
   // Slot called when recording an event
-  void onRecordEvent(int eventType, QObject* Object, const QString& Command, const QString& Arguments);
+  void onRecordEvent(QObject* Object, const QString& Command, const QString& Arguments, int eventType);
 
-  // Legacy convenient slot for pqEventTypes::EVENT events
+  // Legacy convenient slot for pqEventTypes::ACTION_EVENT events
   void onRecordEvent(QObject* Object, const QString& Command, const QString& Arguments);
 
   // Slots called when widget request a specific size for the check overlay

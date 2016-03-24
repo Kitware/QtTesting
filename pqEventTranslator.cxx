@@ -200,9 +200,9 @@ void pqEventTranslator::addWidgetEventTranslator(pqWidgetEventTranslator* Transl
     // Connect record event
     QObject::connect(
                      Translator,
-                     SIGNAL(recordEvent(int, QObject*, const QString&, const QString&)),
+                     SIGNAL(recordEvent(QObject*, const QString&, const QString&, int)),
                      this,
-                     SLOT(onRecordEvent(int, QObject*, const QString&, const QString&)));
+                     SLOT(onRecordEvent(QObject*, const QString&, const QString&, int)));
 
     // Connect resize specific overlay
     QObject::connect(
@@ -551,7 +551,7 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
         for(int i = 0; i != this->Implementation->Translators.size(); ++i)
           {
           bool error = false;
-          if(this->Implementation->Translators[i]->translateEvent(object, event, pqEventTypes::EVENT, error))
+          if(this->Implementation->Translators[i]->translateEvent(object, event, pqEventTypes::ACTION_EVENT, error))
             {
             if(error)
               {
@@ -571,14 +571,14 @@ void pqEventTranslator::onRecordEvent(QObject* Object,
                                       const QString& Command,
                                       const QString& Arguments)
 {
-  this->onRecordEvent(pqEventTypes::EVENT, Object, Command, Arguments);
+  this->onRecordEvent(Object, Command, Arguments, pqEventTypes::ACTION_EVENT);
 }
 
 // ----------------------------------------------------------------------------
-void pqEventTranslator::onRecordEvent(int eventType,
-                                      QObject* Object,
+void pqEventTranslator::onRecordEvent(QObject* Object,
                                       const QString& Command,
-                                      const QString& Arguments)
+                                      const QString& Arguments,
+                                      int eventType)
 {
   if(this->Implementation->IgnoredObjects.contains(Object))
   {
@@ -590,7 +590,7 @@ void pqEventTranslator::onRecordEvent(int eventType,
   }
 
   QString name;
-  if (eventType == pqEventTypes::EVENT)
+  if (eventType == pqEventTypes::ACTION_EVENT)
     {
     // When sender is pqEventObject, the Object name can be NULL.
     if (!qobject_cast<pqEventComment*>(this->sender()) || Object)
@@ -610,7 +610,7 @@ void pqEventTranslator::onRecordEvent(int eventType,
       }
     }
   // Record the event
-  emit recordEvent(eventType, name, Command, Arguments);
+  emit recordEvent(name, Command, Arguments, eventType);
 }
 
 // ----------------------------------------------------------------------------

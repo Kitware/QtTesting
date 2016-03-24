@@ -57,10 +57,10 @@ public:
     FAILURE if there was a problem,
     DONE, if there are no more events. */
   virtual int getNextEvent(
-    int& eventType,
     QString& object,
     QString& command,
-    QString& arguments) = 0;
+    QString& arguments,
+    int& eventType) = 0;
 
   /** Set the filename for contents.
       Returns true for valid file, false for invalid file */
