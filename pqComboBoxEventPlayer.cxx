@@ -58,7 +58,7 @@ bool pqComboBoxEventPlayer::playEvent(
     return false;
     }
 
-  if (eventType == pqEventTypes::EVENT)
+  if (eventType == pqEventTypes::ACTION_EVENT)
     {
     if (command == "activated" || command == "editTextChanged")
       {

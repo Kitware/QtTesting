@@ -73,7 +73,7 @@ bool pqWidgetEventTranslator::translateEvent(
 bool pqWidgetEventTranslator::translateEvent(
   QObject* object, QEvent* event, int eventType, bool& error)
 {
-  if (eventType == pqEventTypes::EVENT)
+  if (eventType == pqEventTypes::ACTION_EVENT)
     {
     return this->translateEvent(object, event, error);
     }

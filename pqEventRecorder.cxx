@@ -171,9 +171,9 @@ void pqEventRecorder::start()
 
   QObject::connect(
     this->ActiveTranslator,
-    SIGNAL(recordEvent(int, QString,QString,QString)),
+    SIGNAL(recordEvent(QString,QString,QString, int)),
     this->ActiveObserver,
-    SLOT(onRecordEvent(int, QString,QString,QString)));
+    SLOT(onRecordEvent(QString,QString,QString, int)));
 
   // Set the device
   this->Stream.setDevice(this->File);
@@ -196,9 +196,9 @@ void pqEventRecorder::stop(int value)
 {
   QObject::disconnect(
     this->ActiveTranslator,
-    SIGNAL(recordEvent(int, QString,QString,QString)),
+    SIGNAL(recordEvent(QString,QString,QString, int)),
     this->ActiveObserver,
-    SLOT(onRecordEvent(int, QString,QString,QString)));
+    SLOT(onRecordEvent(QString,QString,QString, int)));
 
   this->ActiveObserver->setStream(NULL);
   this->ActiveTranslator->stop();
