@@ -37,6 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqAbstractItemViewEventTranslator.h"
 #include "pqAbstractSliderEventTranslator.h"
 #include "pqBasicWidgetEventTranslator.h"
+#include "pqCheckEventOverlay.h"
 #include "pqComboBoxEventTranslator.h"
 #include "pqDoubleSpinBoxEventTranslator.h"
 #include "pqEventComment.h"
@@ -55,56 +56,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QtDebug>
 #include <QSet>
 #include <QVector>
-#include <QPainter>
 #include <QApplication>
 #include <QToolBar>
-
-// Check Overlay class
-class pqCheckEventOverlay : public QWidget
-{
-public:
-  pqCheckEventOverlay(QWidget * parent = 0) : QWidget(parent) {
-    setAttribute(Qt::WA_NoSystemBackground);
-    setAttribute(Qt::WA_TransparentForMouseEvents);
-    this->Valid = false;
-    this->GlWidget = false;
-    this->Specific = false;
-    this->setObjectName("Overlay");
-  }
-
-  // true if the overlayed widget can be checked, false otherwise
-  bool Valid;
-
-  // true if the overlayed widget in an opengl widget, false otherwise
-  bool GlWidget;
-
-  // true if the size of the overlay is specifically defined
-  // via resize slot, false otherwise
-  bool Specific;
-
-  // Static overlauy margin
-  static const int OVERLAY_MARGIN = 2;
-
-  // Static overlay pen width
-  static const int OVERLAY_PEN_WIDTH = 5;
-
-protected:
-  void paintEvent(QPaintEvent *)
-    {
-    QPainter p(this);
-    // Draw red on invalid widget
-    QPen pen(Qt::red, pqCheckEventOverlay::OVERLAY_PEN_WIDTH);
-    if (this->Valid)
-      {
-      // Draw green on valid widget
-      pen.setColor(Qt::green);
-      }
-    p.setPen(pen);
-
-    // Remove the margins to draw
-    p.drawRect(0, 0, width()-pqCheckEventOverlay::OVERLAY_MARGIN, height()-pqCheckEventOverlay::OVERLAY_MARGIN);
-    }
-};
 
 ////////////////////////////////////////////////////////////////////////////////
 // pqEventTranslator::pqImplementation
