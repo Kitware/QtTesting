@@ -69,7 +69,7 @@ protected:
         {
         this->XMLStream->writeAttribute("command", command);
         }
-      else
+      else // if(eventType == pqEventTypes::CHECK_EVENT)
         {
         this->XMLStream->writeAttribute("property", command);
         }

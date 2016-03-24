@@ -69,9 +69,9 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
     }
 
   // Don't try to record events for QComboBox implementation details
-  if(QString(abstractItemView->metaObject()->className()) == "QComboBoxListView")
+  if (abstractItemView->inherits("QComboBoxListView"))
     {
-      return false;
+    return false;
     }
 
   if (eventType == pqEventTypes::EVENT)
@@ -178,8 +178,8 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
         QString indexString = this->getIndexAsString(*this->ModelItemCheck);
         emit this->recordEvent(pqEventTypes::CHECK_EVENT, abstractItemView,
           "modelItemData", QString("%1,%2").arg(indexString).arg(
+            // Replacing tab by space, as they are not valid in xml
             this->ModelItemCheck->data().toString().replace("\t", " ")));
-        // Replacing tab by space, as they are not valid in xml
         }
       // Abstract Item View nb row check
       else
@@ -256,12 +256,10 @@ void pqAbstractItemViewEventTranslatorBase::onDoubleClicked(const QModelIndex& i
 //-----------------------------------------------------------------------------
 QString pqAbstractItemViewEventTranslatorBase::getIndexAsString(const QModelIndex& index)
 {
-  QModelIndex curIndex = index;
   QString indexString;
-  while (curIndex.isValid())
+  for (QModelIndex curIndex = index; curIndex.isValid(); curIndex = curIndex.parent())
     {
     indexString.prepend(QString("%1.%2.").arg(curIndex.row()).arg(curIndex.column()));
-    curIndex = curIndex.parent();
     }
 
   // remove the last ".".
@@ -272,12 +270,9 @@ QString pqAbstractItemViewEventTranslatorBase::getIndexAsString(const QModelInde
 //-----------------------------------------------------------------------------
 void pqAbstractItemViewEventTranslatorBase::onCurrentChanged(const QModelIndex& index)
 {
-  QAbstractItemView* abstractItemView = this->AbstractItemView;
-
-  if (abstractItemView)
+  if (this->AbstractItemView)
     {
-    // record the check state change if the item is user-checkable.
-    emit this->recordEvent(abstractItemView,
+    emit this->recordEvent(this->AbstractItemView,
       "setCurrent", this->getIndexAsString(index));
     }
 }

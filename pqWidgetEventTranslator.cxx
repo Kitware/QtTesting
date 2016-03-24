@@ -50,7 +50,9 @@ bool pqWidgetEventTranslator::translateEvent(
 {
   QWidget* widget = qobject_cast<QWidget*>(object);
   if(!widget)
+    {
     return false;
+    }
 
   switch(event->type())
     {

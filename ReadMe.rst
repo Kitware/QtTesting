@@ -66,7 +66,7 @@ A collection of pqWidgetEventTranslator objects is maintained at runtime by an i
 
 The high-level event emitted from pqEventTranslator may be caught by any observer with the correct Qt slot. It is up to the observer(s) to serialize the high-level event for later playback. At this time the framework includes two observers, pqEventObserverStdout and pqEventObserverXML, which serialize the high-level events to stdout and an XML file respectively. Developers can create their own observers to implement custom functionality, such as serializing events to a logfile, a Python script, etc.
 
-It is also possible to record check event, ( by using the check button on the recordDialog ). When checking, an overlay is drawned over the widget hovered by the mouse. If the overlay is green, then it means that the widget can be checked, if it's red, that it cannot. When clicking on the widget to check, a check event is recorded, associated with a QString value representing the widget "value". Translator managing check event should handle only two types QEvent, MouseMove to see if widget is checkable, and MouseButtonRelease, to record the check.
+It is also possible to record check event, ( by using the check button on the recordDialog ). When checking, an overlay is drawned over the widget hovered by the mouse. If the overlay is green, then it means that the widget can be checked, if it's red, that it cannot. When clicking on the widget to check, a check event is recorded, associated with a QString value representing the widget "value". Translator managing check event should handle only two types QEvent, MouseMove to see if widget is checkable, and MouseButtonRelease, to record check events.
 
 Playback
 ********************************************
