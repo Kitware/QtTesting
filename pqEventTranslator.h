@@ -132,10 +132,6 @@ private:
   bool eventFilter(QObject* Object, QEvent* Event);
   int getWidgetEventTranslatorIndex(const QString& className);
 
-  /// Return true of this metaObject or any of it's superclass
-  /// is a "QVTKObject"
-  static bool isQVTKMetaObject(const QMetaObject* metaObject);
-
   struct pqImplementation;
   pqImplementation* const Implementation;
 };
