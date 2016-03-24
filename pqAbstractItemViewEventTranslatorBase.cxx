@@ -151,7 +151,7 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
           QObject::disconnect(this->AbstractItemView, SIGNAL(entered(const QModelIndex&)),
                               this, SLOT(onEnteredCheck(const QModelIndex&)));
           QObject::disconnect(this->AbstractItemView, SIGNAL(viewportEntered()),
-                           this, SLOT(onViewportEnteredCheck()));
+                              this, SLOT(onViewportEnteredCheck()));
           }
 
         // Keep track of checked item view

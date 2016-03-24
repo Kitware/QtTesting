@@ -60,7 +60,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QToolBar>
 
 // Check Overlay class
-class pqCheckEventOverlay : public QWidget {
+class pqCheckEventOverlay : public QWidget
+{
 public:
   pqCheckEventOverlay(QWidget * parent = 0) : QWidget(parent) {
     setAttribute(Qt::WA_NoSystemBackground);
@@ -88,7 +89,8 @@ public:
   static const int OVERLAY_PEN_WIDTH = 5;
 
 protected:
-  void paintEvent(QPaintEvent *) {
+  void paintEvent(QPaintEvent *)
+    {
     QPainter p(this);
     // Draw red on invalid widget
     QPen pen(Qt::red, pqCheckEventOverlay::OVERLAY_PEN_WIDTH);
@@ -101,7 +103,7 @@ protected:
 
     // Remove the margins to draw
     p.drawRect(0, 0, width()-pqCheckEventOverlay::OVERLAY_MARGIN, height()-pqCheckEventOverlay::OVERLAY_MARGIN);
-  }
+    }
 };
 
 ////////////////////////////////////////////////////////////////////////////////

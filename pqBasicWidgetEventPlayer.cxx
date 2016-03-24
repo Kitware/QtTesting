@@ -40,7 +40,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqEventTypes.h"
 
 pqBasicWidgetEventPlayer::pqBasicWidgetEventPlayer(QObject* p)
-: pqWidgetEventPlayer(p)
+  : pqWidgetEventPlayer(p)
 {
 }
 
@@ -86,7 +86,6 @@ bool pqBasicWidgetEventPlayer::playEvent(QObject* object,
             QPoint pt(x,y);
             if (command == "mouseWheel")
               {
-              //           QEvent::Type type = QEvent::Wheel;
               int delta = args[0].toInt();
               QWheelEvent we(QPoint(x,y), delta, buttons, keym);
               QCoreApplication::sendEvent(object, &we);
