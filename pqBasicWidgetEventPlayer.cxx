@@ -51,7 +51,7 @@ bool pqBasicWidgetEventPlayer::playEvent(QObject* object,
   QWidget* widget = qobject_cast<QWidget*>(object);
   if(widget)
     {
-    if (eventType == pqEventTypes::EVENT)
+    if (eventType == pqEventTypes::ACTION_EVENT)
       {
         {
         if(command == "key")

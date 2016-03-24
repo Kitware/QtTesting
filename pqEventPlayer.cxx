@@ -154,7 +154,7 @@ void pqEventPlayer::playEvent(const QString& objectString,
                               const QString& arguments,
                               bool& error)
 {
-  this->playEvent(objectString, command, arguments, pqEventTypes::EVENT, error);
+  this->playEvent(objectString, command, arguments, pqEventTypes::ACTION_EVENT, error);
 }
 
 // ----------------------------------------------------------------------------

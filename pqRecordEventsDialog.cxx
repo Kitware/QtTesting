@@ -141,10 +141,10 @@ void pqRecordEventsDialog::done(int value)
 }
 
 // ----------------------------------------------------------------------------
-void pqRecordEventsDialog::onEventRecorded(int eventType,
-                                           const QString& widget,
+void pqRecordEventsDialog::onEventRecorded(const QString& widget,
                                            const QString& command,
-                                           const QString& argument)
+                                           const QString& argument,
+                                           int eventType)
 {
   if (!this->Implementation->Recorder->isRecording())
     {

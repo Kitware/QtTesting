@@ -118,7 +118,7 @@ Writing new Translators/Player
 ************************************************************
 A new translator must at least reimplement the translateEvent(QObject object, QEvent event, int eventType, bool& error) method.
 For starters, it must check that the object is of correct class
-Then it should handle the pqEventTypes::EVENT case, recording meaningfull events with identifiable command and associated arguments
+Then it should handle the pqEventTypes::ACTION_EVENT case, recording meaningfull events with identifiable command and associated arguments
 And it should also handle the pqEventTypes::CHECK_EVENT case, only for two different QEvent
 For QEvent::MouseMove it should return true only if a check event can be recorded
 For QEvent::MouseButtonRelease , it should record a check event, associated to the value you want to check and an existing qt property or
@@ -127,7 +127,7 @@ an identified command
 A new player, symmetrically, should at least reimplement the 
 playEvent(QObject* object, const QString& command, const QString& arguments, int eventType, bool& error) method
 
-First it should handle the pqEventTypes::EVENT, converting provided command and arguments into qt instructions, returning true for event that it can handle.
+First it should handle the pqEventTypes::ACTION_EVENT, converting provided command and arguments into qt instructions, returning true for event that it can handle.
 Then, if the the translator can record check command, it should hendle the pqEventTypes::CHECK_EVENT, checking the current value of qt object using provided command and arguments, positionning error to false 
 when a value differ, but returning true for all handled check event, even failed one.
 Property to check are handled by pqBasicWidgetEventPlayer

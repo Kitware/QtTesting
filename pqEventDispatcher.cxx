@@ -313,7 +313,7 @@ void pqEventDispatcher::playEvent(int indent)
   QString arguments;
   int eventType;
   
-  int result = this->ActiveSource->getNextEvent(eventType, object, command, arguments);
+  int result = this->ActiveSource->getNextEvent(object, command, arguments, eventType);
   if (result == pqEventSource::DONE)
     {
     this->PlayBackFinished = true;

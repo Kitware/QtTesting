@@ -67,7 +67,7 @@ bool pqLineEditEventTranslator::translateEvent(QObject* object, QEvent* event, i
     return false;
     }
 
-  if (eventType == pqEventTypes::EVENT)
+  if (eventType == pqEventTypes::ACTION_EVENT)
     {
     // If this line edit is part of a spinbox, don't translate events
     // (the spinbox translator will receive the final value directly)
@@ -125,13 +125,13 @@ bool pqLineEditEventTranslator::translateEvent(QObject* object, QEvent* event, i
         {
         if(teObject != NULL)
           {
-          emit this->recordEvent(pqEventTypes::CHECK_EVENT, teObject,
-                                 "plainText", teObject->toPlainText().replace("\t", " "));
+          emit this->recordEvent(teObject, "plainText",
+            teObject->toPlainText().replace("\t", " "), pqEventTypes::CHECK_EVENT);
           }
         else /* if (pteObject != NULL)*/
           {
-          emit this->recordEvent(pqEventTypes::CHECK_EVENT, pteObject,
-                                 "plainText", pteObject->toPlainText().replace("\t", " "));
+          emit this->recordEvent(pteObject, "plainText",
+            pteObject->toPlainText().replace("\t", " "), pqEventTypes::CHECK_EVENT);
           }
         return true;
         }

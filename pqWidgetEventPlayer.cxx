@@ -70,7 +70,7 @@ bool pqWidgetEventPlayer::playEvent(
 bool pqWidgetEventPlayer::playEvent(QObject* object, const QString& command,
     const QString& arguments, int eventType, bool& error)
 {
-  if (eventType == pqEventTypes::EVENT)
+  if (eventType == pqEventTypes::ACTION_EVENT)
     {
     return this->playEvent(object, command, arguments, error);
     }

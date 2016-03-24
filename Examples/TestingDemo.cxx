@@ -58,14 +58,14 @@ protected:
       }
     }
 
-  virtual void onRecordEvent(const int& eventType, const QString& widget, const QString& command,
-    const QString& arguments)
+  virtual void onRecordEvent(const QString& widget, const QString& command,
+    const QString& arguments, const int& eventType)
     {
     if(this->XMLStream)
       {
       this->XMLStream->writeStartElement("event");
       this->XMLStream->writeAttribute("widget", widget);
-      if (eventType == pqEventTypes::EVENT)
+      if (eventType == pqEventTypes::ACTION_EVENT)
         {
         this->XMLStream->writeAttribute("command", command);
         }
@@ -124,8 +124,8 @@ protected:
     return;
     }
 
-  int getNextEvent(int& eventType, QString& widget, QString& command, QString&
-    arguments)
+  int getNextEvent(QString& widget, QString& command, QString&
+    arguments,int& eventType)
     {
     if (this->XMLStream->atEnd())
       {
@@ -146,7 +146,7 @@ protected:
       {
       return DONE;
       }
-    eventType = pqEventTypes::EVENT;
+    eventType = pqEventTypes::ACTION_EVENT;
     widget = this->XMLStream->attributes().value("widget").toString();
     command = this->XMLStream->attributes().value("command").toString();
     arguments = this->XMLStream->attributes().value("arguments").toString();
