@@ -59,6 +59,12 @@ QModelIndex pqAbstractItemViewEventPlayerBase::GetIndex(const QString& itemStr,
   // Recover model index
   QStringList indices = strIndex.split(".",QString::SkipEmptyParts);
   QModelIndex index;
+  if(indices.size() < 2)
+    {
+    error = true;
+    return index;
+    }
+
   index = abstractItemView->model()->index(indices[0].toInt(), indices[1].toInt(), index);
   for (int cc=2; (cc+1) < indices.size(); cc+=2)
     {

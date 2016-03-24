@@ -89,14 +89,7 @@ bool pqEventRecorder::continuousFlush() const
 // ----------------------------------------------------------------------------
 void pqEventRecorder::check(bool value)
 {
-  if (value)
-    {
-      this->ActiveTranslator->check(true);
-    }
-  else
-    {
-      this->ActiveTranslator->check(false);
-    }
+  this->ActiveTranslator->check(value);
 }
 
 // ----------------------------------------------------------------------------
