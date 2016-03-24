@@ -442,13 +442,13 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
           if (!widget->isWindow() && widget->parent() != NULL)
             {
             // Check if widget is glWidget
-            this->Implementation->CheckOverlay->GlWidget = pqEventTranslator::isQVTKMetaObject(widget->metaObject());
+            this->Implementation->CheckOverlay->GlWidget = widget->inherits("QVTKWidget");
 
             // Check if widget is parent to gl widget
             QList<QWidget *> children = widget->findChildren<QWidget *>();
             foreach(QWidget * child, children)
               {
-              if (pqEventTranslator::isQVTKMetaObject(child->metaObject()))
+              if (child->inherits("QVTKWidget"))
                 {
                 // Ignore widget containing a Gl widget as a child
                 this->ignoreObject(widget);
@@ -611,21 +611,6 @@ void pqEventTranslator::onRecordEvent(int eventType,
     }
   // Record the event
   emit recordEvent(eventType, name, Command, Arguments);
-}
-
-// ----------------------------------------------------------------------------
-bool pqEventTranslator::isQVTKMetaObject(const QMetaObject* metaObject)
-{
-  if (strcmp(metaObject->className(), "QVTKWidget") == 0)
-    {
-    return true;
-    }
-  if (metaObject = metaObject->superClass())
-    {
-    // Recursive go up the inheritance
-    return isQVTKMetaObject(metaObject);
-    }
-  return false;
 }
 
 // ----------------------------------------------------------------------------

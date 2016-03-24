@@ -66,7 +66,7 @@ bool pqAbstractItemViewEventTranslator::translateEvent(QObject* Object, QEvent* 
     }
 
   // Don't try to record events for QComboBox implementation details
-  if(QString(object->metaObject()->className()) == "QComboBoxListView")
+  if(object->inherits("QComboBoxListView"))
     {
     return false;
     }
