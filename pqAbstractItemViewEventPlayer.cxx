@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -49,19 +49,19 @@ static QModelIndex OldGetIndex(QAbstractItemView& View, const QString& Name)
 {
     QStringList rows = Name.split('/', QString::SkipEmptyParts);
     QString column;
-    
-    if(rows.size())
+
+    if (rows.size())
       {
       column = rows.back().split('|').at(1);
       rows.back() = rows.back().split('|').at(0);
       }
-    
+
     QModelIndex index;
-    for(int i = 0; i != rows.size(); ++i)
+    for (int i = 0; i != rows.size(); ++i)
       {
       index = View.model()->index(rows[i].toInt(), column.toInt(), index);
       }
-      
+
     return index;
 }
 
@@ -70,32 +70,32 @@ static QModelIndex GetIndexByItemName(QAbstractItemView& View, const QString& Na
   QListWidget* const listWidget = qobject_cast<QListWidget*>(&View);
 
   QModelIndex index;
-  if(!listWidget)
+  if (!listWidget)
     {
     return index;
     }
-  QList<QListWidgetItem *> findResult = listWidget->findItems(Name,Qt::MatchExactly);
-  if(findResult.count() > 0)
+  QList<QListWidgetItem *> findResult = listWidget->findItems(Name, Qt::MatchExactly);
+  if (findResult.count() > 0)
     {
     // in theory more than one item could match? Only return the index for
     // the first instance.
     index = View.model()->index(listWidget->row(findResult.first()), 0, index);
     }
-    
+
   return index;
 }
 
 static QModelIndex GetIndex(QAbstractItemView* View, const QString& Name)
 {
   QStringList idxs = Name.split('/', QString::SkipEmptyParts);
-  
+
   QModelIndex index;
-  for(int i = 0; i != idxs.size(); ++i)
+  for (int i = 0; i != idxs.size(); ++i)
     {
     QStringList rowCol = idxs[i].split(':');
     index = View->model()->index(rowCol[0].toInt(), rowCol[1].toInt(), index);
     }
-    
+
   return index;
 }
 
@@ -110,12 +110,12 @@ pqAbstractItemViewEventPlayer::pqAbstractItemViewEventPlayer(QObject* p)
 bool pqAbstractItemViewEventPlayer::playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
 {
   QAbstractItemView* object = qobject_cast<QAbstractItemView*>(Object);
-  if(!object)
+  if (!object)
     {
     // mouse events go to the viewport widget
     object = qobject_cast<QAbstractItemView*>(Object->parent());
     }
-  if(!object)
+  if (!object)
     {
     return false;
     }
@@ -125,29 +125,29 @@ bool pqAbstractItemViewEventPlayer::playEvent(QObject* Object, const QString& Co
     // We let the pqBasicWidgetEventPlayer do it ...
     return false;
     }
-    
-  if(Command == "currentChanged")  // left to support old recordings
+
+  if (Command == "currentChanged")  // left to support old recordings
     {
     const QModelIndex index = OldGetIndex(*object, Arguments);
-    if(!index.isValid())
+    if (!index.isValid())
       return false;
-      
+
     object->setCurrentIndex(index);
     return true;
     }
-  else if(Command == "currentChangedbyItemName")
+  else if (Command == "currentChangedbyItemName")
     {
     const QModelIndex index = GetIndexByItemName(*object, Arguments);
-    if(!index.isValid())
+    if (!index.isValid())
       return false;
-      
+
     object->setCurrentIndex(index);
     return true;
     }
-  else if(Command == "keyEvent")
+  else if (Command == "keyEvent")
     {
     QStringList data = Arguments.split(',');
-    if(data.size() == 6)
+    if (data.size() == 6)
       {
       QKeyEvent ke(static_cast<QEvent::Type>(data[0].toInt()),
                    data[1].toInt(),
@@ -159,10 +159,10 @@ bool pqAbstractItemViewEventPlayer::playEvent(QObject* Object, const QString& Co
       return true;
       }
     }
-  else if(Command.startsWith("mouse"))
+  else if (Command.startsWith("mouse"))
     {
     QStringList args = Arguments.split(',');
-    if(args.size() == 6)
+    if (args.size() == 6)
       {
       Qt::MouseButtons buttons = static_cast<Qt::MouseButton>(args[1].toInt());
       Qt::KeyboardModifiers keym = static_cast<Qt::KeyboardModifier>(args[2].toInt());
@@ -170,16 +170,16 @@ bool pqAbstractItemViewEventPlayer::playEvent(QObject* Object, const QString& Co
       int y = args[4].toInt();
       QPoint pt;
       QHeaderView* header = qobject_cast<QHeaderView*>(object);
-      if(header)
+      if (header)
         {
         int idx = args[5].toInt();
-        if(header->orientation() == Qt::Horizontal)
+        if (header->orientation() == Qt::Horizontal)
           {
-          pt = QPoint(header->sectionPosition(idx)+4, 4);
+          pt = QPoint(header->sectionPosition(idx) + 4, 4);
           }
         else
           {
-          pt = QPoint(4, header->sectionPosition(idx)+4);
+          pt = QPoint(4, header->sectionPosition(idx) + 4);
           }
         }
       else
@@ -187,13 +187,12 @@ bool pqAbstractItemViewEventPlayer::playEvent(QObject* Object, const QString& Co
         QModelIndex idx = GetIndex(object, args[5]);
         object->scrollTo(idx);
         QRect r = object->visualRect(idx);
-        pt = r.topLeft() + QPoint(x,y);
+        pt = r.topLeft() + QPoint(x, y);
         }
       if (Command == "mouseWheel")
         {
-//           QEvent::Type type = QEvent::Wheel;
          int delta = args[0].toInt();
-         QWheelEvent we(QPoint(x,y), delta, buttons, keym);
+         QWheelEvent we(QPoint(x, y), delta, buttons, keym);
          QCoreApplication::sendEvent(Object, &we);
          return true;
         }
@@ -207,7 +206,7 @@ bool pqAbstractItemViewEventPlayer::playEvent(QObject* Object, const QString& Co
       return true;
       }
     }
-    
+
   if (!this->Superclass::playEvent(Object, Command, Arguments, Error))
     {
     qCritical() << "Unknown abstract item command: " << Command << "\n";
