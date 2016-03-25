@@ -62,8 +62,8 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
   QObject* object, QEvent* event, int eventType, bool& error)
 {
   // Recover corrected abstract item view
-  QAbstractItemView* abstractItemView = NULL;
-  if (!this->findCorrectedAbstractItemView(object, abstractItemView) || !abstractItemView)
+  QAbstractItemView* abstractItemView = this->findCorrectedAbstractItemView(object);
+  if (abstractItemView)
     {
     return false;
     }

@@ -55,7 +55,7 @@ void pqListViewEventTranslator::onEnteredCheck(const QModelIndex& item)
 
   // Translate the rect of margins and headers
   visualRect.translate(listView->contentsMargins().left(),
-                      listView->contentsMargins().top());
+                       listView->contentsMargins().top());
 
   // Stor item and signal that a specific overlay is ready to be drawn
   this->ModelItemCheck = &item;
@@ -63,26 +63,20 @@ void pqListViewEventTranslator::onEnteredCheck(const QModelIndex& item)
 }
 
 //-----------------------------------------------------------------------------
-bool pqListViewEventTranslator::findCorrectedAbstractItemView(QObject* object,
-  QAbstractItemView*& abstractItemView) const
+QAbstractItemView* pqListViewEventTranslator::findCorrectedAbstractItemView(QObject* object) const
 {
   // Ignore QHeaderView event specifically
   if (qobject_cast<QHeaderView*>(object))
     {
-    abstractItemView = NULL;
-    return false;
+    return NULL;
     }
 
-  abstractItemView = qobject_cast<QListView*>(object);
+  QAbstractItemView* abstractItemView = qobject_cast<QListView*>(object);
   if (!abstractItemView)
     {
     // mouse events go to the viewport widget
     abstractItemView = qobject_cast<QListView*>(object->parent());
     }
-  if (!abstractItemView)
-    {
-    return false;
-    }
-  return true;
+  return abstractItemView;
 }
 

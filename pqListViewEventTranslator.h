@@ -46,8 +46,7 @@ public:
   ~pqListViewEventTranslator();
 
   /// find and set the corrected abstract item view
-  virtual bool findCorrectedAbstractItemView(QObject* object,
-    QAbstractItemView*& abstractItemView) const;
+  virtual QAbstractItemView* findCorrectedAbstractItemView(QObject* object) const;
 
 protected slots:
   /// Compute a visual rectangle for the item and signal it
