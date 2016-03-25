@@ -270,11 +270,8 @@ QString pqAbstractItemViewEventTranslatorBase::getIndexAsString(const QModelInde
 //-----------------------------------------------------------------------------
 void pqAbstractItemViewEventTranslatorBase::onCurrentChanged(const QModelIndex& index)
 {
-  if (this->AbstractItemView)
-    {
-    emit this->recordEvent(this->AbstractItemView,
-      "setCurrent", this->getIndexAsString(index));
-    }
+  emit this->recordEvent(this->AbstractItemView,
+    "setCurrent", this->getIndexAsString(index));
 }
 
 //-----------------------------------------------------------------------------
