@@ -32,10 +32,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "pqWidgetEventPlayer.h"
 
+#include <QContextMenuEvent>
 #include <QCoreApplication>
 #include <QPoint>
 #include <QWidget>
-#include <QContextMenuEvent>
 
 #include "pqEventTypes.h"
   
