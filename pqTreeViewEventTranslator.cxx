@@ -98,25 +98,19 @@ void pqTreeViewEventTranslator::onEnteredCheck(const QModelIndex& item)
 }
 
 //-----------------------------------------------------------------------------
-bool pqTreeViewEventTranslator::findCorrectedAbstractItemView(QObject* object,
-  QAbstractItemView*& abstractItemView) const
+QAbstractItemView* pqTreeViewEventTranslator::findCorrectedAbstractItemView(QObject* object) const
 {
   // Ignore QHeaderView event specifically
   if (qobject_cast<QHeaderView*>(object))
     {
-    abstractItemView = NULL;
-    return false;
+    return NULL;
     }
 
-  abstractItemView = qobject_cast<QTreeView*>(object);
+  QAbstractItemView* abstractItemView = qobject_cast<QTreeView*>(object);
   if(! abstractItemView)
     {
     // mouse events go to the viewport widget
     abstractItemView = qobject_cast<QTreeView*>(object->parent());
     }
-  if(!abstractItemView)
-    {
-    return false;
-    }
-  return true;
+  return abstractItemView;
 }

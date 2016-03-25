@@ -56,8 +56,7 @@ public:
   virtual void connectWidgetToSlots(QAbstractItemView* abstractItemView);
 
   /// find and set the corrected abstract item view
-  virtual bool findCorrectedAbstractItemView(QObject* object,
-    QAbstractItemView*& abstractItemView) const = 0;
+  virtual QAbstractItemView* findCorrectedAbstractItemView(QObject* object) const = 0;
 
 protected slots:
   virtual void onClicked(const QModelIndex&);
