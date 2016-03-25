@@ -32,10 +32,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "pqTabBarEventPlayer.h"
 
-#include <QComboBox>
 #include <QLineEdit>
+#include <QTabBar>
 #include <QtDebug>
-#include <iostream>
 
 #include "pqObjectNaming.h"
 
@@ -110,10 +109,6 @@ bool pqTabBarEventPlayer::playEvent(
           {
           if (sibling_tab_bar->tabText(cc) == value)
             {
-            std::cout << "DEBUG: Could not find request tab-pane on "
-              << pqObjectNaming::GetName(*tab_bar).toLatin1().data() << ". Using "
-              << pqObjectNaming::GetName(*sibling_tab_bar).toLatin1().data() << " instead."
-              << std::endl;
             sibling_tab_bar->setCurrentIndex(cc);
             return true;
             }
