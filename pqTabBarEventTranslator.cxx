@@ -45,7 +45,9 @@ bool pqTabBarEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
 {
   QTabBar* const object = qobject_cast<QTabBar*>(Object);
   if(!object)
-      return false;
+    {
+    return false;
+    }
 
   switch(Event->type())
     {

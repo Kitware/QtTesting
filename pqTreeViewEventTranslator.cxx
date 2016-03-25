@@ -59,20 +59,20 @@ void pqTreeViewEventTranslator::connectWidgetToSlots(QAbstractItemView* abstract
 //-----------------------------------------------------------------------------
 void pqTreeViewEventTranslator::onExpanded(const QModelIndex& index)
 {
-  QTreeView* abstractItemView = qobject_cast<QTreeView*>(this->sender());
+  QTreeView* treeView = qobject_cast<QTreeView*>(this->sender());
 
   // record the check state change if the item is user-checkable.
-  emit this->recordEvent(abstractItemView, "expand",
+  emit this->recordEvent(treeView, "expand",
     this->getIndexAsString(index));
 }
 
 //-----------------------------------------------------------------------------
 void pqTreeViewEventTranslator::onCollapsed(const QModelIndex& index)
 {
-  QTreeView* abstractItemView = qobject_cast<QTreeView*>(this->sender());
+  QTreeView* treeView = qobject_cast<QTreeView*>(this->sender());
 
   // record the check state change if the item is user-checkable.
-  emit this->recordEvent(abstractItemView, "collapse",
+  emit this->recordEvent(treeView, "collapse",
     this->getIndexAsString(index));
 }
 

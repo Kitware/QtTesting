@@ -130,7 +130,7 @@ public:
   QString convertFromDataDirectory(const QString& file);
 
   // Get current test filname if any
-  const QString filename(){return this->Filename;};
+  const QString& filename() const {return this->Filename;};
 
   /// True if a dialog is opened when recording, false otherwise
   bool recordWithDialog() const;
