@@ -40,7 +40,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqTreeViewEventPlayer.h"
 
 #include "pqTest.h"
-#include <iostream>
+
 // ----------------------------------------------------------------------------
 class pqEventPlayerTester: public QObject
 {
@@ -190,7 +190,6 @@ void pqEventPlayerTester::testAddDefaultWidgetEventPlayers()
   QFETCH(QString, widgetEventPlayerName);
   QFETCH(int, index);
 
-  std::cout<<players.at(index)->metaObject()->className()<<" "<<widgetEventPlayerName.toAscii().data()<<std::endl;
   QCOMPARE(QString(players.at(index)->metaObject()->className()),
            widgetEventPlayerName);
 }

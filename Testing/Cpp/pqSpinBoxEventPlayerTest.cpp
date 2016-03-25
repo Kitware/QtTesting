@@ -36,8 +36,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 // QtTesting includes
 #include "pqEventTypes.h"
-#include "pqTest.h"
 #include "pqTestUtility.h"
+
+#include "pqTest.h"
 
 // ----------------------------------------------------------------------------
 class pqSpinBoxEventPlayerTester: public QObject
