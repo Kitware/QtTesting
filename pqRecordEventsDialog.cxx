@@ -90,8 +90,8 @@ pqRecordEventsDialog::pqRecordEventsDialog(pqEventRecorder* recorder,
   this->setObjectName("");
 
   QObject::connect(this->Implementation->TestUtility->eventTranslator(),
-                   SIGNAL(recordEvent(int, QString,QString,QString)),
-                   this, SLOT(onEventRecorded(int, QString,QString,QString)));
+                   SIGNAL(recordEvent(QString,QString,QString, int)),
+                   this, SLOT(onEventRecorded(QString,QString,QString, int)));
 
   QObject::connect(this->Implementation->Ui.commentAddButton,
                    SIGNAL(clicked()),
