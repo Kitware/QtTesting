@@ -112,13 +112,13 @@ bool pqBasicWidgetEventPlayer::playEvent(QObject* object,
     else if (eventType == pqEventTypes::CHECK_EVENT)
       {
       // Recover QProperty
-      QVariant propertyValue = object->property(command.toAscii().data());
+      QVariant propertyValue = object->property(command.toUtf8().data());
 
       // Check it is valid
       if (!propertyValue.isValid())
         {
         QString errorMessage = object->objectName() + " has no valid property named:" + command;
-        qCritical() << errorMessage.toAscii().data();
+        qCritical() << errorMessage.toUtf8().data();
         error = true;
         return true;
         }
@@ -128,7 +128,7 @@ bool pqBasicWidgetEventPlayer::playEvent(QObject* object,
         {
         QString errorMessage = object->objectName() + " property value is: " + propertyValue.toString()
           + ". Expecting: "+ arguments + ".";
-        qCritical() << errorMessage.toAscii().data();
+        qCritical() << errorMessage.toUtf8().data();
         error = true;
         }
         return true;

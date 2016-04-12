@@ -345,7 +345,7 @@ void pqEventDispatcher::playEvent(int indent)
          << " : "
          << QString().fill(' ', 4*indent).toStdString().c_str()
          << local_counter << ": Test (" << indent << "): "
-         << eventString.toAscii().data() << ": "
+         << eventString.toUtf8().data() << ": "
          << pretty_name.toStdString().c_str() << ": "
          << command.toStdString().c_str() << " : "
          << arguments.toStdString().c_str() << endl;
