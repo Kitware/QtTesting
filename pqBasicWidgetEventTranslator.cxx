@@ -169,7 +169,7 @@ bool pqBasicWidgetEventTranslator::translateEvent(QObject* object,
         QString propName = metaProp.name();
 
         // Record check event
-        emit recordEvent(widget, propName, widget->property(propName.toAscii().data()).toString().replace("\t", " "), pqEventTypes::CHECK_EVENT);
+        emit recordEvent(widget, propName, widget->property(propName.toUtf8().data()).toString().replace("\t", " "), pqEventTypes::CHECK_EVENT);
         return true;
         }
       }
