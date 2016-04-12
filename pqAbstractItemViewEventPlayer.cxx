@@ -162,6 +162,12 @@ bool pqAbstractItemViewEventPlayer::playEvent(QObject* Object, const QString& Co
   else if (Command.startsWith("mouse"))
     {
     QStringList args = Arguments.split(',');
+    if (args.size() == 5)
+      {
+      // Sometime, mouseWheel event does not contain the index, in that case,
+      // they should be played by the basic widget event player
+      return false;
+      }
     if (args.size() == 6)
       {
       Qt::MouseButtons buttons = static_cast<Qt::MouseButton>(args[1].toInt());
