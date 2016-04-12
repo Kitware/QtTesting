@@ -45,10 +45,11 @@ Concrete implementation of pqWidgetEventPlayer that translates high-level ParaVi
 class QTTESTING_EXPORT pqAbstractStringEventPlayer : public pqWidgetEventPlayer
 {
   Q_OBJECT
-
+  typedef pqWidgetEventPlayer Superclass;
 public:
   pqAbstractStringEventPlayer(QObject* p=0);
 
+  using Superclass::playEvent;
   bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error);
 
 private:
