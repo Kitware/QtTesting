@@ -36,10 +36,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 void pqStdoutEventObserver::onRecordEvent(
   const QString& Widget,
   const QString& Command,
-  const QString& Arguments)
+  const QString& Arguments,
+  const int& eventType)
 {
-  printf("event: %s %s %s\n",
+  printf("event: %s %s %s %i\n",
     Widget.toLatin1().data(),
     Command.toLatin1().data(),
-    Arguments.toLatin1().data());
+    Arguments.toLatin1().data(),
+    eventType);
 }
