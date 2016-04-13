@@ -49,10 +49,8 @@ public:
                  const QString& arguments, int eventType, bool& error);
 
 signals:
-#if QT_VERSION < 0x050000
   // Transition signal to call combo box activated signal
   void activated(int index);
-#endif
 
 private:
   pqComboBoxEventPlayer(const pqComboBoxEventPlayer&); // Not implemented.

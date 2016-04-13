@@ -1,5 +1,14 @@
 include(../CMake/qtTestingMacroGenerateMocs.cmake)
 
+IF(QtTesting_QT_VERSION VERSION_GREATER "4")
+  FIND_PACKAGE(Qt5Test REQUIRED)
+  ADD_DEFINITIONS(${Qt5Test_DEFINITIONS})
+  INCLUDE_DIRECTORIES(${Qt5Test_INCLUDE_DIRS})
+  SET(TEST_LIBRARIES ${Qt5Test_LIBRARIES})
+ELSE()
+  SET(TEST_LIBRARIES ${QT_QTTEST_LIBRARY})
+ENDIF()
+
 set(KIT ${PROJECT_NAME})
 
 set(TEST_SOURCES
@@ -39,7 +48,7 @@ else()
 endif()
 
 add_executable(${KIT}CppTests ${Tests} ${TEST_MOC_SRCS})
-target_link_libraries(${KIT}CppTests ${PROJECT_NAME} ${QT_QTTEST_LIBRARY})
+target_link_libraries(${KIT}CppTests ${PROJECT_NAME} ${TEST_LIBRARIES})
 set_target_properties(${KIT}CppTests PROPERTIES
   COMPILE_FLAGS "${Qt5Test_EXECUTABLE_COMPILE_FLAGS}")
 
