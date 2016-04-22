@@ -50,6 +50,7 @@ class QTTESTING_EXPORT pqAbstractButtonEventTranslator :
   public pqWidgetEventTranslator
 {
   Q_OBJECT
+  typedef pqWidgetEventTranslator Superclass;
   
 public:
   pqAbstractButtonEventTranslator(QObject* p=0);

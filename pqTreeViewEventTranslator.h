@@ -7,8 +7,8 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
-   
+   under the terms of the ParaView license version 1.2.
+
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
    Kitware Inc.
@@ -29,48 +29,38 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========================================================================*/
-#ifndef __pqTreeViewEventTranslator_h 
+#ifndef __pqTreeViewEventTranslator_h
 #define __pqTreeViewEventTranslator_h
 
-#include "pqWidgetEventTranslator.h"
-#include <QPointer>
-
-class QModelIndex;
-class QTreeView;
+#include "pqAbstractItemViewEventTranslatorBase.h"
 
 /// Event recorder for QTreeView. Records the toggling of the check states for
 /// tree widget items. The recorded state can be played back using
 /// pqTreeViewEventPlayer.
-class QTTESTING_EXPORT pqTreeViewEventTranslator : public pqWidgetEventTranslator
+class QTTESTING_EXPORT pqTreeViewEventTranslator : public pqAbstractItemViewEventTranslatorBase
 {
   Q_OBJECT
-  typedef pqWidgetEventTranslator Superclass;
+  typedef pqAbstractItemViewEventTranslatorBase Superclass;
 public:
   pqTreeViewEventTranslator(QObject* parent=0);
   ~pqTreeViewEventTranslator();
 
-  /// Overridden to handle events on QColorDialog. 
-  virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
- 
-private slots:
-  void onClicked(const QModelIndex&);
-  void onActivated(const QModelIndex&);
-  void onDoubleClicked(const QModelIndex&);
+  /// Connect QTree signals to this class slots
+  virtual void connectWidgetToSlots(QAbstractItemView* abstractItemView);
+
+  /// find and set the corrected abstract item view
+  virtual QAbstractItemView* findCorrectedAbstractItemView(QObject* object) const;
+
+protected slots:
   void onExpanded(const QModelIndex&);
   void onCollapsed(const QModelIndex&);
-  void onCurrentChanged(const QModelIndex&);
 
-protected:
-  QPointer<QTreeView> TreeView;
-  bool                Editing;
+  /// Compute a visual rectangle for the item and signal it
+  void onEnteredCheck(const QModelIndex&);
 
 private:
   pqTreeViewEventTranslator(const pqTreeViewEventTranslator&); // Not implemented.
   void operator=(const pqTreeViewEventTranslator&); // Not implemented.
-
-  QString getIndexAsString(const QModelIndex&);
 };
 
 #endif
-
-

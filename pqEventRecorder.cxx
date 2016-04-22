@@ -38,6 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqEventObserver.h"
 #include "pqEventRecorder.h"
 #include "pqEventTranslator.h"
+#include "pqEventTypes.h"
 
 // ----------------------------------------------------------------------------
 pqEventRecorder::pqEventRecorder(QObject *parent)
@@ -46,8 +47,6 @@ pqEventRecorder::pqEventRecorder(QObject *parent)
   this->ActiveObserver = 0;
   this->ActiveTranslator = 0;
   this->File = 0;
-
-  this->Recording = false;
   this->ContinuousFlush = false;
 }
 
@@ -85,6 +84,12 @@ void pqEventRecorder::setContinuousFlush(bool value)
 bool pqEventRecorder::continuousFlush() const
 {
   return this->ContinuousFlush;
+}
+
+// ----------------------------------------------------------------------------
+void pqEventRecorder::check(bool value)
+{
+  this->ActiveTranslator->check(value);
 }
 
 // ----------------------------------------------------------------------------
@@ -126,7 +131,14 @@ pqEventTranslator* pqEventRecorder::translator() const
 // ----------------------------------------------------------------------------
 bool pqEventRecorder::isRecording() const
 {
-  return this->Recording;
+  if( this->ActiveTranslator != NULL)
+    {
+    return this->ActiveTranslator->isRecording();
+    }
+  else
+    {
+    return false;
+    }
 }
 
 // ----------------------------------------------------------------------------
@@ -159,12 +171,15 @@ void pqEventRecorder::start()
 
   QObject::connect(
     this->ActiveTranslator,
-    SIGNAL(recordEvent(QString,QString,QString)),
+    SIGNAL(recordEvent(QString,QString,QString, int)),
     this->ActiveObserver,
-    SLOT(onRecordEvent(QString,QString,QString)));
+    SLOT(onRecordEvent(QString,QString,QString, int)));
 
   // Set the device
   this->Stream.setDevice(this->File);
+
+  // Set UTF8 Codec
+  this->Stream.setCodec("UTF-8");
 
   // Set the Stream to the Observer
   this->ActiveObserver->setStream(&this->Stream);
@@ -172,7 +187,7 @@ void pqEventRecorder::start()
   // Start the Translator
   this->ActiveTranslator->start();
 
-  this->Recording = true;
+  this->ActiveTranslator->record(true);
   emit this->started();
 }
 
@@ -181,14 +196,14 @@ void pqEventRecorder::stop(int value)
 {
   QObject::disconnect(
     this->ActiveTranslator,
-    SIGNAL(recordEvent(QString,QString,QString)),
+    SIGNAL(recordEvent(QString,QString,QString, int)),
     this->ActiveObserver,
-    SLOT(onRecordEvent(QString,QString,QString)));
+    SLOT(onRecordEvent(QString,QString,QString, int)));
 
   this->ActiveObserver->setStream(NULL);
   this->ActiveTranslator->stop();
 
-  this->Recording = false;
+  this->ActiveTranslator->record(false);
 
   if (!value)
     {
@@ -200,26 +215,14 @@ void pqEventRecorder::stop(int value)
 }
 
 // ----------------------------------------------------------------------------
+void pqEventRecorder::unpause(bool value)
+{
+  this->pause(!value);
+}
+
+// ----------------------------------------------------------------------------
 void pqEventRecorder::pause(bool value)
 {
-  if (!value)
-    {
-    QObject::disconnect(
-      this->ActiveTranslator,
-      SIGNAL(recordEvent(QString,QString,QString)),
-      this->ActiveObserver,
-      SLOT(onRecordEvent(QString,QString,QString)));
-    }
-  else
-    {
-    QObject::connect(
-      this->ActiveTranslator,
-      SIGNAL(recordEvent(QString,QString,QString)),
-      this->ActiveObserver,
-      SLOT(onRecordEvent(QString,QString,QString)),
-      Qt::UniqueConnection);
-    }
-
-  this->Recording = value;
+  this->ActiveTranslator->record(!value);
   emit this->paused(value);
 }

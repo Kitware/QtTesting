@@ -32,7 +32,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "pqWidgetEventPlayer.h"
 
+#include <QContextMenuEvent>
 #include <QCoreApplication>
+#include <QPoint>
+#include <QWidget>
+
+#include "pqEventTypes.h"
   
 pqWidgetEventPlayer::pqWidgetEventPlayer(QObject* p) 
   : QObject(p)  
@@ -43,4 +48,32 @@ pqWidgetEventPlayer::~pqWidgetEventPlayer()
 {
 }
 
+bool pqWidgetEventPlayer::playEvent(
+  QObject* object, const QString& command, 
+  const QString& arguments, bool& error)
+{
+  QWidget* widget = qobject_cast<QWidget*>(object);
+  if(widget)
+    {
+    if(command == "contextMenu")
+      {
+      QPoint pt(widget->x(), widget->y());
+      QPoint globalPt = widget->mapToGlobal(pt);
+      QContextMenuEvent e(QContextMenuEvent::Other, pt, globalPt);
+      qApp->notify(widget, &e);
+      return true;
+      }
+    }
+  return false;
+}
+
+bool pqWidgetEventPlayer::playEvent(QObject* object, const QString& command,
+    const QString& arguments, int eventType, bool& error)
+{
+  if (eventType == pqEventTypes::ACTION_EVENT)
+    {
+    return this->playEvent(object, command, arguments, error);
+    }
+  return false;
+}
 

@@ -202,19 +202,20 @@ void pqEventTranslatorTester::testAddDefaultWidgetEventTranslators_data()
 
   QTest::newRow("0") << 0 << "pqNativeFileDialogEventTranslator";
   QTest::newRow("1") << 1 << "pq3DViewEventTranslator";
-  QTest::newRow("2") << 2 << "pqTreeViewEventTranslator";
-  QTest::newRow("3") << 3 << "pqTabBarEventTranslator";
-  QTest::newRow("4") << 4 << "pqSpinBoxEventTranslator";
-  QTest::newRow("5") << 5 << "pqMenuEventTranslator";
-  QTest::newRow("6") << 6 << "pqLineEditEventTranslator";
-  QTest::newRow("7") << 7 << "pqDoubleSpinBoxEventTranslator";
-  QTest::newRow("8") << 8 << "pqComboBoxEventTranslator";
-  QTest::newRow("9") << 9 << "pqAbstractSliderEventTranslator";
-  QTest::newRow("10") << 10 << "pqAbstractItemViewEventTranslator";
-  QTest::newRow("11") << 11 << "pqAbstractButtonEventTranslator";
-  QTest::newRow("12") << 12 << "pqBasicWidgetEventTranslator";
+  QTest::newRow("2") << 2 << "pqListViewEventTranslator";
+  QTest::newRow("3") << 3 << "pqTableViewEventTranslator";
+  QTest::newRow("4") << 4 << "pqTreeViewEventTranslator";
+  QTest::newRow("5") << 5 << "pqTabBarEventTranslator";
+  QTest::newRow("6") << 6 << "pqSpinBoxEventTranslator";
+  QTest::newRow("7") << 7 << "pqMenuEventTranslator";
+  QTest::newRow("8") << 8 << "pqLineEditEventTranslator";
+  QTest::newRow("9") << 9 << "pqDoubleSpinBoxEventTranslator";
+  QTest::newRow("10") << 10 << "pqComboBoxEventTranslator";
+  QTest::newRow("11") << 11 << "pqAbstractSliderEventTranslator";
+  QTest::newRow("12") << 12 << "pqAbstractItemViewEventTranslator";
+  QTest::newRow("13") << 13 << "pqAbstractButtonEventTranslator";
+  QTest::newRow("14") << 14 << "pqBasicWidgetEventTranslator";
 }
-
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(pqEventTranslatorTest)
 #include "moc_pqEventTranslatorTest.cpp"

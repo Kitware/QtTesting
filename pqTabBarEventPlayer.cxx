@@ -32,10 +32,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "pqTabBarEventPlayer.h"
 
-#include <QComboBox>
 #include <QLineEdit>
+#include <QTabBar>
 #include <QtDebug>
-#include <iostream>
 
 #include "pqObjectNaming.h"
 
@@ -47,16 +46,21 @@ pqTabBarEventPlayer::pqTabBarEventPlayer(QObject* p)
 bool pqTabBarEventPlayer::playEvent(
   QObject* target, const QString& command, const QString& arguments, bool& error_flag)
 {
-  if (command != "set_tab"  && command != "set_tab_with_text")
+/*  if (command != "set_tab"  && command != "set_tab_with_text")
     {
     // I don't handle this. Return false
     return false;
-    }
+    }*/
 
   const QString value = arguments;
     
   QTabBar* const tab_bar = qobject_cast<QTabBar*>(target);
-  if (tab_bar && command=="set_tab")
+  if (!tab_bar)
+    {
+    return false;
+    }
+
+  if (command=="set_tab")
     {
     // "set_tab" saves tab index. This was done in the past. Newly recorded
     // tests will use set_tab_with_text for more reliable playback.
@@ -79,7 +83,7 @@ bool pqTabBarEventPlayer::playEvent(
     return true;
     }
 
-  if (tab_bar && command == "set_tab_with_text")
+  if (command == "set_tab_with_text")
     {
     for (int cc=0 ; cc < tab_bar->count(); cc++)
       {
@@ -105,10 +109,6 @@ bool pqTabBarEventPlayer::playEvent(
           {
           if (sibling_tab_bar->tabText(cc) == value)
             {
-            std::cout << "DEBUG: Could not find request tab-pane on "
-              << pqObjectNaming::GetName(*tab_bar).toLatin1().data() << ". Using "
-              << pqObjectNaming::GetName(*sibling_tab_bar).toLatin1().data() << " instead."
-              << std::endl;
             sibling_tab_bar->setCurrentIndex(cc);
             return true;
             }
@@ -126,9 +126,11 @@ bool pqTabBarEventPlayer::playEvent(
     return true;
     }
 
-  qCritical() << "calling set_tab on unhandled type " << target;
-
-  error_flag = true;
+  if (!this->Superclass::playEvent(target, command, arguments, error_flag))
+    {
+    qCritical() << "calling set_tab on unhandled type " << target;
+    error_flag = true;
+    }
   return true;
 }
 

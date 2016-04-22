@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -34,9 +34,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include <QComboBox>
 #include <QLineEdit>
-#include <QtDebug>
+#include <QPlainTextEdit>
 #include <QTextDocument>
 #include <QTextEdit>
+#include <QtDebug>
 
 #include "pqObjectNaming.h"
 
@@ -47,44 +48,52 @@ pqAbstractStringEventPlayer::pqAbstractStringEventPlayer(QObject* p)
 
 bool pqAbstractStringEventPlayer::playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
 {
-  if(Command != "set_string")
-    return false;
+  if (Command != "set_string")
+      return false;
 
   const QString value = Arguments;
-    
-  if(QComboBox* const object = qobject_cast<QComboBox*>(Object))
+
+  if (QComboBox* const comboBox = qobject_cast<QComboBox*>(Object))
     {
-    int index = object->findText(value);
-    if(index != -1)
+    int index = comboBox->findText(value);
+    if (index != -1)
       {
-      object->setCurrentIndex(index);
+      comboBox->setCurrentIndex(index);
       }
     else
       {
       QString possibles;
-      for(int i=0; i<object->count(); i++)
+      for (int i = 0; i < comboBox->count(); i++)
         {
-        possibles += QString("\t") + object->itemText(i) + QString("\n");
+        possibles += QString("\t") + comboBox->itemText(i) + QString("\n");
         }
       qCritical() << "Unable to find " << value << " in combo box: "
-                  << pqObjectNaming::GetName(*Object)
-                  << "\nPossible values are:\n" << possibles;
+        << pqObjectNaming::GetName(*Object)
+        << "\nPossible values are:\n" << possibles;
       Error = true;
       }
     return true;
     }
 
-  if(QLineEdit* const object = qobject_cast<QLineEdit*>(Object))
+  if (QLineEdit* const lineEdit = qobject_cast<QLineEdit*>(Object))
     {
-    object->setText(value);
+    lineEdit->setText(value);
     return true;
     }
 
-  if (QTextEdit* const object = qobject_cast<QTextEdit*>(Object))
+  if (QTextEdit* const textEdit = qobject_cast<QTextEdit*>(Object))
     {
-    object->setFocus(Qt::OtherFocusReason);
-    object->document()->setPlainText(value);
-    object->clearFocus();
+    textEdit->setFocus(Qt::OtherFocusReason);
+    textEdit->document()->setPlainText(value);
+    textEdit->clearFocus();
+    return true;
+    }
+
+  if (QPlainTextEdit* const plainTextEdit = qobject_cast<QPlainTextEdit*>(Object))
+    {
+    plainTextEdit->setFocus(Qt::OtherFocusReason);
+    plainTextEdit->document()->setPlainText(value);
+    plainTextEdit->clearFocus();
     return true;
     }
 

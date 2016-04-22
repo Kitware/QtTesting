@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -40,15 +40,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QPushButton>
 #include <QToolButton>
 
-#include <iostream>
-
 pqAbstractButtonEventTranslator::pqAbstractButtonEventTranslator(QObject* p)
   : pqWidgetEventTranslator(p)
 {
   this->LastMouseEventType = QEvent::None;
 }
 
-bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& /*Error*/)
+bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& Error)
 {
   QAbstractButton* const object = qobject_cast<QAbstractButton*>(Object);
   if(!object)
@@ -68,8 +66,9 @@ bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Ev
         {
         onActivate(object);
         }
-      }
+      return true;
       break;
+      }
     case QEvent::MouseButtonPress:
       {
       QMouseEvent* const e = dynamic_cast<QMouseEvent*>(Event);
@@ -81,8 +80,9 @@ bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Ev
         {
         onActivate(object);
         }
-      }  
+      return true;
       break;
+      }
     case QEvent::Timer:
       {
       if (this->LastMouseEventType == QEvent::MouseButtonPress)
@@ -96,8 +96,9 @@ bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Ev
           this->LastMouseEventType = QEvent::None;
           }
         }
-      }
+      return true;
       break;
+      }
     case QEvent::MouseButtonRelease:
       {
       bool lastEventWasMouseButtonPress =
@@ -112,13 +113,13 @@ bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Ev
         {
         onActivate(object);
         }
+      return true;
+      break;
       }
-      break;
     default:
-      break;
+    break;
     }
-      
-  return true;
+  return this->Superclass::translateEvent(Object, Event, Error);
 }
 
 void pqAbstractButtonEventTranslator::onActivate(QAbstractButton* actualObject)
@@ -154,7 +155,7 @@ bool pqAbstractButtonEventTranslator::hasMenu(QAbstractButton* button) const
     hasMenu = toolButton->menu() != 0
       || (toolButton->defaultAction()
           && toolButton->defaultAction()->menu() != 0);
-    hasMenu = hasMenu && toolButton->popupMode() != QToolButton::ToolButtonPopupMode::DelayedPopup;
+    hasMenu = hasMenu && toolButton->popupMode() != QToolButton::DelayedPopup;
   }
   return hasMenu;
 }

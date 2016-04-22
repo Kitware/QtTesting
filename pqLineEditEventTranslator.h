@@ -45,11 +45,12 @@ class QTTESTING_EXPORT pqLineEditEventTranslator :
   public pqWidgetEventTranslator
 {
   Q_OBJECT
+  typedef pqWidgetEventTranslator Superclass;
   
 public:
   pqLineEditEventTranslator(QObject* p=0);
   
-  virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
+  virtual bool translateEvent(QObject* object, QEvent* event, int eventType, bool& error);
 
 private:
   pqLineEditEventTranslator(const pqLineEditEventTranslator&);

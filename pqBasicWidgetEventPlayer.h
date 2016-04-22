@@ -44,11 +44,13 @@ class pqBasicWidgetEventPlayer :
   public pqWidgetEventPlayer
 {
   Q_OBJECT
+  typedef pqWidgetEventPlayer Superclass;
 
 public:
   pqBasicWidgetEventPlayer(QObject* p=0);
 
-  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error);
+  bool playEvent(QObject* object, const QString& command, 
+                 const QString& arguments, int eventType, bool& error);
 
 private:
   pqBasicWidgetEventPlayer(const pqBasicWidgetEventPlayer&);

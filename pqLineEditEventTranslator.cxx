@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -38,57 +38,104 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QSpinBox>
 #include <QTextDocument>
 #include <QTextEdit>
+#include <QPlainTextEdit>
 #include <QKeyEvent>
+
+#include "pqEventTypes.h"
 
 pqLineEditEventTranslator::pqLineEditEventTranslator(QObject* p)
   : pqWidgetEventTranslator(p)
 {
 }
 
-bool pqLineEditEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& /*Error*/)
+bool pqLineEditEventTranslator::translateEvent(QObject* object, QEvent* event, int eventType, bool& error)
 {
-  QLineEdit* const object = qobject_cast<QLineEdit*>(Object);
-  QTextEdit* const teObject = qobject_cast<QTextEdit*>(Object);
-  if(!object && !teObject)
+  QObject* tmpObject = object;
+  QLineEdit* leObject = qobject_cast<QLineEdit*>(object);
+  QTextEdit* teObject = qobject_cast<QTextEdit*>(object);
+  QPlainTextEdit* pteObject = qobject_cast<QPlainTextEdit*>(object);
+  if(!leObject && !teObject && !pteObject && object->parent() != NULL)
     {
-    return false;
+    // MouseEvent can be received by viewport
+    tmpObject = object->parent();
+    leObject = qobject_cast<QLineEdit*>(tmpObject);
+    teObject = qobject_cast<QTextEdit*>(tmpObject);
+    pteObject = qobject_cast<QPlainTextEdit*>(tmpObject);
     }
-  
-  // If this line edit is part of a spinbox, don't translate events
-  // (the spinbox translator will receive the final value directly)
-  if(qobject_cast<QSpinBox*>(Object->parent()))
+  if(!leObject && !teObject && !pteObject)
     {
     return false;
     }
 
-  switch(Event->type())
+  if (eventType == pqEventTypes::ACTION_EVENT)
     {
-    case QEvent::KeyRelease:
+    // If this line edit is part of a spinbox, don't translate events
+    // (the spinbox translator will receive the final value directly)
+    if(qobject_cast<QSpinBox*>(tmpObject->parent()))
       {
-      QKeyEvent* ke = static_cast<QKeyEvent*>(Event);
-      QString keyText = ke->text();
-      if(keyText.length() && keyText.at(0).isLetterOrNumber())
+      return false;
+      }
+
+    switch(event->type())
+      {
+      case QEvent::KeyRelease:
         {
-        if (object)
+        QKeyEvent* ke = static_cast<QKeyEvent*>(event);
+        QString keyText = ke->text();
+        if(keyText.length() && keyText.at(0).isLetterOrNumber())
           {
-          emit recordEvent(Object, "set_string", object->text());
+          if (leObject)
+            {
+            emit recordEvent(tmpObject, "set_string", leObject->text());
+            }
+          else if (teObject)
+            {
+            emit recordEvent(tmpObject, "set_string", teObject->document()->toPlainText());
+            }
+          else if (pteObject)
+            {
+            emit recordEvent(tmpObject, "set_string", pteObject->document()->toPlainText());
+            }
+
           }
-        else if (teObject)
+        // if we record F2 event, will cause some issue with the TreeView
+        // Need test to know if we need to record those events
+        else if (ke->key() != Qt::Key_F2)
           {
-          emit recordEvent(Object, "set_string", teObject->document()->toPlainText());
+          emit recordEvent(tmpObject, "key", QString("%1").arg(ke->key()));
           }
+        return true;
+        break;
         }
-      // if we record F2 event, will cause some issue with the TreeView
-      // Need test to know if we need to record those events
-      else if (ke->key() != Qt::Key_F2)
+      default:
+      break;
+      }
+    }
+  else if (eventType == pqEventTypes::CHECK_EVENT)
+    {
+    // TextEdit only, LineEdit does not need specific check
+    if (teObject != NULL || pteObject != NULL)
+      {
+      if (event->type() == QEvent::MouseMove)
         {
-        emit recordEvent(Object, "key", QString("%1").arg(ke->key()));
+        return true;
+        }
+      // Clicking while checking, actual check event
+      if (event->type() == QEvent::MouseButtonRelease)
+        {
+        if(teObject != NULL)
+          {
+          emit this->recordEvent(teObject, "plainText",
+            teObject->toPlainText().replace("\t", " "), pqEventTypes::CHECK_EVENT);
+          }
+        else /* if (pteObject != NULL)*/
+          {
+          emit this->recordEvent(pteObject, "plainText",
+            pteObject->toPlainText().replace("\t", " "), pqEventTypes::CHECK_EVENT);
+          }
+        return true;
         }
       }
-      break;
-    default:
-      break;
     }
-
-  return true;
+  return this->Superclass::translateEvent(object, event, eventType, error);
 }
