@@ -40,6 +40,9 @@ Display a green or red overlay rectangle on top of parent widget
 */
 class pqCheckEventOverlay : public QWidget
 {
+  Q_OBJECT
+  typedef QWidget Superclass;
+
 public:
   pqCheckEventOverlay(QWidget * parent = 0);
 
