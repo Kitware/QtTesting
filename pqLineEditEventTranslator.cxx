@@ -82,7 +82,7 @@ bool pqLineEditEventTranslator::translateEvent(QObject* object, QEvent* event, i
         {
         QKeyEvent* ke = static_cast<QKeyEvent*>(event);
         QString keyText = ke->text();
-        if(keyText.length() && keyText.at(0).isLetterOrNumber())
+        if(keyText.length() && keyText.at(0).isPrint())
           {
           if (leObject)
             {

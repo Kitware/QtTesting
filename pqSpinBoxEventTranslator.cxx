@@ -90,7 +90,7 @@ bool pqSpinBoxEventTranslator::translateEvent(QObject* Object,
     QKeyEvent* ke = static_cast<QKeyEvent*>(Event);
     QString keyText = ke->text();
     this->Value = object->value();
-    if(keyText.length() && keyText.at(0).isLetterOrNumber())
+    if(keyText.length() && keyText.at(0).isPrint())
       {
       emit recordEvent(object, "set_int", QString("%1").arg(object->value()));
       }
