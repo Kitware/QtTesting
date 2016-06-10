@@ -39,6 +39,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QFile>
 #include <QThread>
 
+#include "pqEventDispatcher.h"
+
 // Class that encapsulates the protected function QThread::msleep
 class SleeperThread : public QThread
 {
@@ -59,7 +61,6 @@ pqAbstractMiscellaneousEventPlayer::pqAbstractMiscellaneousEventPlayer(QObject* 
 //Allows for execution of testing commands that don't merit their own class
 bool pqAbstractMiscellaneousEventPlayer::playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
 {
-
   if (Command == "pause")
     {
     const int value = Arguments.toInt();
@@ -70,7 +71,20 @@ bool pqAbstractMiscellaneousEventPlayer::playEvent(QObject* Object, const QStrin
     Error = true;
     qCritical() << "calling pause on unhandled type " << Object;
     }
-
+  if (Command == "process_events")
+    {
+    bool valid = false;
+    const int ms = Arguments.toInt(&valid);
+    if (valid)
+      {
+      pqEventDispatcher::processEventsAndWait(ms);
+      }
+    else
+      {
+      pqEventDispatcher::processEvents();
+      }
+    return true;
+    }
   return false;
 }
 

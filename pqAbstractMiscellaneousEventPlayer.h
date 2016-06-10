@@ -34,11 +34,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define _pqAbstractMiscellaneousEventPlayer_h
 
 #include "pqWidgetEventPlayer.h"
-/**
-Concrete implementation of pqWidgetEventPlayer that translates high-level ParaView events into low-level Qt events.
 
-\sa pqEventPlayer
-*/
+/// Event playback handler for a collection of miscellaneous commands.
+/// For these events, the "object" on which the event is triggered is generally
+/// immaterial.
+///
+/// Supported commands are:
+/// \li \c pause : pause the application for a fixed time. Time is specified as
+///                the arguments in milliseconds to pause the application for.
+///                This is a sleep i.e. no events will be processed and the
+///                application will appear frozen.
+/// \li \c process_events: process pending events (including timers, etc.).
+///                Optional time (in milliseconds) may be specified to also pause
+///                the test playback. Unlike "pause" however, this will continue
+///                to process all events arising in the application e.g.
+///                responding to timer events.
 class QTTESTING_EXPORT pqAbstractMiscellaneousEventPlayer :
   public pqWidgetEventPlayer
 {
