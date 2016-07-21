@@ -31,6 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ========================================================================*/
 #include "pqTreeViewEventPlayer.h"
 #include <QTreeWidget>
+#include <QMenu>
 #include <QDebug>
 
 //-----------------------------------------------------------------------------
@@ -50,7 +51,10 @@ bool pqTreeViewEventPlayer::playEvent(
   const QString& arguments, int eventType, bool& error)
 {
   QTreeView* treeView= qobject_cast<QTreeView*>(object);
-  if(!treeView)
+  QMenu* contextMenu= qobject_cast<QMenu*>(object);
+  // if this a QMenu (potentially a context menu of the view),
+  // we should not move onto parent
+  if(!treeView && !contextMenu)
     {
     // mouse events go to the viewport widget
     treeView = qobject_cast<QTreeView*>(object->parent());

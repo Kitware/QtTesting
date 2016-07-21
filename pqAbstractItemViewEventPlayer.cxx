@@ -41,6 +41,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QList>
 #include <QListWidget>
 #include <QWheelEvent>
+#include <QMenu>
 
 #include "pqEventDispatcher.h"
 
@@ -110,7 +111,10 @@ pqAbstractItemViewEventPlayer::pqAbstractItemViewEventPlayer(QObject* p)
 bool pqAbstractItemViewEventPlayer::playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
 {
   QAbstractItemView* object = qobject_cast<QAbstractItemView*>(Object);
-  if (!object)
+  QMenu* contextMenu= qobject_cast<QMenu*>(Object);
+  // if this a QMenu (potentially a context menu of the view),
+  // we should not move onto parent
+  if (!object && !contextMenu)
     {
     // mouse events go to the viewport widget
     object = qobject_cast<QAbstractItemView*>(Object->parent());

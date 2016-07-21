@@ -37,6 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 //#include <QKeyEvent>
 #include <QAbstractItemView>
 #include <QDebug>
+#include <QMenu>
 //-----------------------------------------------------------------------------
 pqAbstractItemViewEventPlayerBase::pqAbstractItemViewEventPlayerBase(QObject* parentObject)
   : Superclass(parentObject)
@@ -94,7 +95,10 @@ bool pqAbstractItemViewEventPlayerBase::playEvent(
   const QString& arguments, int eventType, bool& error)
 {
   QAbstractItemView* abstractItemView= qobject_cast<QAbstractItemView*>(object);
-  if(!abstractItemView)
+  QMenu* contextMenu= qobject_cast<QMenu*>(object);
+  // if this a QMenu (potentially a context menu of the view),
+  // we should not move onto parent
+  if(!abstractItemView && !contextMenu)
     {
     // mouse events go to the viewport widget
     abstractItemView = qobject_cast<QAbstractItemView*>(object->parent());
