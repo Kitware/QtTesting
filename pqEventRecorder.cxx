@@ -68,13 +68,13 @@ void pqEventRecorder::setContinuousFlush(bool value)
   if (value)
     {
     QObject::connect(this->ActiveObserver,
-                     SIGNAL(eventRecorded(QString,QString,QString)),
+                     SIGNAL(eventRecorded(QString,QString,QString, int)),
                      this, SLOT(flush()));
     }
   else
     {
     QObject::disconnect(this->ActiveObserver,
-                        SIGNAL(eventRecorded(QString,QString,QString)),
+                        SIGNAL(eventRecorded(QString,QString,QString, int)),
                         this, SLOT(flush()));
     }
   this->ContinuousFlush = value;
