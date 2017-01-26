@@ -74,7 +74,8 @@ public slots:
 signals:
   void eventRecorded(const QString& Widget,
                      const QString& Command,
-                     const QString& Arguments);
+                     const QString& Arguments,
+                     const int& eventType);
 
 protected:
   QTextStream* Stream;

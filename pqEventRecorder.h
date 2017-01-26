@@ -63,7 +63,6 @@ public:
   explicit pqEventRecorder(QObject *parent = 0);
   ~pqEventRecorder();
 
-  void setContinuousFlush(bool value);
   bool continuousFlush() const;
 
   void setFile(QIODevice* file);
@@ -104,6 +103,13 @@ public slots:
   // Set/Unset the recorder into Check mode
   // Connection signal into the correct slots
   void check(bool value);
+
+  // Set the continuous flush value
+  // and connect/disconnect the current observer with
+  // this recorder
+  // If true, events are written on file as soon
+  // as they are recorded.
+  void setContinuousFlush(bool value);
 
 protected:
   pqEventObserver*    ActiveObserver;

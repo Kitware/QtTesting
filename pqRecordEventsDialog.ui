@@ -242,6 +242,16 @@
     </widget>
    </item>
    <item>
+    <widget class="QCheckBox" name="continuousFlush">
+      <property name="text">
+        <string>Continuous Flush</string>
+      </property>
+      <property name="toolTip">
+        <string>Write events to file as soon as they are recorded</string>
+      </property>
+    </widget>
+   </item>
+   <item>
     <layout class="QHBoxLayout">
      <property name="spacing">
       <number>6</number>
