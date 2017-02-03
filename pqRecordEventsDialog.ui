@@ -242,14 +242,37 @@
     </widget>
    </item>
    <item>
-    <widget class="QCheckBox" name="continuousFlush">
-      <property name="text">
-        <string>Continuous Flush</string>
-      </property>
-      <property name="toolTip">
-        <string>Write events to file as soon as they are recorded</string>
-      </property>
-    </widget>
+    <layout class="QHBoxLayout">
+     <property name="spacing">
+      <number>6</number>
+     </property>
+     <property name="sizeConstraint">
+      <enum>QLayout::SetMinimumSize</enum>
+     </property>
+     <property name="margin">
+      <number>0</number>
+     </property>
+     <item>
+      <widget class="QCheckBox" name="continuousFlush">
+        <property name="text">
+          <string>Continuous Flush</string>
+        </property>
+        <property name="toolTip">
+          <string>Write events to file as soon as they are recorded</string>
+        </property>
+      </widget>
+     </item>
+     <item>
+      <widget class="QCheckBox" name="recordInteractionTimings">
+        <property name="text">
+          <string>Record Interaction Timings</string>
+        </property>
+        <property name="toolTip">
+          <string>When activated, each pause between interactions will be recorded as a pause event, with the correct timing</string>
+        </property>
+      </widget>
+     </item>
+    </layout>
    </item>
    <item>
     <layout class="QHBoxLayout">

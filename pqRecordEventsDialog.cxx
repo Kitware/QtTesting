@@ -112,6 +112,11 @@ pqRecordEventsDialog::pqRecordEventsDialog(pqEventRecorder* recorder,
                    this->Implementation->Recorder,
                    SLOT(setContinuousFlush(bool)));
 
+  QObject::connect(this->Implementation->Ui.recordInteractionTimings,
+                   SIGNAL(toggled(bool)),
+                   this->Implementation->Recorder,
+                   SLOT(setRecordInteractionTimings(bool)));
+
   QObject::connect(this->Implementation->Recorder,
                    SIGNAL(started()),
                    this,

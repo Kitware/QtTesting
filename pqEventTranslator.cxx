@@ -52,12 +52,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqTableViewEventTranslator.h"
 #include "pqTreeViewEventTranslator.h"
 
-#include <QCoreApplication>
-#include <QtDebug>
-#include <QSet>
-#include <QVector>
 #include <QApplication>
+#include <QCoreApplication>
+#include <QElapsedTimer>
+#include <QSet>
+#include <QtDebug>
 #include <QToolBar>
+#include <QVector>
 
 ////////////////////////////////////////////////////////////////////////////////
 // pqEventTranslator::pqImplementation
@@ -72,6 +73,8 @@ struct pqEventTranslator::pqImplementation
     // Create overlay and hide it
     this->CheckOverlay = new pqCheckEventOverlay(NULL);
     this->hideOverlay();
+
+    this->RecordInteractionTimings = false;
     }
 
   ~pqImplementation()
@@ -117,6 +120,12 @@ struct pqEventTranslator::pqImplementation
 
   // Pointer to the overlayed widget
   QPointer<QWidget> CheckOverlayWidgetOn;
+
+  // Record interaction timings flag
+  bool RecordInteractionTimings;
+
+  // Timer to track time between user interactions
+  QElapsedTimer InteractionsTimer;
 };
 
 ////////////////////////////////////////////////////////////////////////////////
@@ -609,6 +618,22 @@ void pqEventTranslator::onRecordEvent(QObject* Object,
       return;
       }
     }
+
+  // Record user interaction time
+  if (this->Implementation->RecordInteractionTimings)
+  {
+    if (this->Implementation->InteractionsTimer.isValid())
+    {
+      emit recordEvent(name, "pause",
+        QString::number(this->Implementation->InteractionsTimer.restart()),
+        pqEventTypes::ACTION_EVENT);
+    }
+    else
+    {
+      this->Implementation->InteractionsTimer.start();
+    }
+  }
+
   // Record the event
   emit recordEvent(name, Command, Arguments, eventType);
 }
@@ -641,6 +666,16 @@ void pqEventTranslator::record(bool value)
 bool pqEventTranslator::isRecording()
 {
   return this->Implementation->Recording;
+}
+
+// ----------------------------------------------------------------------------
+void pqEventTranslator::recordInteractionTimings(bool value)
+{
+  if (value != this->Implementation->RecordInteractionTimings)
+  {
+    this->Implementation->RecordInteractionTimings = value;
+    this->Implementation->InteractionsTimer.invalidate();
+  }
 }
 
 // ----------------------------------------------------------------------------

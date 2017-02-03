@@ -48,6 +48,7 @@ pqEventRecorder::pqEventRecorder(QObject *parent)
   this->ActiveTranslator = 0;
   this->File = 0;
   this->ContinuousFlush = false;
+  this->RecordInteractionTimings = false;
 }
 
 // ----------------------------------------------------------------------------
@@ -87,6 +88,22 @@ bool pqEventRecorder::continuousFlush() const
 }
 
 // ----------------------------------------------------------------------------
+void pqEventRecorder::setRecordInteractionTimings(bool value)
+{
+  this->RecordInteractionTimings = value;
+  if (this->ActiveTranslator)
+  {
+    this->ActiveTranslator->recordInteractionTimings(value);
+  }
+}
+
+// ----------------------------------------------------------------------------
+bool pqEventRecorder::recordInteractionTimings() const
+{
+  return this->RecordInteractionTimings;
+}
+
+// ----------------------------------------------------------------------------
 void pqEventRecorder::check(bool value)
 {
   this->ActiveTranslator->check(value);
@@ -120,6 +137,7 @@ pqEventObserver* pqEventRecorder::observer() const
 void pqEventRecorder::setTranslator(pqEventTranslator* translator)
 {
   this->ActiveTranslator = translator;
+  this->ActiveTranslator->recordInteractionTimings(this->RecordInteractionTimings);
 }
 
 // ----------------------------------------------------------------------------
