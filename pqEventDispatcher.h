@@ -138,7 +138,6 @@ public slots:
   void oneStep();
 
 protected:
-  bool PlayingBlockingEvent;
   bool PlayBackFinished;
   bool PlayBackPaused;
   bool PlayBackStatus;
@@ -150,6 +149,8 @@ protected:
   /// in a modal dialog or is in a long wait while also processing events
   /// (such as when waiting from Insitu server @see pqLiveInsituManager).
   static bool DeferEventsIfBlocked;
+
+  static bool PlayingBlockingEvent;
 
   pqEventSource* ActiveSource;
   pqEventPlayer* ActivePlayer;

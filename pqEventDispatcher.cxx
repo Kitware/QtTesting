@@ -71,6 +71,7 @@ namespace
 
 bool pqEventDispatcher::DeferMenuTimeouts = false;
 bool pqEventDispatcher::DeferEventsIfBlocked = false;
+bool pqEventDispatcher::PlayingBlockingEvent = false;
 
 //-----------------------------------------------------------------------------
 pqEventDispatcher::pqEventDispatcher(QObject* parentObject) :
@@ -78,8 +79,6 @@ pqEventDispatcher::pqEventDispatcher(QObject* parentObject) :
 {
   this->ActiveSource = NULL;
   this->ActivePlayer = NULL;
-
-  this->PlayingBlockingEvent = false;
 
   this->PlayBackStatus = true;
   this->PlayBackFinished = false;
@@ -213,6 +212,11 @@ bool pqEventDispatcher::playEvents(pqEventSource& source, pqEventPlayer& player)
   this->ActivePlayer = &player;
 
   QApplication::setEffectEnabled(Qt::UI_General, false);
+  QApplication::setEffectEnabled(Qt::UI_AnimateMenu, false); // Show animated menus.
+  QApplication::setEffectEnabled(Qt::UI_FadeMenu, false); //	Show faded menus.
+  QApplication::setEffectEnabled(Qt::UI_AnimateCombo, false); // Show animated comboboxes.
+  QApplication::setEffectEnabled(Qt::UI_AnimateTooltip, false); //	Show tooltip animations.
+  QApplication::setEffectEnabled(Qt::UI_FadeTooltip, false); // Show tooltip fading effects.
 
   QObject::connect(QAbstractEventDispatcher::instance(), SIGNAL(aboutToBlock()),
                    this, SLOT(aboutToBlock()));
@@ -279,6 +283,7 @@ void pqEventDispatcher::playEventOnBlocking()
     return;
     }
 
+  pqEventDispatcher::PlayingBlockingEvent = true;
   //cout << "---blocked event: " << endl;
   // if needed for debugging, I can print blocking annotation here.
   //cerr << "=== playEvent(2) ===" << endl;
@@ -288,7 +293,7 @@ void pqEventDispatcher::playEventOnBlocking()
   //  {
   //  this->BlockTimer.start();
   //  }
-  this->PlayingBlockingEvent = false;
+  pqEventDispatcher::PlayingBlockingEvent = false;
 }
 
 //-----------------------------------------------------------------------------
@@ -388,15 +393,25 @@ void pqEventDispatcher::processEventsAndWait(int ms)
   pqEventDispatcher::DeferMenuTimeouts = true;
   if (ms > 0)
     {
-//    ms = (ms < 100) ? 100 : ms;
-    QApplication::processEvents();
+    QApplication::sendPostedEvents();
     QEventLoop loop;
     QTimer::singleShot(ms, &loop, SLOT(quit()));
     loop.exec();
     }
-  QApplication::processEvents();
+  // When this gets called during playback from a blocking event loop (e.g. a modal dialog)
+  // calling `QApplication::processEvents()` has a sideeffect on Qt 5 + OsX where it does
+  // not quit the eventloop for the modal dialog until a mouse event (for example) is
+  // received by the application. Avoiding calling QApplication::processEvents when already
+  // processing a event loop other the apps main event loop avoids that problem.
+  if (!pqEventDispatcher::PlayingBlockingEvent)
+    {
+    QApplication::processEvents();
+    }
   QApplication::sendPostedEvents();
-  QApplication::processEvents();
+  if (!pqEventDispatcher::PlayingBlockingEvent)
+    {
+    QApplication::processEvents();
+    }
   pqEventDispatcher::DeferMenuTimeouts = prev;
 }
 
