@@ -64,6 +64,7 @@ public:
   ~pqEventRecorder();
 
   bool continuousFlush() const;
+  bool recordInteractionTimings() const;
 
   void setFile(QIODevice* file);
   QIODevice* file() const;
@@ -109,7 +110,18 @@ public slots:
   // this recorder
   // If true, events are written on file as soon
   // as they are recorded.
+  // False by default
   void setContinuousFlush(bool value);
+
+  // Set the record interaction timings value
+  // and pass it to current active translator
+  // if any.
+  // When set to true user's pause between interaction events
+  // are recorded and thus will be reproduced during playback.
+  // When enabled, timing starts to be recorded only after the
+  // next recorded event.
+  // False by default
+  void setRecordInteractionTimings(bool value);
 
 protected:
   pqEventObserver*    ActiveObserver;
@@ -117,6 +129,7 @@ protected:
   QIODevice*          File;
 
   bool                ContinuousFlush;
+  bool                RecordInteractionTimings;
   QTextStream         Stream;
 };
 

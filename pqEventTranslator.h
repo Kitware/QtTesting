@@ -103,6 +103,8 @@ public:
   void record(bool value);
   bool isRecording();
 
+  /// Set the record interaction timings flag
+  void recordInteractionTimings(bool value);
 signals:
   /// This signal will be emitted every time a translator generates a
   /// high-level ParaView event.  Observers should connect to this signal
