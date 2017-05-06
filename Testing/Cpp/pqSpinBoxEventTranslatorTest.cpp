@@ -239,7 +239,7 @@ void pqSpinBoxEventTranslatorTester::testRecordKeyBoardClick_data()
                                 QString("spinBoxTest, set_int, 33"));
   QTest::newRow("-5") << QString::number(-5)
                      << QString("%1#%2#%3#")
-                        .arg(QString("spinBoxTest, key, 45"),
+                        .arg(QString("spinBoxTest, set_int, 0"), // corresponds to "-"
                              QString("spinBoxTest, set_int, -5"),
                              QString("spinBoxTest, set_int, -5"));
 }

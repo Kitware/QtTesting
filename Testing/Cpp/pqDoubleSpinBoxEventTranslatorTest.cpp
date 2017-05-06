@@ -238,15 +238,15 @@ void pqDoubleSpinBoxEventTranslatorTester::testRecordKeyBoardClick_data()
                                 QString("doubleSpinBoxTest, set_double, 3"),
                                 QString("doubleSpinBoxTest, set_double, 33"),
                                 QString("doubleSpinBoxTest, set_double, 33"),
-                                QString("doubleSpinBoxTest, key, 46"),
+                                QString("doubleSpinBoxTest, set_double, 33"), // corresponds to "."
                                 QString("doubleSpinBoxTest, set_double, 33.5"),
                                 QString("doubleSpinBoxTest, set_double, 33.5"));
   QTest::newRow("-5.23") << QString::number(-5.23)
                      << QString("%1#%2#%3#%4#%5#%6#%7#%8#")
-                        .arg(QString("doubleSpinBoxTest, key, 45"),
+                        .arg(QString("doubleSpinBoxTest, set_double, 0"), // corresponds to "-"
                              QString("doubleSpinBoxTest, set_double, -5"),
                              QString("doubleSpinBoxTest, set_double, -5"),
-                             QString("doubleSpinBoxTest, key, 46"),
+                             QString("doubleSpinBoxTest, set_double, -5"), // corresponds to "."
                              QString("doubleSpinBoxTest, set_double, -5.2"),
                              QString("doubleSpinBoxTest, set_double, -5.2"),
                              QString("doubleSpinBoxTest, set_double, -5.23"),
@@ -264,10 +264,10 @@ void pqDoubleSpinBoxEventTranslatorTester::testRecordComplexClick()
 
   this->DoubleSpinBox->clear();
   QTest::keyClicks(this->DoubleSpinBox, QString::number(-5.25));
-  recordExpected.append(QString("doubleSpinBoxTest, key, 45#"));
+  recordExpected.append(QString("doubleSpinBoxTest, set_double, 0#")); // corresponds to "-"
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5#"));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5#"));
-  recordExpected.append(QString("doubleSpinBoxTest, key, 46#"));
+  recordExpected.append(QString("doubleSpinBoxTest, set_double, -5#")); // corresponds to "."
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.2#"));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.2#"));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.25#"));
