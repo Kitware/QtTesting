@@ -137,7 +137,10 @@ pqEventObserver* pqEventRecorder::observer() const
 void pqEventRecorder::setTranslator(pqEventTranslator* translator)
 {
   this->ActiveTranslator = translator;
-  this->ActiveTranslator->recordInteractionTimings(this->RecordInteractionTimings);
+  if( this->ActiveTranslator != NULL)
+    {
+    this->ActiveTranslator->recordInteractionTimings(this->RecordInteractionTimings);
+    }
 }
 
 // ----------------------------------------------------------------------------
