@@ -54,6 +54,7 @@ public:
   pqNativeFileDialogEventTranslator(pqTestUtility* util, QObject* p=0);
   ~pqNativeFileDialogEventTranslator();
 
+  using Superclass::translateEvent;
   virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
 
   void record(const QString& command, const QString& args);

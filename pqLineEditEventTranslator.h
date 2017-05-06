@@ -49,7 +49,8 @@ class QTTESTING_EXPORT pqLineEditEventTranslator :
   
 public:
   pqLineEditEventTranslator(QObject* p=0);
-  
+
+  using Superclass::translateEvent;
   virtual bool translateEvent(QObject* object, QEvent* event, int eventType, bool& error);
 
 private:

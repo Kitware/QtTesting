@@ -50,7 +50,8 @@ class QTTESTING_EXPORT pqAbstractItemViewEventTranslator :
   
 public:
   pqAbstractItemViewEventTranslator(QObject* p=0);
-  
+
+  using Superclass::translateEvent;
   virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
  
 protected: 

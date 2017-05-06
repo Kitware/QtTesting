@@ -52,7 +52,8 @@ class QTTESTING_EXPORT pqMenuEventTranslator :
 public:
   pqMenuEventTranslator(QObject* p=0);
   ~pqMenuEventTranslator();
-  
+
+  using Superclass::translateEvent;
   virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
 
 private:

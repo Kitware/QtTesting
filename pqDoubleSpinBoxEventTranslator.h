@@ -49,7 +49,8 @@ class QTTESTING_EXPORT pqDoubleSpinBoxEventTranslator :
   
 public:
   pqDoubleSpinBoxEventTranslator(QObject* p=0);
-  
+
+  using Superclass::translateEvent;
   virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
 
 private:
