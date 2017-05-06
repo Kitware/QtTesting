@@ -48,6 +48,7 @@ public:
   ~pqAbstractItemViewEventPlayerBase()=0;
 
   /// Play an event on a QAbstractViewItem
+  using Superclass::playEvent;
   bool playEvent(QObject* object, const QString& command,
                  const QString& arguments, int eventType, bool& error);
 

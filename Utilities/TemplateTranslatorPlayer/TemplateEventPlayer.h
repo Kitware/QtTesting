@@ -11,10 +11,12 @@ class TemplateEventPlayer :
   public pqWidgetEventPlayer
 {
   Q_OBJECT
+  typedef pqWidgetEventPlayer Superclass;
 
 public:
   TemplateEventPlayer(QObject* parent = 0);
 
+  using Superclass::playEvent;
   bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error);
 
 private:

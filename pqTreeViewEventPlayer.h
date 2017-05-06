@@ -44,6 +44,7 @@ public:
   pqTreeViewEventPlayer(QObject* parent=0);
   ~pqTreeViewEventPlayer();
 
+  using Superclass::playEvent;
   bool playEvent(QObject* object, const QString& command, 
                  const QString& arguments, int eventType, bool& error);
 

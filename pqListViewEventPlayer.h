@@ -44,6 +44,7 @@ public:
   pqListViewEventPlayer(QObject* parent=0);
   ~pqListViewEventPlayer();
 
+  using Superclass::playEvent;
   bool playEvent(QObject* object, const QString& command,
                  const QString& arguments, int eventType, bool& error);
 

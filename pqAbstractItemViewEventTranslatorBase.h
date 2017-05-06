@@ -50,6 +50,7 @@ public:
   ~pqAbstractItemViewEventTranslatorBase();
 
   /// Overridden to handle events on QAbstractItemView
+  using pqWidgetEventTranslator::translateEvent;
   virtual bool translateEvent(QObject* object, QEvent* event, int eventType, bool& error);
 
   /// Connect the QAbstractItemView signals to this classe slots

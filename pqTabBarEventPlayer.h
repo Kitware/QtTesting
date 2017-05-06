@@ -50,6 +50,7 @@ class QTTESTING_EXPORT pqTabBarEventPlayer :
 public:
   pqTabBarEventPlayer(QObject* p=0);
 
+  using Superclass::playEvent;
   bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error);
 
 private:
