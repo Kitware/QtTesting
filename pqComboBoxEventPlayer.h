@@ -45,6 +45,7 @@ public:
   ~pqComboBoxEventPlayer();
 
   /// Play an event on a QComboBox
+  using Superclass::playEvent;
   bool playEvent(QObject* object, const QString& command,
                  const QString& arguments, int eventType, bool& error);
 

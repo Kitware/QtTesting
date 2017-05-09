@@ -49,6 +49,7 @@ class pqBasicWidgetEventPlayer :
 public:
   pqBasicWidgetEventPlayer(QObject* p=0);
 
+  using Superclass::playEvent;
   bool playEvent(QObject* object, const QString& command, 
                  const QString& arguments, int eventType, bool& error);
 

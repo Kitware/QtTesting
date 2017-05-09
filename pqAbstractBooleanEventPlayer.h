@@ -44,10 +44,12 @@ class QTTESTING_EXPORT pqAbstractBooleanEventPlayer :
   public pqWidgetEventPlayer
 {
   Q_OBJECT
+  typedef pqWidgetEventPlayer Superclass;
 
 public:
   pqAbstractBooleanEventPlayer(QObject* p=0);
 
+  using Superclass::playEvent;
   bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error);
 
 private:

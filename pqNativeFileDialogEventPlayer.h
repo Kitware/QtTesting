@@ -48,11 +48,13 @@ class QTTESTING_EXPORT pqNativeFileDialogEventPlayer :
   public pqWidgetEventPlayer
 {
   Q_OBJECT
+  typedef pqWidgetEventPlayer Superclass;
 
 public:
   pqNativeFileDialogEventPlayer(pqTestUtility* util, QObject* p=0);
   ~pqNativeFileDialogEventPlayer();
 
+  using Superclass::playEvent;
   bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error);
 
 protected slots:

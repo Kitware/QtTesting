@@ -52,6 +52,7 @@ public:
   pq3DViewEventTranslator(const QByteArray& classname, QObject* p=0);
   ~pq3DViewEventTranslator();
 
+  using Superclass::translateEvent;
   virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
 
 protected:

@@ -50,6 +50,7 @@ class QTTESTING_EXPORT pq3DViewEventPlayer :
 public:
   pq3DViewEventPlayer(const QByteArray& classname, QObject* p = 0);
 
+  using Superclass::playEvent;
   bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error);
 
 protected:

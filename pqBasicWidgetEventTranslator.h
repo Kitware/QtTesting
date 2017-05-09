@@ -52,7 +52,8 @@ class QTTESTING_EXPORT pqBasicWidgetEventTranslator :
 public:
   pqBasicWidgetEventTranslator(QObject* p=0);
   ~pqBasicWidgetEventTranslator();
-  
+
+  using Superclass::translateEvent;
   virtual bool translateEvent(QObject* object, QEvent* event, int eventType, bool& error);
 
 protected:

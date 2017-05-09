@@ -44,11 +44,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class QTTESTING_EXPORT pqCommentEventPlayer : public pqWidgetEventPlayer
 {
   Q_OBJECT
+  typedef pqWidgetEventPlayer Superclass;
 
 public:
   pqCommentEventPlayer(pqTestUtility* testUtility, QObject* p =0);
   ~pqCommentEventPlayer();
 
+  using Superclass::playEvent;
   bool playEvent(QObject* Object, const QString &Command, const QString &Arguments, bool &Error);
 
 signals:
