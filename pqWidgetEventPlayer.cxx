@@ -35,10 +35,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QContextMenuEvent>
 #include <QCoreApplication>
 #include <QPoint>
+#include <QtDebug>
 #include <QWidget>
 
 #include "pqEventTypes.h"
-  
+
 pqWidgetEventPlayer::pqWidgetEventPlayer(QObject* p) 
   : QObject(p)  
 {
@@ -62,6 +63,20 @@ bool pqWidgetEventPlayer::playEvent(
       QContextMenuEvent e(QContextMenuEvent::Other, pt, globalPt);
       qApp->notify(widget, &e);
       return true;
+      }
+    else if (command == "size")
+      {
+      QStringList entries = arguments.split(',');
+      if (entries.size() == 2)
+        {
+        QSize sz = widget->size();
+        error = (sz.width() != entries[0].toInt() || sz.height() != entries[1].toInt());
+        if (error)
+          {
+          qCritical() << "Size mismatch: (" << arguments << ") != " << sz;
+          }
+        return true;
+        }
       }
     }
   return false;
