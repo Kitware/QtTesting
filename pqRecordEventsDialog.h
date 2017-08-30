@@ -54,7 +54,7 @@ public:
                        QWidget* Parent);
 
 private slots:
-  virtual void done(int);
+  void done(int) override;
   void onEventRecorded(const QString&, const QString&, const QString&, int eventType);
 
   void addComment();
@@ -65,7 +65,7 @@ public slots:
 private:
   pqRecordEventsDialog(const pqRecordEventsDialog&);
   pqRecordEventsDialog& operator=(const pqRecordEventsDialog&);
-  ~pqRecordEventsDialog();
+  ~pqRecordEventsDialog() override;
 
   void ignoreObject(QObject* object);
 

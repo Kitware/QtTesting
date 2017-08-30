@@ -50,7 +50,7 @@ public:
   pqAbstractStringEventPlayer(QObject* p=0);
 
   using Superclass::playEvent;
-  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error);
+  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
 
 private:
   pqAbstractStringEventPlayer(const pqAbstractStringEventPlayer&);

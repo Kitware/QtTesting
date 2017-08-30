@@ -52,7 +52,7 @@ class QTTESTING_EXPORT pqWidgetEventPlayer : public QObject
 
 public:
   pqWidgetEventPlayer(QObject* p);
-  virtual ~pqWidgetEventPlayer();
+  ~pqWidgetEventPlayer() override;
 
   /** Derivatives should implement this and play-back the given command,
   returning "true" if they handled the command, and setting Error

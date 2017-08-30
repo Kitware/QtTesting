@@ -61,7 +61,7 @@ class QTTESTING_EXPORT pqEventRecorder : public QObject
 
 public:
   explicit pqEventRecorder(QObject *parent = 0);
-  ~pqEventRecorder();
+  ~pqEventRecorder() override;
 
   bool continuousFlush() const;
   bool recordInteractionTimings() const;

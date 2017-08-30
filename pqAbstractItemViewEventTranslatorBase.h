@@ -47,11 +47,11 @@ class QTTESTING_EXPORT pqAbstractItemViewEventTranslatorBase : public pqWidgetEv
   typedef pqWidgetEventTranslator Superclass;
 public:
   pqAbstractItemViewEventTranslatorBase(QObject* parent=0);
-  ~pqAbstractItemViewEventTranslatorBase();
+  ~pqAbstractItemViewEventTranslatorBase() override;
 
   /// Overridden to handle events on QAbstractItemView
   using pqWidgetEventTranslator::translateEvent;
-  virtual bool translateEvent(QObject* object, QEvent* event, int eventType, bool& error);
+  bool translateEvent(QObject* object, QEvent* event, int eventType, bool& error) override;
 
   /// Connect the QAbstractItemView signals to this classe slots
   virtual void connectWidgetToSlots(QAbstractItemView* abstractItemView);

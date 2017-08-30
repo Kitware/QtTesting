@@ -54,7 +54,7 @@ class QTTESTING_EXPORT pqEventObserver :
   
 public:
   pqEventObserver(QObject* p);
-  ~pqEventObserver();
+  ~pqEventObserver() override;
 
 public:
   virtual void setStream(QTextStream* stream);

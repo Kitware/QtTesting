@@ -53,7 +53,7 @@ public:
   pqTabBarEventTranslator(QObject* p=0);
 
   using Superclass::translateEvent;
-  virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
+  bool translateEvent(QObject* Object, QEvent* Event, bool& Error) override;
 
 protected slots:
   void indexChanged(int);

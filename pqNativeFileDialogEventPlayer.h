@@ -52,10 +52,10 @@ class QTTESTING_EXPORT pqNativeFileDialogEventPlayer :
 
 public:
   pqNativeFileDialogEventPlayer(pqTestUtility* util, QObject* p=0);
-  ~pqNativeFileDialogEventPlayer();
+  ~pqNativeFileDialogEventPlayer() override;
 
   using Superclass::playEvent;
-  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error);
+  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
 
 protected slots:
   void start();

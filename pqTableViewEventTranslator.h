@@ -43,14 +43,14 @@ class QTTESTING_EXPORT pqTableViewEventTranslator : public pqAbstractItemViewEve
   typedef pqAbstractItemViewEventTranslatorBase Superclass;
 public:
   pqTableViewEventTranslator(QObject* parent=0);
-  ~pqTableViewEventTranslator();
+  ~pqTableViewEventTranslator() override;
 
   /// find and set the corrected abstract item view
-  virtual QAbstractItemView* findCorrectedAbstractItemView(QObject* object) const;
+  QAbstractItemView* findCorrectedAbstractItemView(QObject* object) const override;
 
 protected slots:
   /// Compute a visual rectangle for the item and signal it
-  void onEnteredCheck(const QModelIndex&);
+  void onEnteredCheck(const QModelIndex&) override;
 
 private:
   pqTableViewEventTranslator(const pqTableViewEventTranslator&); // Not implemented.

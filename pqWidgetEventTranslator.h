@@ -52,7 +52,7 @@ class QTTESTING_EXPORT pqWidgetEventTranslator :
   typedef QObject Superclass;
 public:
   pqWidgetEventTranslator(QObject* p=0);
-  virtual ~pqWidgetEventTranslator();
+  ~pqWidgetEventTranslator() override;
   
   /** Derivatives should implement this and translate events into commands,
   returning "true" if they handled the event, and setting Error

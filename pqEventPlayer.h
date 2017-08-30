@@ -76,7 +76,7 @@ class QTTESTING_EXPORT pqEventPlayer :
 
 public:
   pqEventPlayer();
-  ~pqEventPlayer();
+  ~pqEventPlayer() override;
 
   /** Adds the default set of widget players to the current working set.
   Players are executed in-order, so you can call addWidgetEventPlayer()

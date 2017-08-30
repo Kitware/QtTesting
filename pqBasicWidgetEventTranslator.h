@@ -51,10 +51,10 @@ class QTTESTING_EXPORT pqBasicWidgetEventTranslator :
   
 public:
   pqBasicWidgetEventTranslator(QObject* p=0);
-  ~pqBasicWidgetEventTranslator();
+  ~pqBasicWidgetEventTranslator() override;
 
   using Superclass::translateEvent;
-  virtual bool translateEvent(QObject* object, QEvent* event, int eventType, bool& error);
+  bool translateEvent(QObject* object, QEvent* event, int eventType, bool& error) override;
 
 protected:
   QPoint LastPos;

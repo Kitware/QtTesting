@@ -9,7 +9,7 @@ class TestingDemo : public QMainWindow
   Q_OBJECT
 public:
   TestingDemo();
-  ~TestingDemo();
+  ~TestingDemo() override;
 protected slots:
   void record();
   void play();

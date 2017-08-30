@@ -43,20 +43,20 @@ class QTTESTING_EXPORT pqTreeViewEventTranslator : public pqAbstractItemViewEven
   typedef pqAbstractItemViewEventTranslatorBase Superclass;
 public:
   pqTreeViewEventTranslator(QObject* parent=0);
-  ~pqTreeViewEventTranslator();
+  ~pqTreeViewEventTranslator() override;
 
   /// Connect QTree signals to this class slots
-  virtual void connectWidgetToSlots(QAbstractItemView* abstractItemView);
+  void connectWidgetToSlots(QAbstractItemView* abstractItemView) override;
 
   /// find and set the corrected abstract item view
-  virtual QAbstractItemView* findCorrectedAbstractItemView(QObject* object) const;
+  QAbstractItemView* findCorrectedAbstractItemView(QObject* object) const override;
 
 protected slots:
   void onExpanded(const QModelIndex&);
   void onCollapsed(const QModelIndex&);
 
   /// Compute a visual rectangle for the item and signal it
-  void onEnteredCheck(const QModelIndex&);
+  void onEnteredCheck(const QModelIndex&) override;
 
 private:
   pqTreeViewEventTranslator(const pqTreeViewEventTranslator&); // Not implemented.

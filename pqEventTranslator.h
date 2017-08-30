@@ -60,7 +60,7 @@ class QTTESTING_EXPORT pqEventTranslator :
 
 public:
   pqEventTranslator(QObject* p=0);
-  ~pqEventTranslator();
+  ~pqEventTranslator() override;
 
   /** Adds the default set of widget translators to the working set.
   Translators are executed in order, so you may call addWidgetEventTranslator()
@@ -131,7 +131,7 @@ private:
   pqEventTranslator(const pqEventTranslator&);
   pqEventTranslator& operator=(const pqEventTranslator&);
 
-  bool eventFilter(QObject* Object, QEvent* Event);
+  bool eventFilter(QObject* Object, QEvent* Event) override;
   int getWidgetEventTranslatorIndex(const QString& className);
 
   struct pqImplementation;

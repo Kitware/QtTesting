@@ -47,7 +47,7 @@ class QTTESTING_EXPORT pqThreadedEventSource : public pqEventSource
   Q_OBJECT
 public:
   pqThreadedEventSource(QObject* p);
-  ~pqThreadedEventSource();
+  ~pqThreadedEventSource() override;
 
   /** Called by the dispatcher on the GUI thread.
     Retrieves the next available event.  Returns true if an event was
@@ -68,7 +68,7 @@ public:
                      const QString& argument);
 
   /** tell this source to stop */
-  virtual void stop();
+  void stop() override;
 
   /** Wait for the GUI thread to acknowledge an event.
       A previously locked mutex must be passed in.

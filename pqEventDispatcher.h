@@ -72,7 +72,7 @@ class QTTESTING_EXPORT pqEventDispatcher : public QObject
   typedef QObject Superclass; 
 public:
   pqEventDispatcher(QObject* parent=0);
-  ~pqEventDispatcher();
+  ~pqEventDispatcher() override;
 
   /// Retrieves events from the given event source, dispatching them to
   /// the given event player for test case playback. This call blocks until all

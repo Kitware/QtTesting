@@ -51,7 +51,7 @@ public:
   pqLineEditEventTranslator(QObject* p=0);
 
   using Superclass::translateEvent;
-  virtual bool translateEvent(QObject* object, QEvent* event, int eventType, bool& error);
+  bool translateEvent(QObject* object, QEvent* event, int eventType, bool& error) override;
 
 private:
   pqLineEditEventTranslator(const pqLineEditEventTranslator&);
