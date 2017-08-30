@@ -56,7 +56,7 @@ public:
   pqAbstractButtonEventTranslator(QObject* p=0);
 
   using Superclass::translateEvent;
-  virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
+  bool translateEvent(QObject* Object, QEvent* Event, bool& Error) override;
 
 protected:
   virtual void onActivate(QAbstractButton*);

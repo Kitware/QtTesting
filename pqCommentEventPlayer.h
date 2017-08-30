@@ -48,10 +48,10 @@ class QTTESTING_EXPORT pqCommentEventPlayer : public pqWidgetEventPlayer
 
 public:
   pqCommentEventPlayer(pqTestUtility* testUtility, QObject* p =0);
-  ~pqCommentEventPlayer();
+  ~pqCommentEventPlayer() override;
 
   using Superclass::playEvent;
-  bool playEvent(QObject* Object, const QString &Command, const QString &Arguments, bool &Error);
+  bool playEvent(QObject* Object, const QString &Command, const QString &Arguments, bool &Error) override;
 
 signals:
   void comment(const QString&);

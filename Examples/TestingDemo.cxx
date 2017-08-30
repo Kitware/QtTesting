@@ -28,13 +28,13 @@ public:
   this->XMLStream = NULL;
   }
 
-  ~XMLEventObserver()
+  ~XMLEventObserver() override
     {
     delete this->XMLStream;
     }
 
 protected:
-  virtual void setStream(QTextStream* stream)
+  void setStream(QTextStream* stream) override
     {
     if (this->XMLStream)
       {
@@ -58,8 +58,8 @@ protected:
       }
     }
 
-  virtual void onRecordEvent(const QString& widget, const QString& command,
-    const QString& arguments, const int& eventType)
+  void onRecordEvent(const QString& widget, const QString& command,
+    const QString& arguments, const int& eventType) override
     {
     if(this->XMLStream)
       {
@@ -86,10 +86,10 @@ class XMLEventSource : public pqEventSource
 
 public:
   XMLEventSource(QObject* p): Superclass(p) { this->XMLStream = NULL;}
-  ~XMLEventSource() { delete this->XMLStream; }
+  ~XMLEventSource() override { delete this->XMLStream; }
 
 protected:
-  virtual void setContent(const QString& xmlfilename)
+  void setContent(const QString& xmlfilename) override
     {
     delete this->XMLStream;
     this->XMLStream = NULL;
@@ -125,7 +125,7 @@ protected:
     }
 
   int getNextEvent(QString& widget, QString& command, QString&
-    arguments,int& eventType)
+    arguments,int& eventType) override
     {
     if (this->XMLStream->atEnd())
       {

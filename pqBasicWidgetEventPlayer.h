@@ -51,7 +51,7 @@ public:
 
   using Superclass::playEvent;
   bool playEvent(QObject* object, const QString& command, 
-                 const QString& arguments, int eventType, bool& error);
+                 const QString& arguments, int eventType, bool& error) override;
 
 private:
   pqBasicWidgetEventPlayer(const pqBasicWidgetEventPlayer&);

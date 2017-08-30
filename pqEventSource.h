@@ -44,7 +44,7 @@ class QTTESTING_EXPORT pqEventSource : public QObject
   Q_OBJECT
 public:
   pqEventSource(QObject* p) : QObject(p) {}
-  virtual ~pqEventSource() {}
+  ~pqEventSource() override {}
 
   enum eventReturnFlag {
     SUCCESS,

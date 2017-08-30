@@ -51,7 +51,7 @@ public:
   pqDoubleSpinBoxEventTranslator(QObject* p=0);
 
   using Superclass::translateEvent;
-  virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
+  bool translateEvent(QObject* Object, QEvent* Event, bool& Error) override;
 
 private:
   pqDoubleSpinBoxEventTranslator(const pqDoubleSpinBoxEventTranslator&);

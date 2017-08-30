@@ -50,10 +50,10 @@ class QTTESTING_EXPORT pq3DViewEventTranslator :
 
 public:
   pq3DViewEventTranslator(const QByteArray& classname, QObject* p=0);
-  ~pq3DViewEventTranslator();
+  ~pq3DViewEventTranslator() override;
 
   using Superclass::translateEvent;
-  virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
+  bool translateEvent(QObject* Object, QEvent* Event, bool& Error) override;
 
 protected:
   QByteArray mClassType;

@@ -53,7 +53,7 @@ class QTTESTING_EXPORT pqEventComment :
 
 public:
   pqEventComment(pqTestUtility* util, QObject* parent = 0);
-  ~pqEventComment();
+  ~pqEventComment() override;
 
   /// Call this function to add an event comment, which will display a message,
   /// during the playback in the log.

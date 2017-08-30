@@ -63,7 +63,7 @@ class QTTESTING_EXPORT pqTestUtility : public QObject
   Q_PROPERTY(bool recordWithDialog READ recordWithDialog WRITE setRecordWithDialog)
 public:
   pqTestUtility(QObject* parent = 0);
-  ~pqTestUtility();
+  ~pqTestUtility() override;
 
 public:
 

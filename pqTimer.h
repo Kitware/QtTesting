@@ -46,7 +46,7 @@ class QTTESTING_EXPORT pqTimer : public QTimer
   typedef QTimer Superclass;
 public:
   pqTimer(QObject* parent=0);
-  virtual ~pqTimer();
+  ~pqTimer() override;
 
   /// This static function calls a slot after a given time interval.
   static void singleShot(int msec, QObject* receiver, const char* member);
@@ -54,7 +54,7 @@ public:
 protected:
   /// overridden to support blocking timer events in future (current
   /// implementation merely forwards to superclass).
-  virtual void timerEvent(QTimerEvent* evt);
+  void timerEvent(QTimerEvent* evt) override;
 
 private:
   Q_DISABLE_COPY(pqTimer)

@@ -42,11 +42,11 @@ class QTTESTING_EXPORT pqTreeViewEventPlayer : public pqAbstractItemViewEventPla
   typedef pqAbstractItemViewEventPlayerBase Superclass;
 public:
   pqTreeViewEventPlayer(QObject* parent=0);
-  ~pqTreeViewEventPlayer();
+  ~pqTreeViewEventPlayer() override;
 
   using Superclass::playEvent;
   bool playEvent(QObject* object, const QString& command, 
-                 const QString& arguments, int eventType, bool& error);
+                 const QString& arguments, int eventType, bool& error) override;
 
 private:
   pqTreeViewEventPlayer(const pqTreeViewEventPlayer&); // Not implemented.

@@ -52,7 +52,7 @@ public:
   */
   pqPlayBackEventsDialog(pqEventPlayer& Player,pqEventDispatcher& Source,
                          pqTestUtility* TestUtility, QWidget* Parent);
-  ~pqPlayBackEventsDialog();
+  ~pqPlayBackEventsDialog() override;
 
 private slots:
   void onEventAboutToBePlayed(const QString&,const QString&,const QString&);
@@ -67,11 +67,11 @@ private slots:
   void onModal(bool value);
 
 public slots:
-  virtual void done(int);
+  void done(int) override;
   void updateUi();
 
 protected:
-  virtual void moveEvent(QMoveEvent* event);
+  void moveEvent(QMoveEvent* event) override;
 
 private:
   void loadFiles(const QStringList& filenames);

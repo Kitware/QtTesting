@@ -63,7 +63,7 @@ public:
   static const int OVERLAY_PEN_WIDTH = 5;
 
 protected:
-  void paintEvent(QPaintEvent *);
+  void paintEvent(QPaintEvent *) override;
 };
 
 #endif

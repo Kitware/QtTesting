@@ -52,10 +52,10 @@ class QTTESTING_EXPORT pqNativeFileDialogEventTranslator :
 
 public:
   pqNativeFileDialogEventTranslator(pqTestUtility* util, QObject* p=0);
-  ~pqNativeFileDialogEventTranslator();
+  ~pqNativeFileDialogEventTranslator() override;
 
   using Superclass::translateEvent;
-  virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
+  bool translateEvent(QObject* Object, QEvent* Event, bool& Error) override;
 
   void record(const QString& command, const QString& args);
 

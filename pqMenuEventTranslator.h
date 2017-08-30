@@ -51,10 +51,10 @@ class QTTESTING_EXPORT pqMenuEventTranslator :
   
 public:
   pqMenuEventTranslator(QObject* p=0);
-  ~pqMenuEventTranslator();
+  ~pqMenuEventTranslator() override;
 
   using Superclass::translateEvent;
-  virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
+  bool translateEvent(QObject* Object, QEvent* Event, bool& Error) override;
 
 private:
   pqMenuEventTranslator(const pqMenuEventTranslator&);
