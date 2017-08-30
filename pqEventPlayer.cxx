@@ -178,8 +178,9 @@ void pqEventPlayer::playEvent(const QString& objectString,
 
   if(!object && !command.startsWith("comment"))
     {
-    qCritical() << pqObjectNaming::lastErrorMessage();
-    emit this->errorMessage(pqObjectNaming::lastErrorMessage());
+    QString errorMsg = pqObjectNaming::lastErrorMessage();
+    qCritical() << (errorMsg.toLocal8Bit().data());
+    emit this->errorMessage(errorMsg);
     error = true;
     return;
     }

@@ -51,10 +51,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QStackedWidget>
 #include <QTabBar>
 #include <QTabWidget>
+#include <QtDebug>
+#include <QTextStream>
 #include <QToolBar>
 #include <QToolButton>
-#include <QtDebug>
-
 
 namespace
 {
@@ -250,34 +250,46 @@ QObject* pqObjectNaming::GetObject(const QString& Name)
     
   if(result)
     return result;
-  
-  ErrorMessage = QString("Couldn't find object %1\n").arg(Name);
-  if(lastObject)
+
+  ErrorMessage.clear();
+  QTextStream stream(&ErrorMessage);
+  stream << "Couldn't find object `"<< Name << "`\n";
+  if (lastObject)
     {
-    ErrorMessage += QString("Found up to %1\n").arg(
-                      pqObjectNaming::GetName(*lastObject));
+    stream << "Found up to `" << pqObjectNaming::GetName(*lastObject) << "`\n";
     }
+
+  // controls how many matches to dump in error message.
+  QString matchLimitEnv = QString::fromLocal8Bit(qgetenv("PQOBJECTNAMING_MATCH_LIMIT"));
+  const int matchLimit = matchLimitEnv.isEmpty() ? 20 : matchLimitEnv.toInt();
+
   bool foundMatch = false;
   if(lastObject)
     {
-    QObjectList matches =
-      lastObject->findChildren<QObject*>(names[names.size()-1]);
-    foreach(QObject* o, matches)
+    const QObjectList matches = lastObject->findChildren<QObject*>(names[names.size()-1]);
+    for (int cc=0; (matchLimit <= 0 || cc < matchLimit) && cc < matches.size(); ++cc)
       {
-      ErrorMessage  += QString("\tPossible match: %1\n").arg(pqObjectNaming::GetName(*o));
-      foundMatch = true;
+      stream << "\tPossible match: `" << pqObjectNaming::GetName(*matches[cc]) << "`\n";
+      }
+    if (matchLimit > 0 && matches.size() > matchLimit)
+      {
+      stream << "\tPossible match: .... (and " << (matches.size() - matchLimit) << " more!)\n"
+             << "\tSet PQOBJECTNAMING_MATCH_LIMIT environment var to a +'ve number to limit entries (or 0 for unlimited).\n";
       }
     }
   if (!foundMatch)
     {
-    QObjectList matches = lastObject->findChildren<QObject*>();
-    foreach(QObject* o, matches)
+    const QObjectList matches = lastObject->findChildren<QObject*>();
+    for (int cc=0; (matchLimit <= 0 || cc < matchLimit) && cc < matches.size(); ++cc)
       {
-      ErrorMessage  += QString("\tAvailable widget: %1\n").arg(pqObjectNaming::GetName(*o));
+      stream << "\tAvailable widget: `" << pqObjectNaming::GetName(*matches[cc]) << "`\n";
+      }
+    if (matchLimit > 0 && matches.size() > matchLimit)
+      {
+      stream << "\tAvailable widget: .... (and " << (matches.size() - matchLimit) << " more!)\n"
+             << "\tSet PQOBJECTNAMING_MATCH_LIMIT environment var to a +'ve number to limit entries (or 0 for unlimited).\n";
       }
     }
-
-  qCritical() << ErrorMessage ;
   return 0;
 }
 
