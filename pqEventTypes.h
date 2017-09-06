@@ -35,11 +35,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 namespace pqEventTypes
 {
-  enum eventType {
-    ACTION_EVENT = 0,
-    CHECK_EVENT = 1
-  };
+enum eventType
+{
+  ACTION_EVENT = 0,
+  CHECK_EVENT = 1
+};
 };
 
 #endif // !_pqEventTypes_h
-

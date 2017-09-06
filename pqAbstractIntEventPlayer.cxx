@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -41,46 +41,46 @@ pqAbstractIntEventPlayer::pqAbstractIntEventPlayer(QObject* p)
 {
 }
 
-bool pqAbstractIntEventPlayer::playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
+bool pqAbstractIntEventPlayer::playEvent(
+  QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
 {
-  if(Command != "set_int" && Command != "spin")
+  if (Command != "set_int" && Command != "spin")
     return false;
 
   const int value = Arguments.toInt();
-    
-  if(QAbstractSlider* const object = qobject_cast<QAbstractSlider*>(Object))
-    {
+
+  if (QAbstractSlider* const object = qobject_cast<QAbstractSlider*>(Object))
+  {
     object->setValue(value);
     return true;
-    }
+  }
 
-  if(QSpinBox* const object = qobject_cast<QSpinBox*>(Object))
+  if (QSpinBox* const object = qobject_cast<QSpinBox*>(Object))
+  {
+    if (Command == "set_int")
     {
-    if(Command == "set_int")
-      {
       object->setValue(value);
       return true;
-      }
-    else if(Command == "spin" && Arguments == "up")
-      {
+    }
+    else if (Command == "spin" && Arguments == "up")
+    {
       object->stepUp();
       return true;
-      }
-    else if(Command == "spin" && Arguments == "down")
-      {
+    }
+    else if (Command == "spin" && Arguments == "down")
+    {
       object->stepDown();
       return true;
-      }
     }
+  }
 
   if (Command == "spin")
-    {
+  {
     // let pqAbstractEventPlayer handle it if possible.
     return false;
-    }
+  }
 
   qCritical() << "calling set_int on unhandled type " << Object;
   Error = true;
   return true;
 }
-

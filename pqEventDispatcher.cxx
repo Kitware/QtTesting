@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -36,15 +36,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqEventSource.h"
 
 #include <QAbstractEventDispatcher>
-#include <QtDebug>
 #include <QApplication>
-#include <QEventLoop>
-#include <QThread>
 #include <QDialog>
-#include <QMainWindow>
+#include <QEventLoop>
 #include <QList>
+#include <QMainWindow>
 #include <QPointer>
+#include <QThread>
 #include <QTimer>
+#include <QtDebug>
 
 #include <iostream>
 using namespace std;
@@ -52,21 +52,21 @@ using namespace std;
 //-----------------------------------------------------------------------------
 namespace
 {
-  static QList<QPointer<QTimer> > RegisteredTimers;
-  
-  void processTimers()
-    {
-    foreach (QTimer* timer, RegisteredTimers)
-      {
-      if (timer && timer->isActive())
-        {
-        QTimerEvent event(timer->timerId());
-        qApp->notify(timer, &event);
-        }
-      }
-    }
+static QList<QPointer<QTimer> > RegisteredTimers;
 
-  static int EventPlaybackDelay = QT_TESTING_EVENT_PLAYBACK_DELAY;
+void processTimers()
+{
+  foreach (QTimer* timer, RegisteredTimers)
+  {
+    if (timer && timer->isActive())
+    {
+      QTimerEvent event(timer->timerId());
+      qApp->notify(timer, &event);
+    }
+  }
+}
+
+static int EventPlaybackDelay = QT_TESTING_EVENT_PLAYBACK_DELAY;
 };
 
 bool pqEventDispatcher::DeferMenuTimeouts = false;
@@ -74,8 +74,8 @@ bool pqEventDispatcher::DeferEventsIfBlocked = false;
 bool pqEventDispatcher::PlayingBlockingEvent = false;
 
 //-----------------------------------------------------------------------------
-pqEventDispatcher::pqEventDispatcher(QObject* parentObject) :
-  Superclass(parentObject)
+pqEventDispatcher::pqEventDispatcher(QObject* parentObject)
+  : Superclass(parentObject)
 {
   this->ActiveSource = NULL;
   this->ActivePlayer = NULL;
@@ -92,8 +92,7 @@ pqEventDispatcher::pqEventDispatcher(QObject* parentObject) :
   this->BlockTimer.setInterval(100);
 #endif
   this->BlockTimer.setSingleShot(true);
-  QObject::connect(&this->BlockTimer, SIGNAL(timeout()),
-                   this, SLOT(playEventOnBlocking()));
+  QObject::connect(&this->BlockTimer, SIGNAL(timeout()), this, SLOT(playEventOnBlocking()));
 }
 
 //-----------------------------------------------------------------------------
@@ -101,11 +100,10 @@ pqEventDispatcher::~pqEventDispatcher()
 {
 }
 
-
 //-----------------------------------------------------------------------------
 void pqEventDispatcher::setEventPlaybackDelay(int milliseconds)
 {
-  EventPlaybackDelay = (milliseconds <= 0)? 0 : milliseconds;
+  EventPlaybackDelay = (milliseconds <= 0) ? 0 : milliseconds;
 }
 
 //-----------------------------------------------------------------------------
@@ -118,9 +116,9 @@ int pqEventDispatcher::eventPlaybackDelay()
 void pqEventDispatcher::registerTimer(QTimer* timer)
 {
   if (timer)
-    {
+  {
     RegisteredTimers.push_back(timer);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -129,25 +127,24 @@ void pqEventDispatcher::deferEventsIfBlocked(bool enable)
   pqEventDispatcher::DeferEventsIfBlocked = enable;
 }
 
-
 //-----------------------------------------------------------------------------
 void pqEventDispatcher::aboutToBlock()
 {
   // if (!pqEventDispatcher::DeferMenuTimeouts)
-    {
+  {
     if (!this->BlockTimer.isActive())
-      {
+    {
       // cout << "aboutToBlock" << endl;
       // Request a delayed playback for an event.
       this->BlockTimer.start();
-      }
     }
+  }
 }
 
 //-----------------------------------------------------------------------------
 void pqEventDispatcher::awake()
 {
-  //if (!pqEventDispatcher::DeferMenuTimeouts)
+  // if (!pqEventDispatcher::DeferMenuTimeouts)
   //  {
   //  // cout << "awake" << endl;
   //  // this->BlockTimer.stop();
@@ -165,13 +162,13 @@ void pqEventDispatcher::run(bool value)
 {
   this->PlayBackPaused = !value;
   if (value)
-    {
+  {
     emit this->restarted();
-    }
+  }
   else
-    {
+  {
     emit this->paused();
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -203,25 +200,24 @@ void pqEventDispatcher::oneStep()
 bool pqEventDispatcher::playEvents(pqEventSource& source, pqEventPlayer& player)
 {
   if (this->ActiveSource || this->ActivePlayer)
-    {
+  {
     qCritical() << "Event dispatcher is already playing";
     return false;
-    }
+  }
 
   this->ActiveSource = &source;
   this->ActivePlayer = &player;
 
   QApplication::setEffectEnabled(Qt::UI_General, false);
-  QApplication::setEffectEnabled(Qt::UI_AnimateMenu, false); // Show animated menus.
-  QApplication::setEffectEnabled(Qt::UI_FadeMenu, false); //	Show faded menus.
-  QApplication::setEffectEnabled(Qt::UI_AnimateCombo, false); // Show animated comboboxes.
+  QApplication::setEffectEnabled(Qt::UI_AnimateMenu, false);    // Show animated menus.
+  QApplication::setEffectEnabled(Qt::UI_FadeMenu, false);       //	Show faded menus.
+  QApplication::setEffectEnabled(Qt::UI_AnimateCombo, false);   // Show animated comboboxes.
   QApplication::setEffectEnabled(Qt::UI_AnimateTooltip, false); //	Show tooltip animations.
-  QApplication::setEffectEnabled(Qt::UI_FadeTooltip, false); // Show tooltip fading effects.
+  QApplication::setEffectEnabled(Qt::UI_FadeTooltip, false);    // Show tooltip fading effects.
 
-  QObject::connect(QAbstractEventDispatcher::instance(), SIGNAL(aboutToBlock()),
-                   this, SLOT(aboutToBlock()));
-  QObject::connect(QAbstractEventDispatcher::instance(), SIGNAL(awake()),
-                   this, SLOT(awake()));
+  QObject::connect(
+    QAbstractEventDispatcher::instance(), SIGNAL(aboutToBlock()), this, SLOT(aboutToBlock()));
+  QObject::connect(QAbstractEventDispatcher::instance(), SIGNAL(awake()), this, SLOT(awake()));
 
   // This is how the playback logic works:
   // * In here, we continuously keep on playing one event after another until
@@ -237,32 +233,31 @@ bool pqEventDispatcher::playEvents(pqEventSource& source, pqEventPlayer& player)
   this->PlayBackStatus = true; // success.
   this->PlayBackFinished = false;
   while (!this->PlayBackFinished)
+  {
+    if (!this->PlayBackPaused)
     {
-    if(!this->PlayBackPaused)
-      {
-    //cerr << "=== playEvent(1) ===" << endl;
-    this->playEvent();
+      // cerr << "=== playEvent(1) ===" << endl;
+      this->playEvent();
     }
     else
-      {
+    {
       if (this->PlayBackOneStep)
-        {
+      {
         this->PlayBackOneStep = false;
         this->playEvent();
-        }
+      }
       else
-        {
+      {
         this->processEventsAndWait(100);
-        }
       }
     }
+  }
   this->ActiveSource = NULL;
   this->ActivePlayer = NULL;
 
-  QObject::disconnect(QAbstractEventDispatcher::instance(), SIGNAL(aboutToBlock()),
-                   this, SLOT(aboutToBlock()));
-  QObject::disconnect(QAbstractEventDispatcher::instance(), SIGNAL(awake()),
-                   this, SLOT(awake()));
+  QObject::disconnect(
+    QAbstractEventDispatcher::instance(), SIGNAL(aboutToBlock()), this, SLOT(aboutToBlock()));
+  QObject::disconnect(QAbstractEventDispatcher::instance(), SIGNAL(awake()), this, SLOT(awake()));
 
   return this->PlayBackStatus;
 }
@@ -270,26 +265,26 @@ bool pqEventDispatcher::playEvents(pqEventSource& source, pqEventPlayer& player)
 //-----------------------------------------------------------------------------
 void pqEventDispatcher::playEventOnBlocking()
 {
-//  if(this->PlayingBlockingEvent)
-//    {
-//    qDebug() << "Event blocking already playing ....";
-//    return;
-//    }
+  //  if(this->PlayingBlockingEvent)
+  //    {
+  //    qDebug() << "Event blocking already playing ....";
+  //    return;
+  //    }
 
   if (pqEventDispatcher::DeferMenuTimeouts || pqEventDispatcher::DeferEventsIfBlocked)
-    {
-    //cerr << "=== playEventOnBlocking ===" << endl;
+  {
+    // cerr << "=== playEventOnBlocking ===" << endl;
     this->BlockTimer.start();
     return;
-    }
+  }
 
   pqEventDispatcher::PlayingBlockingEvent = true;
-  //cout << "---blocked event: " << endl;
+  // cout << "---blocked event: " << endl;
   // if needed for debugging, I can print blocking annotation here.
-  //cerr << "=== playEvent(2) ===" << endl;
+  // cerr << "=== playEvent(2) ===" << endl;
   this->playEvent(1);
 
-  //if (!this->BlockTimer.isActive())
+  // if (!this->BlockTimer.isActive())
   //  {
   //  this->BlockTimer.start();
   //  }
@@ -301,37 +296,37 @@ void pqEventDispatcher::playEvent(int indent)
 {
   this->BlockTimer.stop();
   if (this->PlayBackFinished)
-    {
+  {
     return;
-    }
+  }
 
   if (!this->ActiveSource)
-    {
+  {
     this->PlayBackFinished = true;
     this->PlayBackStatus = false; // failure.
     qCritical("Internal error: playEvent called without a valid event source.");
     return;
-    }
+  }
 
   QString object;
   QString command;
   QString arguments;
   int eventType;
-  
+
   int result = this->ActiveSource->getNextEvent(object, command, arguments, eventType);
   if (result == pqEventSource::DONE)
-    {
+  {
     this->PlayBackFinished = true;
     return;
-    }
-  else if(result == pqEventSource::FAILURE)
-    {
+  }
+  else if (result == pqEventSource::FAILURE)
+  {
     this->PlayBackFinished = true;
     this->PlayBackStatus = false; // failure.
     return;
-    }
-    
-  static unsigned long counter=0;
+  }
+
+  static unsigned long counter = 0;
   unsigned long local_counter = counter++;
   QString pretty_name = object.mid(object.lastIndexOf('/'));
   bool print_debug = getenv("PV_DEBUG_TEST") != NULL;
@@ -339,22 +334,19 @@ void pqEventDispatcher::playEvent(int indent)
   print_debug = true;
 #endif
   if (print_debug)
-    {
+  {
     QString eventString = "Event";
     if (eventType == pqEventTypes::CHECK_EVENT)
-      {
+    {
       eventString = "Check Event";
-      }
-
-    cout <<  QTime::currentTime().toString("hh:mm:ss").toStdString().c_str()
-         << " : "
-         << QString().fill(' ', 4*indent).toStdString().c_str()
-         << local_counter << ": Test (" << indent << "): "
-         << eventString.toUtf8().data() << ": "
-         << pretty_name.toStdString().c_str() << ": "
-         << command.toStdString().c_str() << " : "
-         << arguments.toStdString().c_str() << endl;
     }
+
+    cout << QTime::currentTime().toString("hh:mm:ss").toStdString().c_str() << " : "
+         << QString().fill(' ', 4 * indent).toStdString().c_str() << local_counter << ": Test ("
+         << indent << "): " << eventString.toUtf8().data() << ": "
+         << pretty_name.toStdString().c_str() << ": " << command.toStdString().c_str() << " : "
+         << arguments.toStdString().c_str() << endl;
+  }
 
   bool error = false;
   this->ActivePlayer->playEvent(object, command, arguments, eventType, error);
@@ -370,20 +362,18 @@ void pqEventDispatcher::playEvent(int indent)
   this->BlockTimer.stop();
 
   if (print_debug)
-    {
-    cout << QTime::currentTime().toString("hh:mm:ss").toStdString().c_str()
-         << " : "
-         << QString().fill(' ', 4*indent).toStdString().c_str()
-         << local_counter << ": Done" << endl;
-    }
+  {
+    cout << QTime::currentTime().toString("hh:mm:ss").toStdString().c_str() << " : "
+         << QString().fill(' ', 4 * indent).toStdString().c_str() << local_counter << ": Done"
+         << endl;
+  }
 
   if (error)
-    {
-    this->PlayBackStatus  = false;
+  {
+    this->PlayBackStatus = false;
     this->PlayBackFinished = true;
     return;
-    }
-
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -392,26 +382,26 @@ void pqEventDispatcher::processEventsAndWait(int ms)
   bool prev = pqEventDispatcher::DeferMenuTimeouts;
   pqEventDispatcher::DeferMenuTimeouts = true;
   if (ms > 0)
-    {
+  {
     QApplication::sendPostedEvents();
     QEventLoop loop;
     QTimer::singleShot(ms, &loop, SLOT(quit()));
     loop.exec();
-    }
+  }
   // When this gets called during playback from a blocking event loop (e.g. a modal dialog)
   // calling `QApplication::processEvents()` has a sideeffect on Qt 5 + OsX where it does
   // not quit the eventloop for the modal dialog until a mouse event (for example) is
   // received by the application. Avoiding calling QApplication::processEvents when already
   // processing a event loop other the apps main event loop avoids that problem.
   if (!pqEventDispatcher::PlayingBlockingEvent)
-    {
+  {
     QApplication::processEvents();
-    }
+  }
   QApplication::sendPostedEvents();
   if (!pqEventDispatcher::PlayingBlockingEvent)
-    {
+  {
     QApplication::processEvents();
-    }
+  }
   pqEventDispatcher::DeferMenuTimeouts = prev;
 }
 

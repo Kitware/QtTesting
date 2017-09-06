@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -33,13 +33,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef _pqEventObserver_h
 #define _pqEventObserver_h
 
+#include "QtTestingExport.h"
 #include <QObject>
 #include <QString>
-#include "QtTestingExport.h"
 class QTextStream;
 
 /**
-Observes high-level ParaView events, and serializes them to a stream 
+Observes high-level ParaView events, and serializes them to a stream
 for possible playback (as a test-case, demo, tutorial, etc).  To use,
 connect the onRecordEvent() slot to the pqEventTranslator::recordEvent()
 signal.
@@ -47,11 +47,10 @@ signal.
 \sa pqEventTranslator, pqStdoutEventObserver
 */
 
-class QTTESTING_EXPORT pqEventObserver :
-  public QObject
+class QTTESTING_EXPORT pqEventObserver : public QObject
 {
   Q_OBJECT
-  
+
 public:
   pqEventObserver(QObject* p);
   ~pqEventObserver() override;
@@ -64,22 +63,15 @@ public slots:
   // Event Type can be pqEventTypes::ACTION_EVENT or pqEventType::CHECK_EVENT
   // Widget, Command/Property and Arguments are QString
   // THis method has to be redefined by subclasses
-  virtual void onRecordEvent(
-    const QString& Widget,
-    const QString& Command,
-    const QString& Arguments,
-    const int& eventType)=0;
-
+  virtual void onRecordEvent(const QString& Widget, const QString& Command,
+    const QString& Arguments, const int& eventType) = 0;
 
 signals:
-  void eventRecorded(const QString& Widget,
-                     const QString& Command,
-                     const QString& Arguments,
-                     const int& eventType);
+  void eventRecorded(
+    const QString& Widget, const QString& Command, const QString& Arguments, const int& eventType);
 
 protected:
   QTextStream* Stream;
 };
 
 #endif // !_pqEventObserver_h
-

@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -42,17 +42,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
 #ifdef _DEBUG
-# undef _DEBUG
-# if defined(_MSC_VER) && _MSC_VER >= 1400
-#   define _CRT_NOFORCE_MANIFEST 1
-# endif
-# include <Python.h>
-# define _DEBUG
-#else
-# include <Python.h>
+#undef _DEBUG
+#if defined(_MSC_VER) && _MSC_VER >= 1400
+#define _CRT_NOFORCE_MANIFEST 1
 #endif
-
-
+#include <Python.h>
+#define _DEBUG
+#else
+#include <Python.h>
+#endif
 
 #ifndef PyMODINIT_FUNC
 #define PyMODINIT_FUNC extern "C" void
@@ -65,22 +63,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <signal.h>
 
 // Qt include
-#include <QVariant>
-#include <QFile>
-#include <QtDebug>
+#include <QApplication>
 #include <QCoreApplication>
 #include <QEvent>
-#include <QStringList>
-#include <QThread>
-#include <QApplication>
+#include <QFile>
 #include <QMetaObject>
 #include <QMetaProperty>
+#include <QStringList>
+#include <QThread>
+#include <QVariant>
+#include <QtDebug>
 
 // Qt testing includes
+#include "pqEventDispatcher.h"
 #include "pqObjectNaming.h"
 #include "pqWidgetEventPlayer.h"
-#include "pqEventDispatcher.h"
-
 
 // TODO not have a global instance pointer?
 static pqPythonEventSource* Instance = NULL;
@@ -89,9 +86,7 @@ static QString PropertyResult;
 static QString PropertyValue;
 static QStringList ObjectList;
 
-
-static PyObject*
-QtTesting_playCommand(PyObject* /*self*/, PyObject* args)
+static PyObject* QtTesting_playCommand(PyObject* /*self*/, PyObject* args)
 {
   // this gives the main thread some time to refresh before we start sending
   // commands. Avoids crazy hangs in QDialog::exec() calls.
@@ -99,302 +94,263 @@ QtTesting_playCommand(PyObject* /*self*/, PyObject* args)
 
   // void QtTesting.playCommand('object', 'command', 'arguments')
   //   an exception is thrown in this fails
-  
+
   const char* object = 0;
   const char* command = 0;
   const char* arguments = 0;
 
-  if(!PyArg_ParseTuple(args, const_cast<char*>("sss"), &object, &command, &arguments))
-    {
+  if (!PyArg_ParseTuple(args, const_cast<char*>("sss"), &object, &command, &arguments))
+  {
     PyErr_SetString(PyExc_TypeError, "bad arguments to playCommand()");
     return NULL;
-    }
+  }
 
-  if(Instance)
+  if (Instance)
+  {
+    if (!Instance->postNextEvent(object, command, arguments))
     {
-    if(!Instance->postNextEvent(object, command, arguments))
-      {
       PyErr_SetString(PyExc_AssertionError, "error processing event");
       return NULL;
-      }
     }
+  }
   else
-    {
+  {
     PyErr_SetString(PyExc_AssertionError, "pqPythonEventSource not defined");
     return NULL;
-    }
+  }
 
   return Py_BuildValue(const_cast<char*>(""));
 }
 
-static PyObject*
-QtTesting_getProperty(PyObject* /*self*/, PyObject* args)
+static PyObject* QtTesting_getProperty(PyObject* /*self*/, PyObject* args)
 {
   // string QtTesting.getProperty('object', 'property')
   //    returns the string value of the property
-  
+
   const char* object = 0;
   const char* property = 0;
 
-  if(!PyArg_ParseTuple(args, const_cast<char*>("ss"), &object, &property))
-    {
+  if (!PyArg_ParseTuple(args, const_cast<char*>("ss"), &object, &property))
+  {
     return NULL;
-    }
+  }
 
   PropertyObject = object;
   PropertyResult = property;
   PropertyValue = QString::null;
 
-  if(Instance && QThread::currentThread() != QApplication::instance()->thread())
-    {
+  if (Instance && QThread::currentThread() != QApplication::instance()->thread())
+  {
     QMetaObject::invokeMethod(Instance, "threadGetProperty", Qt::QueuedConnection);
-    if(!Instance->waitForGUI())
-      {
+    if (!Instance->waitForGUI())
+    {
       PyErr_SetString(PyExc_ValueError, "error getting property");
       return NULL;
-      }
     }
-  else if(QThread::currentThread() == QApplication::instance()->thread())
-    {
+  }
+  else if (QThread::currentThread() == QApplication::instance()->thread())
+  {
     PropertyValue = pqPythonEventSource::getProperty(PropertyObject, PropertyResult);
-    }
+  }
   else
-    {
+  {
     PyErr_SetString(PyExc_AssertionError, "pqPythonEventSource not defined");
     return NULL;
-    }
+  }
 
-  if(PropertyObject == QString::null)
-    {
+  if (PropertyObject == QString::null)
+  {
     PyErr_SetString(PyExc_ValueError, "object not found");
     return NULL;
-    }
-  
-  if(PropertyResult == QString::null)
-    {
+  }
+
+  if (PropertyResult == QString::null)
+  {
     PyErr_SetString(PyExc_ValueError, "property not found");
     return NULL;
-    }
+  }
 
-  return Py_BuildValue(const_cast<char*>("s"), 
-             PropertyValue.toLatin1().data());
+  return Py_BuildValue(const_cast<char*>("s"), PropertyValue.toLatin1().data());
 }
 
-static PyObject*
-QtTesting_setProperty(PyObject* /*self*/, PyObject* args)
+static PyObject* QtTesting_setProperty(PyObject* /*self*/, PyObject* args)
 {
   // string QtTesting.setProperty('object', 'property', 'value')
   //    returns the string value of the property
-  
+
   const char* object = 0;
   const char* property = 0;
   const char* value = 0;
 
-  if(!PyArg_ParseTuple(args, const_cast<char*>("sss"), &object, 
-                                                      &property, &value))
-    {
+  if (!PyArg_ParseTuple(args, const_cast<char*>("sss"), &object, &property, &value))
+  {
     return NULL;
-    }
+  }
 
   PropertyObject = object;
   PropertyResult = property;
   PropertyValue = value;
 
-  if(Instance && QThread::currentThread() != QApplication::instance()->thread())
-    {
+  if (Instance && QThread::currentThread() != QApplication::instance()->thread())
+  {
     QMetaObject::invokeMethod(Instance, "threadSetProperty", Qt::QueuedConnection);
-    if(!Instance->waitForGUI())
-      {
+    if (!Instance->waitForGUI())
+    {
       PyErr_SetString(PyExc_ValueError, "error setting property");
       return NULL;
-      }
     }
-  else if(QThread::currentThread() == QApplication::instance()->thread())
-    {
-    pqPythonEventSource::setProperty(PropertyObject, 
-                                     PropertyResult,
-                                     PropertyValue);
-    }
+  }
+  else if (QThread::currentThread() == QApplication::instance()->thread())
+  {
+    pqPythonEventSource::setProperty(PropertyObject, PropertyResult, PropertyValue);
+  }
   else
-    {
+  {
     PyErr_SetString(PyExc_AssertionError, "pqPythonEventSource not defined");
     return NULL;
-    }
+  }
 
-  if(PropertyObject == QString::null)
-    {
+  if (PropertyObject == QString::null)
+  {
     PyErr_SetString(PyExc_ValueError, "object not found");
     return NULL;
-    }
+  }
 
-  if(PropertyResult == QString::null)
-    {
+  if (PropertyResult == QString::null)
+  {
     PyErr_SetString(PyExc_ValueError, "property not found");
     return NULL;
-    }
+  }
 
   return Py_BuildValue(const_cast<char*>("s"), "");
 }
 
-static PyObject*
-QtTesting_getQtVersion(PyObject* /*self*/, PyObject* /*args*/)
+static PyObject* QtTesting_getQtVersion(PyObject* /*self*/, PyObject* /*args*/)
 {
   // string QtTesting.getQtVersion()
   //    returns the Qt version as a string
-  
+
   return Py_BuildValue(const_cast<char*>("s"), qVersion());
 }
 
-
-static PyObject*
-QtTesting_getChildren(PyObject* /*self*/, PyObject* args)
+static PyObject* QtTesting_getChildren(PyObject* /*self*/, PyObject* args)
 {
   // string QtTesting.getChildren('object')
   //    returns the a list of strings with object names
-  
+
   const char* object = 0;
 
-  if(!PyArg_ParseTuple(args, const_cast<char*>("s"), &object))
-    {
+  if (!PyArg_ParseTuple(args, const_cast<char*>("s"), &object))
+  {
     return NULL;
-    }
+  }
 
   PropertyObject = object;
   ObjectList.clear();
 
-  if(Instance && QThread::currentThread() != QApplication::instance()->thread())
-    {
+  if (Instance && QThread::currentThread() != QApplication::instance()->thread())
+  {
     QMetaObject::invokeMethod(Instance, "threadGetChildren", Qt::QueuedConnection);
-    if(!Instance->waitForGUI())
-      {
+    if (!Instance->waitForGUI())
+    {
       PyErr_SetString(PyExc_ValueError, "error getting children");
       return NULL;
-      }
     }
-  else if(QThread::currentThread() == QApplication::instance()->thread())
-    {
+  }
+  else if (QThread::currentThread() == QApplication::instance()->thread())
+  {
     ObjectList = pqPythonEventSource::getChildren(PropertyObject);
-    }
+  }
   else
-    {
+  {
     PyErr_SetString(PyExc_AssertionError, "pqPythonEventSource not defined");
     return NULL;
-    }
+  }
 
-  if(PropertyObject == QString::null)
-    {
+  if (PropertyObject == QString::null)
+  {
     PyErr_SetString(PyExc_ValueError, "object not found");
     return NULL;
-    }
+  }
 
   QString objs = ObjectList.join(", ");
   QString ret = QString("[%1]").arg(objs);
 
-  return Py_BuildValue(const_cast<char*>("s"), 
-             ret.toLatin1().data());
+  return Py_BuildValue(const_cast<char*>("s"), ret.toLatin1().data());
 }
 
-static PyObject*
-QtTesting_invokeMethod(PyObject* /*self*/, PyObject* args)
+static PyObject* QtTesting_invokeMethod(PyObject* /*self*/, PyObject* args)
 {
   // string QtTesting.invokeMethod('object', 'method')
   //    calls a method and returns its value
-  
+
   const char* object = 0;
   const char* method = 0;
 
-  if(!PyArg_ParseTuple(args, const_cast<char*>("ss"), &object, &method))
-    {
+  if (!PyArg_ParseTuple(args, const_cast<char*>("ss"), &object, &method))
+  {
     return NULL;
-    }
+  }
 
   PropertyObject = object;
   PropertyValue = method;
   PropertyResult = QString();
 
-  if(Instance && QThread::currentThread() != QApplication::instance()->thread())
-    {
+  if (Instance && QThread::currentThread() != QApplication::instance()->thread())
+  {
     QMetaObject::invokeMethod(Instance, "threadInvokeMethod", Qt::QueuedConnection);
-    if(!Instance->waitForGUI())
-      {
+    if (!Instance->waitForGUI())
+    {
       PyErr_SetString(PyExc_ValueError, "error invoking method");
       return NULL;
-      }
     }
-  else if(QThread::currentThread() == QApplication::instance()->thread())
-    {
-    PropertyResult = pqPythonEventSource::invokeMethod(PropertyObject,
-                                                       PropertyValue);
-    }
+  }
+  else if (QThread::currentThread() == QApplication::instance()->thread())
+  {
+    PropertyResult = pqPythonEventSource::invokeMethod(PropertyObject, PropertyValue);
+  }
   else
-    {
+  {
     PyErr_SetString(PyExc_AssertionError, "pqPythonEventSource not defined");
     return NULL;
-    }
+  }
 
-  if(PropertyObject == QString::null)
-    {
+  if (PropertyObject == QString::null)
+  {
     PyErr_SetString(PyExc_ValueError, "object not found");
     return NULL;
-    }
-  else if(PropertyValue == QString::null)
-    {
+  }
+  else if (PropertyValue == QString::null)
+  {
     PyErr_SetString(PyExc_ValueError, "method not found");
     return NULL;
-    }
+  }
 
-  return Py_BuildValue(const_cast<char*>("s"), 
-             PropertyResult.toLatin1().data());
+  return Py_BuildValue(const_cast<char*>("s"), PropertyResult.toLatin1().data());
 }
 
 static PyMethodDef QtTestingMethods[] = {
-  {
-    const_cast<char*>("playCommand"), 
-    QtTesting_playCommand,
-    METH_VARARGS,
-    const_cast<char*>("Play a test command.")
-  },
-  {
-    const_cast<char*>("getProperty"),
-    QtTesting_getProperty,
-    METH_VARARGS,
-    const_cast<char*>("Get a property of an object.")
-  },
-  {
-    const_cast<char*>("setProperty"),
-    QtTesting_setProperty,
-    METH_VARARGS,
-    const_cast<char*>("Set a property of an object.")
-  },
+  { const_cast<char*>("playCommand"), QtTesting_playCommand, METH_VARARGS,
+    const_cast<char*>("Play a test command.") },
+  { const_cast<char*>("getProperty"), QtTesting_getProperty, METH_VARARGS,
+    const_cast<char*>("Get a property of an object.") },
+  { const_cast<char*>("setProperty"), QtTesting_setProperty, METH_VARARGS,
+    const_cast<char*>("Set a property of an object.") },
 
-  {
-    const_cast<char*>("getQtVersion"),
-    QtTesting_getQtVersion,
-    METH_VARARGS,
-    const_cast<char*>("Get the version of Qt being used.")
-  },
-  {
-    const_cast<char*>("getChildren"),
-    QtTesting_getChildren,
-    METH_VARARGS,
-    const_cast<char*>("Return a list of child objects.")
-  },
-  {
-    const_cast<char*>("invokeMethod"),
-    QtTesting_invokeMethod,
-    METH_VARARGS,
-    const_cast<char*>("Invoke a Qt slot with the signature \"QVariant foo()\".")
-  },
+  { const_cast<char*>("getQtVersion"), QtTesting_getQtVersion, METH_VARARGS,
+    const_cast<char*>("Get the version of Qt being used.") },
+  { const_cast<char*>("getChildren"), QtTesting_getChildren, METH_VARARGS,
+    const_cast<char*>("Return a list of child objects.") },
+  { const_cast<char*>("invokeMethod"), QtTesting_invokeMethod, METH_VARARGS,
+    const_cast<char*>("Invoke a Qt slot with the signature \"QVariant foo()\".") },
 
-  {NULL, NULL, 0, NULL} // Sentinal
+  { NULL, NULL, 0, NULL } // Sentinal
 };
 
-PyMODINIT_FUNC
-initQtTesting(void)
+PyMODINIT_FUNC initQtTesting(void)
 {
   Py_InitModule(const_cast<char*>("QtTesting"), QtTestingMethods);
 }
-
 
 class pqPythonEventSource::pqInternal
 {
@@ -416,14 +372,14 @@ pqPythonEventSource::~pqPythonEventSource()
 void pqPythonEventSource::initPythonIfNeeded()
 {
   int initPy = Py_IsInitialized();
-  if(!initPy)
-    {
+  if (!initPy)
+  {
     // initialize python
     Py_Initialize();
 #ifdef SIGINT
     signal(SIGINT, SIG_DFL);
 #endif
-    }
+  }
   // add QtTesting to python's inittab, so it is
   // available to all interpreters
   PyImport_AppendInittab(const_cast<char*>("QtTesting"), initQtTesting);
@@ -435,7 +391,7 @@ void pqPythonEventSource::setContent(const QString& path)
   this->Internal->FileName = path;
   this->start();
 }
-  
+
 QString pqPythonEventSource::getProperty(QString& object, QString& prop)
 {
   // ensure other tasks have been completed
@@ -443,31 +399,29 @@ QString pqPythonEventSource::getProperty(QString& object, QString& prop)
   QVariant ret;
 
   QObject* qobject = pqObjectNaming::GetObject(object);
-  if(!qobject)
-    {
+  if (!qobject)
+  {
     object = QString::null;
     return QString();
-    }
+  }
   int idx = qobject->metaObject()->indexOfProperty(prop.toLatin1().data());
-  if(idx == -1)
-    {
+  if (idx == -1)
+  {
     prop = QString::null;
     return QString();
-    }
+  }
   else
-    {
-    QMetaProperty metaProp =  qobject->metaObject()->property(idx);
+  {
+    QMetaProperty metaProp = qobject->metaObject()->property(idx);
     ret = metaProp.read(qobject);
 
-    if(metaProp.type() == QVariant::List || metaProp.type() ==
-      QVariant::StringList)
-      {
+    if (metaProp.type() == QVariant::List || metaProp.type() == QVariant::StringList)
+    {
       return ret.toStringList().join(";");
-      }
-    return ret.toString();
     }
+    return ret.toString();
+  }
 }
-
 
 void pqPythonEventSource::threadGetProperty()
 {
@@ -475,38 +429,35 @@ void pqPythonEventSource::threadGetProperty()
   this->guiAcknowledge();
 }
 
-
-void pqPythonEventSource::setProperty(QString& object, QString& prop, 
-                                      const QString& value)
+void pqPythonEventSource::setProperty(QString& object, QString& prop, const QString& value)
 {
   // ensure other tasks have been completed
   pqEventDispatcher::processEventsAndWait(1);
   QVariant ret;
 
   QObject* qobject = pqObjectNaming::GetObject(object);
-  if(!qobject)
-    {
+  if (!qobject)
+  {
     object = QString::null;
     return;
-    }
-  
+  }
+
   int idx = qobject->metaObject()->indexOfProperty(prop.toLatin1().data());
-  if(idx == -1)
-    {
+  if (idx == -1)
+  {
     prop = QString::null;
     return;
-    }
+  }
   else
-    {
+  {
     QVariant val = value;
-    QMetaProperty metaProp =  qobject->metaObject()->property(idx);
-    if(metaProp.type() == QVariant::List || metaProp.type() ==
-            QVariant::StringList)
-      {
+    QMetaProperty metaProp = qobject->metaObject()->property(idx);
+    if (metaProp.type() == QVariant::List || metaProp.type() == QVariant::StringList)
+    {
       val = value.split(";");
-      }
-    qobject->setProperty(prop.toLatin1().data(), val);
     }
+    qobject->setProperty(prop.toLatin1().data(), val);
+  }
 }
 
 void pqPythonEventSource::threadSetProperty()
@@ -515,7 +466,6 @@ void pqPythonEventSource::threadSetProperty()
   this->guiAcknowledge();
 }
 
-
 QStringList pqPythonEventSource::getChildren(QString& object)
 {
   // ensure other tasks have been completed
@@ -523,21 +473,20 @@ QStringList pqPythonEventSource::getChildren(QString& object)
   QStringList ret;
 
   QObject* qobject = pqObjectNaming::GetObject(object);
-  if(!qobject)
-    {
+  if (!qobject)
+  {
     object = QString::null;
-    }
+  }
   else
-    {
+  {
     const QObjectList& children = qobject->children();
-    foreach(QObject* child, children)
-      {
+    foreach (QObject* child, children)
+    {
       ret.append(pqObjectNaming::GetName(*child));
-      }
     }
+  }
   return ret;
 }
-
 
 void pqPythonEventSource::threadGetChildren()
 {
@@ -557,11 +506,11 @@ void pqPythonEventSource::start()
 void pqPythonEventSource::run()
 {
   QFile file(this->Internal->FileName);
-  if(!file.open(QFile::ReadOnly | QFile::Text))
-    {
+  if (!file.open(QFile::ReadOnly | QFile::Text))
+  {
     printf("Unable to open python script\n");
     return;
-    } 
+  }
   this->initPythonIfNeeded();
   Instance = this;
 
@@ -590,18 +539,16 @@ QString pqPythonEventSource::invokeMethod(QString& object, QString& method)
   QVariant ret;
 
   QObject* qobject = pqObjectNaming::GetObject(object);
-  if(!qobject)
-    {
+  if (!qobject)
+  {
     object = QString::null;
-    }
+  }
   else
+  {
+    if (!QMetaObject::invokeMethod(qobject, method.toLatin1().data(), Q_RETURN_ARG(QVariant, ret)))
     {
-    if(!QMetaObject::invokeMethod(qobject, method.toLatin1().data(),
-                                  Q_RETURN_ARG(QVariant, ret)))
-      {
       method = QString::null;
-      }
     }
+  }
   return ret.toString();
 }
-

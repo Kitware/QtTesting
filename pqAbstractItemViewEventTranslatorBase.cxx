@@ -32,9 +32,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqAbstractItemViewEventTranslatorBase.h"
 #include "pqEventTypes.h"
 
+#include <QAbstractItemView>
 #include <QEvent>
 #include <QKeyEvent>
-#include <QAbstractItemView>
 #include <QVariant>
 
 //-----------------------------------------------------------------------------
@@ -52,9 +52,9 @@ pqAbstractItemViewEventTranslatorBase::pqAbstractItemViewEventTranslatorBase(QOb
 pqAbstractItemViewEventTranslatorBase::~pqAbstractItemViewEventTranslatorBase()
 {
   if (this->AbstractItemView != NULL)
-    {
+  {
     this->AbstractItemView->setMouseTracking(this->AbstractItemViewMouseTracking);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -64,95 +64,95 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
   // Recover corrected abstract item view
   QAbstractItemView* abstractItemView = this->findCorrectedAbstractItemView(object);
   if (!abstractItemView)
-    {
+  {
     return false;
-    }
+  }
 
   // Don't try to record events for QComboBox implementation details
   if (abstractItemView->inherits("QComboBoxListView"))
-    {
+  {
     return false;
-    }
+  }
 
   if (eventType == pqEventTypes::ACTION_EVENT)
+  {
+    switch (event->type())
     {
-    switch(event->type())
-      {
       case QEvent::KeyRelease:
-        {
+      {
         QKeyEvent* ke = static_cast<QKeyEvent*>(event);
         QModelIndex index = abstractItemView->currentIndex();
         QString indexString = this->getIndexAsString(index);
         if (this->Editing)
-          {
+        {
           if (ke->key() == Qt::Key_Enter || ke->key() == Qt::Key_Return)
-            {
+          {
             QVariant value = abstractItemView->model()->data(index);
             this->Editing = false;
             emit this->recordEvent(abstractItemView, "editAccepted",
               QString("%1,%2").arg(indexString, value.toString()));
             return true;
             break;
-            }
+          }
           if (ke->key() == Qt::Key_Escape)
-            {
+          {
             this->Editing = false;
             emit this->recordEvent(abstractItemView, "editCancel", indexString);
             return true;
             break;
-            }
           }
+        }
         else if (ke->key() == Qt::Key_F2)
-          {
+        {
           this->Editing = true;
           emit this->recordEvent(abstractItemView, "edit", indexString);
           return true;
           break;
-          }
-        break;
         }
+        break;
+      }
       case QEvent::Enter:
-        {
+      {
         if (this->AbstractItemView != abstractItemView || this->Checking)
-          {
-          //Checking flag
+        {
+          // Checking flag
           this->Checking = false;
-          if(this->AbstractItemView)
-            {
+          if (this->AbstractItemView)
+          {
             QObject::disconnect(this->AbstractItemView, 0, this, 0);
             QObject::disconnect(this->AbstractItemView->selectionModel(), 0, this, 0);
-            }
+          }
           this->connectWidgetToSlots(abstractItemView);
           this->AbstractItemView = abstractItemView;
-          }
+        }
         return true;
         break;
-        }
+      }
       default:
-        {
+      {
         break;
-        }
       }
     }
+  }
   else if (eventType == pqEventTypes::CHECK_EVENT)
-    {
+  {
     if (event->type() == QEvent::MouseMove)
-      {
+    {
       // Entering while checking
       if (this->AbstractItemView != abstractItemView || !this->Checking)
-        {
-        //Checking flag
+      {
+        // Checking flag
         this->Checking = true;
 
         // Disconnect precedently check item view
         if (this->AbstractItemView != NULL)
-          {
+        {
           this->AbstractItemView->setMouseTracking(this->AbstractItemViewMouseTracking);
-          QObject::disconnect(this->AbstractItemView, SIGNAL(entered(const QModelIndex&)),
-                              this, SLOT(onEnteredCheck(const QModelIndex&)));
-          QObject::disconnect(this->AbstractItemView, SIGNAL(viewportEntered()),
-                              this, SLOT(onViewportEnteredCheck()));
-          }
+          QObject::disconnect(this->AbstractItemView, SIGNAL(entered(const QModelIndex&)), this,
+            SLOT(onEnteredCheck(const QModelIndex&)));
+          QObject::disconnect(this->AbstractItemView, SIGNAL(viewportEntered()), this,
+            SLOT(onViewportEnteredCheck()));
+        }
 
         // Keep track of checked item view
         this->AbstractItemView = abstractItemView;
@@ -162,77 +162,81 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
         this->AbstractItemView->setMouseTracking(true);
 
         // Connect item entered event to the entered check slot
-        QObject::connect(this->AbstractItemView, SIGNAL(entered(const QModelIndex&)),
-                         this, SLOT(onEnteredCheck(const QModelIndex&)));
-        QObject::connect(this->AbstractItemView, SIGNAL(viewportEntered()),
-                         this, SLOT(onViewportEnteredCheck()));
-        }
-      return true;
+        QObject::connect(this->AbstractItemView, SIGNAL(entered(const QModelIndex&)), this,
+          SLOT(onEnteredCheck(const QModelIndex&)));
+        QObject::connect(
+          this->AbstractItemView, SIGNAL(viewportEntered()), this, SLOT(onViewportEnteredCheck()));
       }
+      return true;
+    }
     // Clicking while checking, actual check event
     if (event->type() == QEvent::MouseButtonRelease)
-      {
+    {
       // Item Check
       if (this->ModelItemCheck != NULL)
-        {
+      {
         QString indexString = this->getIndexAsString(*this->ModelItemCheck);
-        emit this->recordEvent(abstractItemView, "modelItemData", QString("%1,%2").arg(indexString).arg(
-            // Replacing tab by space, as they are not valid in xml
-            this->ModelItemCheck->data().toString().replace("\t", " ")),
+        emit this->recordEvent(abstractItemView, "modelItemData",
+          QString("%1,%2")
+            .arg(indexString)
+            .arg(
+              // Replacing tab by space, as they are not valid in xml
+              this->ModelItemCheck->data().toString().replace("\t", " ")),
           pqEventTypes::CHECK_EVENT);
-        }
+      }
       // Abstract Item View nb row check
       else
-        {
+      {
         emit this->recordEvent(abstractItemView, "modelRowCount",
           QString::number(abstractItemView->model()->rowCount()), pqEventTypes::CHECK_EVENT);
-        }
-      return true;
       }
+      return true;
     }
+  }
   return this->Superclass::translateEvent(object, event, eventType, error);
 }
 
 //-----------------------------------------------------------------------------
-void pqAbstractItemViewEventTranslatorBase::connectWidgetToSlots(QAbstractItemView* abstractItemView)
+void pqAbstractItemViewEventTranslatorBase::connectWidgetToSlots(
+  QAbstractItemView* abstractItemView)
 {
-  QObject::connect(abstractItemView, SIGNAL(clicked(const QModelIndex&)),
-                   this, SLOT(onClicked(const QModelIndex&)));
-  QObject::connect(abstractItemView, SIGNAL(activated(const QModelIndex&)),
-                   this, SLOT(onActivated(const QModelIndex&)));
-  QObject::connect(abstractItemView, SIGNAL(doubleClicked(const QModelIndex&)),
-                   this, SLOT(onDoubleClicked(const QModelIndex&)));
+  QObject::connect(abstractItemView, SIGNAL(clicked(const QModelIndex&)), this,
+    SLOT(onClicked(const QModelIndex&)));
+  QObject::connect(abstractItemView, SIGNAL(activated(const QModelIndex&)), this,
+    SLOT(onActivated(const QModelIndex&)));
+  QObject::connect(abstractItemView, SIGNAL(doubleClicked(const QModelIndex&)), this,
+    SLOT(onDoubleClicked(const QModelIndex&)));
   QObject::connect(abstractItemView->selectionModel(),
-    SIGNAL(currentChanged(const QModelIndex &, const QModelIndex &)),
-    this, SLOT(onCurrentChanged(const QModelIndex&)));
+    SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)), this,
+    SLOT(onCurrentChanged(const QModelIndex&)));
 }
 
 //-----------------------------------------------------------------------------
-void pqAbstractItemViewEventTranslatorBase::onClicked(
-  const QModelIndex& index)
+void pqAbstractItemViewEventTranslatorBase::onClicked(const QModelIndex& index)
 {
   static QModelIndex oldIndex;
   QAbstractItemView* abstractItemView = qobject_cast<QAbstractItemView*>(this->sender());
   QString indexString = this->getIndexAsString(index);
-  if ( (index.model()->flags(index) & Qt::ItemIsUserCheckable) != 0)
-    {
+  if ((index.model()->flags(index) & Qt::ItemIsUserCheckable) != 0)
+  {
     // record the check state change if the item is user-checkable.
-    emit this->recordEvent( abstractItemView, "setCheckState",
-      QString("%1,%3").arg(indexString).arg(
-        index.model()->data(index,Qt::CheckStateRole).toInt()));
-    }
-  if ((abstractItemView->editTriggers() & QAbstractItemView::SelectedClicked)
-        == QAbstractItemView::SelectedClicked &&
-      index == oldIndex)
-    {
+    emit this->recordEvent(abstractItemView, "setCheckState",
+      QString("%1,%3")
+        .arg(indexString)
+        .arg(index.model()->data(index, Qt::CheckStateRole).toInt()));
+  }
+  if ((abstractItemView->editTriggers() & QAbstractItemView::SelectedClicked) ==
+      QAbstractItemView::SelectedClicked &&
+    index == oldIndex)
+  {
     this->Editing = true;
     emit this->recordEvent(abstractItemView, "edit", indexString);
-    }
+  }
   oldIndex = index;
 }
 
 //-----------------------------------------------------------------------------
-void pqAbstractItemViewEventTranslatorBase::onActivated(const QModelIndex & index)
+void pqAbstractItemViewEventTranslatorBase::onActivated(const QModelIndex& index)
 {
   QAbstractItemView* abstractItemView = qobject_cast<QAbstractItemView*>(this->sender());
   QString indexString = this->getIndexAsString(index);
@@ -245,12 +249,12 @@ void pqAbstractItemViewEventTranslatorBase::onDoubleClicked(const QModelIndex& i
   QAbstractItemView* abstractItemView = qobject_cast<QAbstractItemView*>(this->sender());
   QString indexString = this->getIndexAsString(index);
   // record the check state change if the item is user-checkable.
-  if ((abstractItemView->editTriggers() & QAbstractItemView::DoubleClicked)
-      == QAbstractItemView::DoubleClicked)
-    {
+  if ((abstractItemView->editTriggers() & QAbstractItemView::DoubleClicked) ==
+    QAbstractItemView::DoubleClicked)
+  {
     this->Editing = true;
     emit this->recordEvent(abstractItemView, "edit", indexString);
-    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -258,9 +262,9 @@ QString pqAbstractItemViewEventTranslatorBase::getIndexAsString(const QModelInde
 {
   QString indexString;
   for (QModelIndex curIndex = index; curIndex.isValid(); curIndex = curIndex.parent())
-    {
+  {
     indexString.prepend(QString("%1.%2.").arg(curIndex.row()).arg(curIndex.column()));
-    }
+  }
 
   // remove the last ".".
   indexString.chop(1);
@@ -270,8 +274,7 @@ QString pqAbstractItemViewEventTranslatorBase::getIndexAsString(const QModelInde
 //-----------------------------------------------------------------------------
 void pqAbstractItemViewEventTranslatorBase::onCurrentChanged(const QModelIndex& index)
 {
-  emit this->recordEvent(this->AbstractItemView,
-    "setCurrent", this->getIndexAsString(index));
+  emit this->recordEvent(this->AbstractItemView, "setCurrent", this->getIndexAsString(index));
 }
 
 //-----------------------------------------------------------------------------
@@ -280,4 +283,3 @@ void pqAbstractItemViewEventTranslatorBase::onViewportEnteredCheck()
   this->ModelItemCheck = NULL;
   emit this->specificOverlay(this->AbstractItemView->rect());
 }
-

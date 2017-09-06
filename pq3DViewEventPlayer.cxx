@@ -35,46 +35,45 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QApplication>
 #include <QKeyEvent>
 #include <QMouseEvent>
-#include <QtDebug>
 #include <QRegExp>
 #include <QWidget>
+#include <QtDebug>
 
-pq3DViewEventPlayer::pq3DViewEventPlayer(const QByteArray& classname, QObject * p)
-      : pqWidgetEventPlayer(p), mClassType(classname)
+pq3DViewEventPlayer::pq3DViewEventPlayer(const QByteArray& classname, QObject* p)
+  : pqWidgetEventPlayer(p)
+  , mClassType(classname)
 {
 }
 
-bool pq3DViewEventPlayer::playEvent(QObject* Object,
-                                    const QString& Command,
-                                    const QString& Arguments,
-                                    bool& Error)
+bool pq3DViewEventPlayer::playEvent(
+  QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
 {
-    QWidget* widget = qobject_cast<QWidget*>(Object);
-    if(widget && Object->inherits(mClassType.data()))
+  QWidget* widget = qobject_cast<QWidget*>(Object);
+  if (widget && Object->inherits(mClassType.data()))
+  {
+    if (Command == "mousePress" || Command == "mouseRelease" || Command == "mouseMove")
+    {
+      QRegExp mouseRegExp("\\(([^,]*),([^,]*),([^,]),([^,]),([^,]*)\\)");
+      if (mouseRegExp.indexIn(Arguments) != -1)
       {
-      if (Command == "mousePress" || Command=="mouseRelease" || Command=="mouseMove")
-        {
-        QRegExp mouseRegExp("\\(([^,]*),([^,]*),([^,]),([^,]),([^,]*)\\)");
-        if (mouseRegExp.indexIn(Arguments)!= -1)
-          {
-          QVariant v = mouseRegExp.cap(1);
-          int x = static_cast<int>(v.toDouble() * widget->size().width());
-          v = mouseRegExp.cap(2);
-          int y = static_cast<int>(v.toDouble() * widget->size().height());
-          v = mouseRegExp.cap(3);
-          Qt::MouseButton button = static_cast<Qt::MouseButton>(v.toInt());
-          v = mouseRegExp.cap(4);
-          Qt::MouseButtons buttons = static_cast<Qt::MouseButton>(v.toInt());
-          v = mouseRegExp.cap(5);
-          Qt::KeyboardModifiers keym = static_cast<Qt::KeyboardModifier>(v.toInt());
-          QEvent::Type type = (Command == "mousePress")? QEvent::MouseButtonPress :
-            ((Command=="mouseMove")?  QEvent::MouseMove : QEvent::MouseButtonRelease);
-          QMouseEvent e(type, QPoint(x,y), button, buttons, keym);
-          qApp->notify(Object, &e);
-          }
-        return true;
-        }
+        QVariant v = mouseRegExp.cap(1);
+        int x = static_cast<int>(v.toDouble() * widget->size().width());
+        v = mouseRegExp.cap(2);
+        int y = static_cast<int>(v.toDouble() * widget->size().height());
+        v = mouseRegExp.cap(3);
+        Qt::MouseButton button = static_cast<Qt::MouseButton>(v.toInt());
+        v = mouseRegExp.cap(4);
+        Qt::MouseButtons buttons = static_cast<Qt::MouseButton>(v.toInt());
+        v = mouseRegExp.cap(5);
+        Qt::KeyboardModifiers keym = static_cast<Qt::KeyboardModifier>(v.toInt());
+        QEvent::Type type = (Command == "mousePress")
+          ? QEvent::MouseButtonPress
+          : ((Command == "mouseMove") ? QEvent::MouseMove : QEvent::MouseButtonRelease);
+        QMouseEvent e(type, QPoint(x, y), button, buttons, keym);
+        qApp->notify(Object, &e);
       }
-    return this->Superclass::playEvent(Object, Command, Arguments, Error);
+      return true;
+    }
+  }
+  return this->Superclass::playEvent(Object, Command, Arguments, Error);
 }
-

@@ -40,17 +40,18 @@ class QTTESTING_EXPORT pqListViewEventPlayer : public pqAbstractItemViewEventPla
 {
   Q_OBJECT
   typedef pqAbstractItemViewEventPlayerBase Superclass;
+
 public:
-  pqListViewEventPlayer(QObject* parent=0);
+  pqListViewEventPlayer(QObject* parent = 0);
   ~pqListViewEventPlayer() override;
 
   using Superclass::playEvent;
-  bool playEvent(QObject* object, const QString& command,
-                 const QString& arguments, int eventType, bool& error) override;
+  bool playEvent(QObject* object, const QString& command, const QString& arguments, int eventType,
+    bool& error) override;
 
 private:
   pqListViewEventPlayer(const pqListViewEventPlayer&); // Not implemented.
-  void operator=(const pqListViewEventPlayer&); // Not implemented.
+  void operator=(const pqListViewEventPlayer&);        // Not implemented.
 };
 
 #endif

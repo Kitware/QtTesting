@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -49,17 +49,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ///                the test playback. Unlike "pause" however, this will continue
 ///                to process all events arising in the application e.g.
 ///                responding to timer events.
-class QTTESTING_EXPORT pqAbstractMiscellaneousEventPlayer :
-  public pqWidgetEventPlayer
+class QTTESTING_EXPORT pqAbstractMiscellaneousEventPlayer : public pqWidgetEventPlayer
 {
   Q_OBJECT
   typedef pqWidgetEventPlayer Superclass;
 
 public:
-  pqAbstractMiscellaneousEventPlayer(QObject* p=0);
+  pqAbstractMiscellaneousEventPlayer(QObject* p = 0);
 
   using Superclass::playEvent;
-  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
+  bool playEvent(
+    QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
 
 private:
   pqAbstractMiscellaneousEventPlayer(const pqAbstractMiscellaneousEventPlayer&);
@@ -67,5 +67,3 @@ private:
 };
 
 #endif // !_pqAbstractMiscellaneousEventPlayer_h
-
-

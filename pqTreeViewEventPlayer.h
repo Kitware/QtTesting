@@ -7,8 +7,8 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
-   
+   under the terms of the ParaView license version 1.2.
+
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
    Kitware Inc.
@@ -29,7 +29,7 @@ NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS
 SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========================================================================*/
-#ifndef __pqTreeViewEventPlayer_h 
+#ifndef __pqTreeViewEventPlayer_h
 #define __pqTreeViewEventPlayer_h
 
 #include "pqAbstractItemViewEventPlayerBase.h"
@@ -40,19 +40,18 @@ class QTTESTING_EXPORT pqTreeViewEventPlayer : public pqAbstractItemViewEventPla
 {
   Q_OBJECT
   typedef pqAbstractItemViewEventPlayerBase Superclass;
+
 public:
-  pqTreeViewEventPlayer(QObject* parent=0);
+  pqTreeViewEventPlayer(QObject* parent = 0);
   ~pqTreeViewEventPlayer() override;
 
   using Superclass::playEvent;
-  bool playEvent(QObject* object, const QString& command, 
-                 const QString& arguments, int eventType, bool& error) override;
+  bool playEvent(QObject* object, const QString& command, const QString& arguments, int eventType,
+    bool& error) override;
 
 private:
   pqTreeViewEventPlayer(const pqTreeViewEventPlayer&); // Not implemented.
-  void operator=(const pqTreeViewEventPlayer&); // Not implemented.
+  void operator=(const pqTreeViewEventPlayer&);        // Not implemented.
 };
 
 #endif
-
-

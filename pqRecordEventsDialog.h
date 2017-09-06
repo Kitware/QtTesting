@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -39,19 +39,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class pqEventRecorder;
 class pqTestUtility;
 
-/// Provides a standard dialog that will record user input to an XML file as long as the dialog remains open
-class QTTESTING_EXPORT pqRecordEventsDialog :
-  public QDialog
+/// Provides a standard dialog that will record user input to an XML file as long as the dialog
+/// remains open
+class QTTESTING_EXPORT pqRecordEventsDialog : public QDialog
 {
   Q_OBJECT
-  
+
 public:
   /**
   Creates the dialog and begins translating user input with the supplied translator.
   */
-  pqRecordEventsDialog(pqEventRecorder* recorder,
-                       pqTestUtility* testUtility,
-                       QWidget* Parent);
+  pqRecordEventsDialog(pqEventRecorder* recorder, pqTestUtility* testUtility, QWidget* Parent);
 
 private slots:
   void done(int) override;
@@ -74,4 +72,3 @@ private:
 };
 
 #endif // !_pqRecordEventsDialog_h
-

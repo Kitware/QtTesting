@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -37,7 +37,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqWidgetEventPlayer.h"
 
 /**
-Concrete implementation of pqWidgetEventPlayer that translates high-level ParaView events into low-level Qt events.
+Concrete implementation of pqWidgetEventPlayer that translates high-level ParaView events into
+low-level Qt events.
 
 \sa pqEventPlayer
 */
@@ -46,11 +47,13 @@ class QTTESTING_EXPORT pqAbstractStringEventPlayer : public pqWidgetEventPlayer
 {
   Q_OBJECT
   typedef pqWidgetEventPlayer Superclass;
+
 public:
-  pqAbstractStringEventPlayer(QObject* p=0);
+  pqAbstractStringEventPlayer(QObject* p = 0);
 
   using Superclass::playEvent;
-  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
+  bool playEvent(
+    QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
 
 private:
   pqAbstractStringEventPlayer(const pqAbstractStringEventPlayer&);
@@ -58,4 +61,3 @@ private:
 };
 
 #endif // !_pqAbstractStringEventPlayer_h
-

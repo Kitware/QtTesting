@@ -35,9 +35,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "QtTestingExport.h"
 
+#include <QList>
 #include <QObject>
 #include <QString>
-#include <QList>
 
 class pqWidgetEventPlayer;
 class pqTestUtility;
@@ -69,8 +69,7 @@ event playback, so you can also use this mechanism to
 pqEventSource, pqXMLEventSource
 */
 
-class QTTESTING_EXPORT pqEventPlayer :
-  public QObject
+class QTTESTING_EXPORT pqEventPlayer : public QObject
 {
   Q_OBJECT
 
@@ -98,25 +97,17 @@ public:
   If there was an error playing the event, Error argument will be set
   to "true".  Note: Currently there is no guarantee that playEvent()
   will return immediately, since the functionality it invokes may enter
-  a separate event loop (a modal dialog or context menu, for example). 
+  a separate event loop (a modal dialog or context menu, for example).
   Check event will not modify ui but check a widget value*/
-  void playEvent(const QString& object,
-                 const QString& command,
-                 const QString& arguments,
-                 int eventType,
-                 bool& Error);
-  void playEvent(const QString& object,
-                 const QString& command,
-                 const QString& arguments,
-                 bool& Error);
+  void playEvent(const QString& object, const QString& command, const QString& arguments,
+    int eventType, bool& Error);
+  void playEvent(
+    const QString& object, const QString& command, const QString& arguments, bool& Error);
 
 signals:
-  void eventAboutToBePlayed(const QString& Object,
-                            const QString& Command,
-                            const QString& Arguments);
-  void eventPlayed(const QString& Object,
-                   const QString& Command,
-                   const QString& Arguments);
+  void eventAboutToBePlayed(
+    const QString& Object, const QString& Command, const QString& Arguments);
+  void eventPlayed(const QString& Object, const QString& Command, const QString& Arguments);
   void errorMessage(const QString&);
 
 private:

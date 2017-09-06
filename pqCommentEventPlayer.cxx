@@ -33,8 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqCommentEventPlayer.h"
 
 // ----------------------------------------------------------------------------
-pqCommentEventPlayer::pqCommentEventPlayer(pqTestUtility* testUtility,
-                                           QObject* parent)
+pqCommentEventPlayer::pqCommentEventPlayer(pqTestUtility* testUtility, QObject* parent)
   : pqWidgetEventPlayer(parent)
 {
   this->TestUtility = testUtility;
@@ -47,25 +46,23 @@ pqCommentEventPlayer::~pqCommentEventPlayer()
 }
 
 // ----------------------------------------------------------------------------
-bool pqCommentEventPlayer::playEvent(QObject* Object,
-                                     const QString &Command,
-                                     const QString &Arguments,
-                                     bool &Error)
+bool pqCommentEventPlayer::playEvent(
+  QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
 {
   if (!Command.startsWith("comment"))
-    {
+  {
     return false;
-    }
+  }
 
   if (!Arguments.isEmpty())
-    {
+  {
     emit this->comment(Arguments);
-    }
+  }
 
   if (Command.split("-").contains("block"))
-    {
+  {
     this->TestUtility->dispatcher()->run(false);
-    }
+  }
 
   return true;
 }

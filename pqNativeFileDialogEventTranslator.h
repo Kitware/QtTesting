@@ -44,14 +44,13 @@ Records usage of native file dialogs in test cases.
 \sa pqEventTranslator
 */
 
-class QTTESTING_EXPORT pqNativeFileDialogEventTranslator :
-  public pqWidgetEventTranslator
+class QTTESTING_EXPORT pqNativeFileDialogEventTranslator : public pqWidgetEventTranslator
 {
   Q_OBJECT
   typedef pqWidgetEventTranslator Superclass;
 
 public:
-  pqNativeFileDialogEventTranslator(pqTestUtility* util, QObject* p=0);
+  pqNativeFileDialogEventTranslator(pqTestUtility* util, QObject* p = 0);
   ~pqNativeFileDialogEventTranslator() override;
 
   using Superclass::translateEvent;
@@ -64,7 +63,6 @@ protected slots:
   void stop();
 
 protected:
-
   pqTestUtility* mUtil;
 
 private:

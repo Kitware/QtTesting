@@ -49,31 +49,28 @@ pqPythonEventObserver::~pqPythonEventObserver()
 void pqPythonEventObserver::setStream(QTextStream* stream)
 {
   pqEventObserver::setStream(stream);
-  if(this->Stream)
-    {
+  if (this->Stream)
+  {
     *this->Stream << "#/usr/bin/env python\n\n";
     *this->Stream << "import QtTesting\n\n";
-    }
+  }
 }
 
 void pqPythonEventObserver::onRecordEvent(
-  const QString& Widget,
-  const QString& Command,
-  const QString& Arguments,
-  const int& eventType)
+  const QString& Widget, const QString& Command, const QString& Arguments, const int& eventType)
 {
-  if(this->Stream)
-    {
+  if (this->Stream)
+  {
     QString varname = this->Names[Widget];
-    if(varname == QString::null)
-      {
+    if (varname == QString::null)
+    {
       varname = QString("object%1").arg(this->Names.count());
       this->Names.insert(Widget, varname);
       QString objname("%1 = '%2'");
       objname = objname.arg(varname);
       objname = objname.arg(Widget);
       *this->Stream << objname << "\n";
-      }
+    }
 
     QString pycommand("QtTesting.playCommand(%1, '%2', '%3', '%4')");
     pycommand = pycommand.arg(varname);
@@ -83,5 +80,5 @@ void pqPythonEventObserver::onRecordEvent(
     *this->Stream << pycommand << "\n";
 
     emit eventRecorded(widget, command, arguments, eventType);
-    }
+  }
 }

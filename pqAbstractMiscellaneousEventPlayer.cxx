@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -30,14 +30,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
 
-
-
 #include "pqAbstractMiscellaneousEventPlayer.h"
 
 #include <QAbstractButton>
-#include <QtDebug>
 #include <QFile>
 #include <QThread>
+#include <QtDebug>
 
 #include "pqEventDispatcher.h"
 
@@ -45,7 +43,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class SleeperThread : public QThread
 {
 public:
-  //Allows for cross platform sleep function
+  // Allows for cross platform sleep function
   static bool msleep(unsigned long msecs)
   {
     QThread::msleep(msecs);
@@ -58,34 +56,33 @@ pqAbstractMiscellaneousEventPlayer::pqAbstractMiscellaneousEventPlayer(QObject* 
 {
 }
 
-//Allows for execution of testing commands that don't merit their own class
-bool pqAbstractMiscellaneousEventPlayer::playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
+// Allows for execution of testing commands that don't merit their own class
+bool pqAbstractMiscellaneousEventPlayer::playEvent(
+  QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
 {
   if (Command == "pause")
-    {
+  {
     const int value = Arguments.toInt();
-    if(SleeperThread::msleep(value))
-      {
+    if (SleeperThread::msleep(value))
+    {
       return true;
-      }
+    }
     Error = true;
     qCritical() << "calling pause on unhandled type " << Object;
-    }
+  }
   if (Command == "process_events")
-    {
+  {
     bool valid = false;
     const int ms = Arguments.toInt(&valid);
     if (valid)
-      {
+    {
       pqEventDispatcher::processEventsAndWait(ms);
-      }
-    else
-      {
-      pqEventDispatcher::processEvents();
-      }
-    return true;
     }
+    else
+    {
+      pqEventDispatcher::processEvents();
+    }
+    return true;
+  }
   return false;
 }
-
-

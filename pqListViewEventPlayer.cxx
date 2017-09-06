@@ -45,18 +45,17 @@ pqListViewEventPlayer::~pqListViewEventPlayer()
 
 //-----------------------------------------------------------------------------0000000
 bool pqListViewEventPlayer::playEvent(
-  QObject* object, const QString& command,
-  const QString& arguments, int eventType, bool& error)
+  QObject* object, const QString& command, const QString& arguments, int eventType, bool& error)
 {
-  QListView* listView= qobject_cast<QListView*>(object);
-  if(!listView)
-    {
+  QListView* listView = qobject_cast<QListView*>(object);
+  if (!listView)
+  {
     // mouse events go to the viewport widget
     listView = qobject_cast<QListView*>(object->parent());
-    }
-  if(!listView)
-    {
+  }
+  if (!listView)
+  {
     return false;
-    }
+  }
   return this->Superclass::playEvent(object, command, arguments, eventType, error);
 }

@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -44,16 +44,16 @@ events, for test-cases, demos, tutorials, etc.
 
 \sa pqEventTranslator
 */
-class QTTESTING_EXPORT pqWidgetEventTranslator :
-  public QObject
+class QTTESTING_EXPORT pqWidgetEventTranslator : public QObject
 {
   Q_OBJECT
-  
+
   typedef QObject Superclass;
+
 public:
-  pqWidgetEventTranslator(QObject* p=0);
+  pqWidgetEventTranslator(QObject* p = 0);
   ~pqWidgetEventTranslator() override;
-  
+
   /** Derivatives should implement this and translate events into commands,
   returning "true" if they handled the event, and setting Error
   to "true" if there were any problems. eventType allow to specify different types of events
@@ -63,7 +63,8 @@ public:
 
 signals:
   /// Derivatives should emit this signal whenever they wish to record a high-level event
-  void recordEvent(QObject* Object, const QString& Command, const QString& Arguments, int eventType);
+  void recordEvent(
+    QObject* Object, const QString& Command, const QString& Arguments, int eventType);
   void recordEvent(QObject* Object, const QString& Command, const QString& Arguments);
   void specificOverlay(const QRect& geometry);
 
@@ -73,4 +74,3 @@ protected:
 };
 
 #endif // !_pqWidgetEventTranslator_h
-

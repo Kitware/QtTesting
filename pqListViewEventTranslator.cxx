@@ -31,8 +31,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ========================================================================*/
 #include "pqListViewEventTranslator.h"
 
-#include <QListView>
 #include <QHeaderView>
+#include <QListView>
 //-----------------------------------------------------------------------------
 pqListViewEventTranslator::pqListViewEventTranslator(QObject* parentObject)
   : Superclass(parentObject)
@@ -54,8 +54,7 @@ void pqListViewEventTranslator::onEnteredCheck(const QModelIndex& item)
   QRect visualRect = listView->visualRect(item);
 
   // Translate the rect of margins and headers
-  visualRect.translate(listView->contentsMargins().left(),
-                       listView->contentsMargins().top());
+  visualRect.translate(listView->contentsMargins().left(), listView->contentsMargins().top());
 
   // Stor item and signal that a specific overlay is ready to be drawn
   this->ModelItemCheck = &item;
@@ -67,16 +66,15 @@ QAbstractItemView* pqListViewEventTranslator::findCorrectedAbstractItemView(QObj
 {
   // Ignore QHeaderView event specifically
   if (qobject_cast<QHeaderView*>(object))
-    {
+  {
     return NULL;
-    }
+  }
 
   QAbstractItemView* abstractItemView = qobject_cast<QListView*>(object);
   if (!abstractItemView)
-    {
+  {
     // mouse events go to the viewport widget
     abstractItemView = qobject_cast<QListView*>(object->parent());
-    }
+  }
   return abstractItemView;
 }
-

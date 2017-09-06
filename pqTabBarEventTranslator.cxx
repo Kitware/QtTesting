@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -32,49 +32,47 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "pqTabBarEventTranslator.h"
 
-#include <QTabBar>
 #include <QEvent>
+#include <QTabBar>
 
-pqTabBarEventTranslator::pqTabBarEventTranslator(QObject* p) 
-  : pqWidgetEventTranslator(p),
-  CurrentObject(0)
+pqTabBarEventTranslator::pqTabBarEventTranslator(QObject* p)
+  : pqWidgetEventTranslator(p)
+  , CurrentObject(0)
 {
 }
 
 bool pqTabBarEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& Error)
 {
   QTabBar* const object = qobject_cast<QTabBar*>(Object);
-  if(!object)
-    {
+  if (!object)
+  {
     return false;
-    }
+  }
 
-  switch(Event->type())
-    {
+  switch (Event->type())
+  {
     case QEvent::Enter:
+    {
+      if (this->CurrentObject != Object)
       {
-      if(this->CurrentObject != Object)
+        if (this->CurrentObject)
         {
-        if(this->CurrentObject)
-          {
           disconnect(this->CurrentObject, 0, this, 0);
-          }
+        }
 
         this->CurrentObject = object;
         connect(object, SIGNAL(currentChanged(int)), this, SLOT(indexChanged(int)));
-        }
+      }
       return true;
       break;
-      }
-    default:
-    break;
     }
+    default:
+      break;
+  }
   return this->Superclass::translateEvent(Object, Event, Error);
 }
 
 void pqTabBarEventTranslator::indexChanged(int which)
 {
-  emit recordEvent(this->CurrentObject, "set_tab_with_text",
-    this->CurrentObject->tabText(which));
+  emit recordEvent(this->CurrentObject, "set_tab_with_text", this->CurrentObject->tabText(which));
 }
-

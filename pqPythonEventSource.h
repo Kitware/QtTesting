@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -38,8 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 /** Concrete implementation of pqEventSource that retrieves events recorded
 by pqPythonEventObserver */
-class QTTESTING_EXPORT pqPythonEventSource :
-  public pqThreadedEventSource
+class QTTESTING_EXPORT pqPythonEventSource : public pqThreadedEventSource
 {
   Q_OBJECT
 public:
@@ -73,4 +72,3 @@ private:
 };
 
 #endif // !_pqPythonEventSource_h
-

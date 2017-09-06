@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -33,48 +33,48 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqAbstractBooleanEventPlayer.h"
 
 #include <QAbstractButton>
+#include <QAction>
 #include <QGroupBox>
 #include <QtDebug>
-#include <QAction>
 
 pqAbstractBooleanEventPlayer::pqAbstractBooleanEventPlayer(QObject* p)
   : pqWidgetEventPlayer(p)
 {
 }
 
-bool pqAbstractBooleanEventPlayer::playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
+bool pqAbstractBooleanEventPlayer::playEvent(
+  QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
 {
-  if(Command != "set_boolean")
+  if (Command != "set_boolean")
     return false;
 
   const bool value = Arguments == "true" ? true : false;
 
-  if(QAbstractButton* const object = qobject_cast<QAbstractButton*>(Object))
-    {
-    if(value != object->isChecked())
+  if (QAbstractButton* const object = qobject_cast<QAbstractButton*>(Object))
+  {
+    if (value != object->isChecked())
       object->click();
     return true;
-    }
+  }
 
   if (QAction* const action = qobject_cast<QAction*>(Object))
-    {
+  {
     if (action->isChecked() != value)
-      {
-      action->trigger();
-      }
-    return true;
-    }
-
-  if ( QGroupBox* const object =  qobject_cast<QGroupBox*>(Object))
     {
-    if ( value != object->isChecked() )
-      {
-      object->setChecked( value );
-      }
-    return true;
+      action->trigger();
     }
+    return true;
+  }
+
+  if (QGroupBox* const object = qobject_cast<QGroupBox*>(Object))
+  {
+    if (value != object->isChecked())
+    {
+      object->setChecked(value);
+    }
+    return true;
+  }
   qCritical() << "calling set_boolean on unhandled type " << Object;
   Error = true;
   return true;
 }
-

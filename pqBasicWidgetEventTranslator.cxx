@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -50,130 +50,129 @@ pqBasicWidgetEventTranslator::~pqBasicWidgetEventTranslator()
 {
 }
 
-bool pqBasicWidgetEventTranslator::translateEvent(QObject* object, 
-                                                  QEvent* event,
-                                                  int eventType, 
-                                                  bool& error)
+bool pqBasicWidgetEventTranslator::translateEvent(
+  QObject* object, QEvent* event, int eventType, bool& error)
 {
   QWidget* widget = qobject_cast<QWidget*>(object);
-  if(!widget)
-      return false;
+  if (!widget)
+    return false;
 
   if (eventType == pqEventTypes::ACTION_EVENT)
+  {
+    switch (event->type())
     {
-    switch(event->type())
-      {
       case QEvent::KeyPress:
-        {
+      {
         QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
-        if(qobject_cast<QDialog*>(object))
-          {
+        if (qobject_cast<QDialog*>(object))
+        {
           emit recordEvent(widget, "key", QString::number(keyEvent->key()));
-          }
+        }
         return true;
         break;
-        }
+      }
       case QEvent::MouseButtonPress:
       case QEvent::MouseButtonDblClick:
       case QEvent::MouseButtonRelease:
-        {
+      {
         QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
         QString info = QString("%1,%2,%3,%4,%5")
-          .arg(mouseEvent->button())
-         .arg(mouseEvent->buttons())
-          .arg(mouseEvent->modifiers())
-          .arg(mouseEvent->x())
-          .arg(mouseEvent->y());
+                         .arg(mouseEvent->button())
+                         .arg(mouseEvent->buttons())
+                         .arg(mouseEvent->modifiers())
+                         .arg(mouseEvent->x())
+                         .arg(mouseEvent->y());
 
-        if(event->type() != QEvent::MouseButtonRelease)
-          {
+        if (event->type() != QEvent::MouseButtonRelease)
+        {
           this->LastPos = mouseEvent->pos();
-          }
+        }
 
-        if(event->type() == QEvent::MouseButtonPress)
-          {
+        if (event->type() == QEvent::MouseButtonPress)
+        {
           emit recordEvent(widget, "mousePress", info);
-          }
-        if(event->type() == QEvent::MouseButtonDblClick)
-          {
+        }
+        if (event->type() == QEvent::MouseButtonDblClick)
+        {
           emit recordEvent(widget, "mouseDblClick", info);
-          }
-        else if(event->type() == QEvent::MouseButtonRelease)
+        }
+        else if (event->type() == QEvent::MouseButtonRelease)
+        {
+          if (this->LastPos != mouseEvent->pos())
           {
-          if(this->LastPos != mouseEvent->pos())
-            {
             emit recordEvent(widget, "mouseMove", info);
-            }
-          emit recordEvent(widget, "mouseRelease", info);
           }
+          emit recordEvent(widget, "mouseRelease", info);
+        }
         return true;
         break;
-        }
+      }
       case QEvent::Wheel:
+      {
+        if (qobject_cast<QScrollBar*>(object))
         {
-        if(qobject_cast<QScrollBar*>(object))
-          {
           QWheelEvent* wheelEvent = dynamic_cast<QWheelEvent*>(event);
-          if(wheelEvent)
-            {
+          if (wheelEvent)
+          {
             int buttons = wheelEvent->buttons();
             int modifiers = wheelEvent->modifiers();
             int numStep = wheelEvent->delta();
             emit recordEvent(object, "mouseWheel", QString("%1,%2,%3,%4,%5")
-                             .arg(numStep)
-                             .arg(buttons)
-                             .arg(modifiers)
-                             .arg(wheelEvent->x())
-                             .arg(wheelEvent->y()));
-            }
+                                                     .arg(numStep)
+                                                     .arg(buttons)
+                                                     .arg(modifiers)
+                                                     .arg(wheelEvent->x())
+                                                     .arg(wheelEvent->y()));
           }
+        }
         return true;
         break;
-        }
-      default:
-      break;
       }
+      default:
+        break;
     }
+  }
   else if (eventType == pqEventTypes::CHECK_EVENT)
-    {
+  {
     if (event->type() == QEvent::MouseMove)
-      {
+    {
       // Check for available meta prop
       const QMetaProperty metaProp = widget->metaObject()->userProperty();
       if (!metaProp.isValid() && qobject_cast<QWidget*>(widget->parent()) != NULL)
-        {
+      {
         // MouseEvent can be received by the viewport
         const QMetaProperty metaProp = widget->parent()->metaObject()->userProperty();
-        }
-      if (metaProp.isValid())
-        {
-        return true;
-        }
       }
+      if (metaProp.isValid())
+      {
+        return true;
+      }
+    }
 
     // Clicking while checking, actual check event
     if (event->type() == QEvent::MouseButtonRelease)
-      {
-      //Generic Meta prop check
+    {
+      // Generic Meta prop check
       const QMetaProperty metaProp = widget->metaObject()->userProperty();
       if (!metaProp.isValid() && widget->parent() != NULL)
-        {
+      {
         // MouseEvent can be received by the viewport, so try the parent widget
         const QMetaProperty metaProp = widget->parent()->metaObject()->userProperty();
         widget = qobject_cast<QWidget*>(widget->parent());
-        }
+      }
 
       if (metaProp.isValid() && widget)
-        {
+      {
         // Recover meto prop name
         QString propName = metaProp.name();
 
         // Record check event
-        emit recordEvent(widget, propName, widget->property(propName.toUtf8().data()).toString().replace("\t", " "), pqEventTypes::CHECK_EVENT);
+        emit recordEvent(widget, propName,
+          widget->property(propName.toUtf8().data()).toString().replace("\t", " "),
+          pqEventTypes::CHECK_EVENT);
         return true;
-        }
       }
     }
+  }
   return this->Superclass::translateEvent(object, event, eventType, error);
 }
-

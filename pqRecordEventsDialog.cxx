@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -53,12 +53,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 struct pqRecordEventsDialog::pqImplementation
 {
 public:
-  pqImplementation(pqEventRecorder* recorder,
-                   pqTestUtility* testUtility)
-    : Recorder(recorder), TestUtility(testUtility)
+  pqImplementation(pqEventRecorder* recorder, pqTestUtility* testUtility)
+    : Recorder(recorder)
+    , TestUtility(testUtility)
   {
   }
-  
+
   ~pqImplementation()
   {
     this->Recorder = 0;
@@ -67,19 +67,18 @@ public:
 
   Ui::pqRecordEventsDialog Ui;
 
-  pqEventRecorder*    Recorder;
-  pqTestUtility*      TestUtility;
+  pqEventRecorder* Recorder;
+  pqTestUtility* TestUtility;
 };
 
 ///////////////////////////////////////////////////////////////////////////////////
 // pqRecordEventsDialog
 
 // ----------------------------------------------------------------------------
-pqRecordEventsDialog::pqRecordEventsDialog(pqEventRecorder* recorder,
-                                           pqTestUtility* testUtility,
-                                           QWidget* Parent)
-  : QDialog(Parent),
-    Implementation(new pqImplementation(recorder, testUtility))
+pqRecordEventsDialog::pqRecordEventsDialog(
+  pqEventRecorder* recorder, pqTestUtility* testUtility, QWidget* Parent)
+  : QDialog(Parent)
+  , Implementation(new pqImplementation(recorder, testUtility))
 {
   this->Implementation->Ui.setupUi(this);
   this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
@@ -90,41 +89,26 @@ pqRecordEventsDialog::pqRecordEventsDialog(pqEventRecorder* recorder,
   this->setObjectName("");
 
   QObject::connect(this->Implementation->TestUtility->eventTranslator(),
-                   SIGNAL(recordEvent(QString,QString,QString, int)),
-                   this, SLOT(onEventRecorded(QString,QString,QString, int)));
+    SIGNAL(recordEvent(QString, QString, QString, int)), this,
+    SLOT(onEventRecorded(QString, QString, QString, int)));
 
-  QObject::connect(this->Implementation->Ui.commentAddButton,
-                   SIGNAL(clicked()),
-                   this, SLOT(addComment()));
+  QObject::connect(
+    this->Implementation->Ui.commentAddButton, SIGNAL(clicked()), this, SLOT(addComment()));
 
-  QObject::connect(this->Implementation->Ui.checkButton,
-                   SIGNAL(toggled(bool)),
-                   this->Implementation->Recorder,
-                   SLOT(check(bool)));
+  QObject::connect(this->Implementation->Ui.checkButton, SIGNAL(toggled(bool)),
+    this->Implementation->Recorder, SLOT(check(bool)));
 
-  QObject::connect(this->Implementation->Ui.recordPauseButton,
-                   SIGNAL(toggled(bool)),
-                   this->Implementation->Recorder,
-                   SLOT(unpause(bool)));
+  QObject::connect(this->Implementation->Ui.recordPauseButton, SIGNAL(toggled(bool)),
+    this->Implementation->Recorder, SLOT(unpause(bool)));
 
-  QObject::connect(this->Implementation->Ui.continuousFlush,
-                   SIGNAL(toggled(bool)),
-                   this->Implementation->Recorder,
-                   SLOT(setContinuousFlush(bool)));
+  QObject::connect(this->Implementation->Ui.continuousFlush, SIGNAL(toggled(bool)),
+    this->Implementation->Recorder, SLOT(setContinuousFlush(bool)));
 
-  QObject::connect(this->Implementation->Ui.recordInteractionTimings,
-                   SIGNAL(toggled(bool)),
-                   this->Implementation->Recorder,
-                   SLOT(setRecordInteractionTimings(bool)));
+  QObject::connect(this->Implementation->Ui.recordInteractionTimings, SIGNAL(toggled(bool)),
+    this->Implementation->Recorder, SLOT(setRecordInteractionTimings(bool)));
 
-  QObject::connect(this->Implementation->Recorder,
-                   SIGNAL(started()),
-                   this,
-                   SLOT(updateUi()));
-  QObject::connect(this->Implementation->Recorder,
-                   SIGNAL(stopped()),
-                   this,
-                   SLOT(updateUi()));
+  QObject::connect(this->Implementation->Recorder, SIGNAL(started()), this, SLOT(updateUi()));
+  QObject::connect(this->Implementation->Recorder, SIGNAL(stopped()), this, SLOT(updateUi()));
 }
 
 // ----------------------------------------------------------------------------
@@ -137,10 +121,10 @@ pqRecordEventsDialog::~pqRecordEventsDialog()
 void pqRecordEventsDialog::ignoreObject(QObject* object)
 {
   this->Implementation->TestUtility->eventTranslator()->ignoreObject(object);
-  foreach(QObject* child, object->children())
-    {
+  foreach (QObject* child, object->children())
+  {
     this->ignoreObject(child);
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -151,15 +135,13 @@ void pqRecordEventsDialog::done(int value)
 }
 
 // ----------------------------------------------------------------------------
-void pqRecordEventsDialog::onEventRecorded(const QString& widget,
-                                           const QString& command,
-                                           const QString& argument,
-                                           int eventType)
+void pqRecordEventsDialog::onEventRecorded(
+  const QString& widget, const QString& command, const QString& argument, int eventType)
 {
   if (!this->Implementation->Recorder->isRecording())
-    {
+  {
     return;
-    }
+  }
 
   this->Implementation->Ui.eventWidgetEdit->setText(widget);
   this->Implementation->Ui.eventCommandEdit->setText(command);
@@ -172,15 +154,15 @@ void pqRecordEventsDialog::onEventRecorded(const QString& widget,
 void pqRecordEventsDialog::addComment()
 {
   if (this->Implementation->Ui.blockingCheckBox->isChecked())
-    {
+  {
     this->Implementation->Recorder->translator()->eventComment()->recordCommentBlock(
-        this->Implementation->Ui.commentTextEdit->toPlainText());
-    }
+      this->Implementation->Ui.commentTextEdit->toPlainText());
+  }
   else
-    {
+  {
     this->Implementation->Recorder->translator()->eventComment()->recordComment(
-        this->Implementation->Ui.commentTextEdit->toPlainText());
-    }
+      this->Implementation->Ui.commentTextEdit->toPlainText());
+  }
   this->Implementation->Ui.commentTextEdit->clear();
 }
 
@@ -188,5 +170,5 @@ void pqRecordEventsDialog::addComment()
 void pqRecordEventsDialog::updateUi()
 {
   this->Implementation->Ui.recordPauseButton->setChecked(
-      this->Implementation->Recorder->isRecording());
+    this->Implementation->Recorder->isRecording());
 }

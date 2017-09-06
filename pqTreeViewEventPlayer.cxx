@@ -30,9 +30,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========================================================================*/
 #include "pqTreeViewEventPlayer.h"
-#include <QTreeWidget>
-#include <QMenu>
 #include <QDebug>
+#include <QMenu>
+#include <QTreeWidget>
 
 //-----------------------------------------------------------------------------
 pqTreeViewEventPlayer::pqTreeViewEventPlayer(QObject* parentObject)
@@ -47,71 +47,70 @@ pqTreeViewEventPlayer::~pqTreeViewEventPlayer()
 
 //-----------------------------------------------------------------------------0000000
 bool pqTreeViewEventPlayer::playEvent(
-  QObject* object, const QString& command,
-  const QString& arguments, int eventType, bool& error)
+  QObject* object, const QString& command, const QString& arguments, int eventType, bool& error)
 {
-  QTreeView* treeView= qobject_cast<QTreeView*>(object);
-  QMenu* contextMenu= qobject_cast<QMenu*>(object);
+  QTreeView* treeView = qobject_cast<QTreeView*>(object);
+  QMenu* contextMenu = qobject_cast<QMenu*>(object);
   // if this a QMenu (potentially a context menu of the view),
   // we should not move onto parent
-  if(!treeView && !contextMenu)
-    {
+  if (!treeView && !contextMenu)
+  {
     // mouse events go to the viewport widget
     treeView = qobject_cast<QTreeView*>(object->parent());
-    }
-  if(!treeView)
-    {
+  }
+  if (!treeView)
+  {
     return false;
-    }
+  }
 
   QRegExp regExp0("^([\\d\\.]+),(\\d+),(\\d+)$");
   if (command == "setTreeItemCheckState" && regExp0.indexIn(arguments) != -1)
-    {
+  {
     // legacy command recorded from tree widgets.
     QTreeWidget* treeWidget = qobject_cast<QTreeWidget*>(object);
     if (!treeWidget)
-      {
+    {
       return false;
-      }
+    }
     QString str_index = regExp0.cap(1);
     int column = regExp0.cap(2).toInt();
     int check_state = regExp0.cap(3).toInt();
 
-    QStringList indices = str_index.split(".",QString::SkipEmptyParts);
+    QStringList indices = str_index.split(".", QString::SkipEmptyParts);
     QTreeWidgetItem* cur_item = NULL;
     foreach (QString cur_index, indices)
-      {
+    {
       int index = cur_index.toInt();
       if (!cur_item)
-        {
+      {
         cur_item = treeWidget->topLevelItem(index);
-        }
-      else
-        {
-        cur_item = cur_item->child(index);
-        }
-      if (!cur_item)
-        {
-        error=true;
-        qCritical() << "ERROR: Tree widget must have changed. "
-          << "Indices recorded in the test are no longer valid. Cannot playback.";
-        return true;
-        }
       }
+      else
+      {
+        cur_item = cur_item->child(index);
+      }
+      if (!cur_item)
+      {
+        error = true;
+        qCritical() << "ERROR: Tree widget must have changed. "
+                    << "Indices recorded in the test are no longer valid. Cannot playback.";
+        return true;
+      }
+    }
     cur_item->setCheckState(column, static_cast<Qt::CheckState>(check_state));
     return true;
-    }
+  }
 
   if (command == "expand" || command == "collapse")
-    {
+  {
     QString str_index = arguments;
     QModelIndex index = pqTreeViewEventPlayer::GetIndex(str_index, treeView, error);
     if (error)
-      {
+    {
       return true;
-      }
-    treeView->setExpanded(index, (command=="expand"));
-    return true;
     }
+    treeView->setExpanded(index, (command == "expand"));
+    return true;
+  }
   return this->Superclass::playEvent(object, command, arguments, eventType, error);
 }

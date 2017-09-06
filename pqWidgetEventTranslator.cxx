@@ -45,27 +45,26 @@ pqWidgetEventTranslator::~pqWidgetEventTranslator()
 {
 }
 
-bool pqWidgetEventTranslator::translateEvent(
-  QObject* object, QEvent* event, bool& error)
+bool pqWidgetEventTranslator::translateEvent(QObject* object, QEvent* event, bool& error)
 {
   QWidget* widget = qobject_cast<QWidget*>(object);
-  if(!widget)
-    {
+  if (!widget)
+  {
     return false;
-    }
+  }
 
-  switch(event->type())
-    {
+  switch (event->type())
+  {
     case QEvent::ContextMenu:
-      {
+    {
       emit recordEvent(widget, "contextMenu", "");
       break;
-      }
-    default:
-      {
-      break;
-      }
     }
+    default:
+    {
+      break;
+    }
+  }
   return true;
 }
 
@@ -74,8 +73,8 @@ bool pqWidgetEventTranslator::translateEvent(
   QObject* object, QEvent* event, int eventType, bool& error)
 {
   if (eventType == pqEventTypes::ACTION_EVENT)
-    {
+  {
     return this->translateEvent(object, event, error);
-    }
+  }
   return false;
 }

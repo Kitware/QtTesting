@@ -43,10 +43,14 @@ class QTTESTING_EXPORT pqEventSource : public QObject
 {
   Q_OBJECT
 public:
-  pqEventSource(QObject* p) : QObject(p) {}
+  pqEventSource(QObject* p)
+    : QObject(p)
+  {
+  }
   ~pqEventSource() override {}
 
-  enum eventReturnFlag {
+  enum eventReturnFlag
+  {
     SUCCESS,
     FAILURE,
     DONE
@@ -57,10 +61,7 @@ public:
     FAILURE if there was a problem,
     DONE, if there are no more events. */
   virtual int getNextEvent(
-    QString& object,
-    QString& command,
-    QString& arguments,
-    int& eventType) = 0;
+    QString& object, QString& command, QString& arguments, int& eventType) = 0;
 
   /** Set the filename for contents.
       Returns true for valid file, false for invalid file */
@@ -68,8 +69,6 @@ public:
 
   /** tell the source to stop feeding in events */
   virtual void stop() {}
-
 };
 
 #endif // !_pqEventSource_h
-

@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -40,34 +40,34 @@ pqAbstractDoubleEventPlayer::pqAbstractDoubleEventPlayer(QObject* p)
 {
 }
 
-bool pqAbstractDoubleEventPlayer::playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
+bool pqAbstractDoubleEventPlayer::playEvent(
+  QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
 {
-   if(Command != "set_double" && Command != "spin")
+  if (Command != "set_double" && Command != "spin")
     return false;
 
   const double value = Arguments.toDouble();
-    
-  if(QDoubleSpinBox* const object = qobject_cast<QDoubleSpinBox*>(Object))
+
+  if (QDoubleSpinBox* const object = qobject_cast<QDoubleSpinBox*>(Object))
+  {
+    if (Command == "set_double")
     {
-    if(Command == "set_double")
-      {
       object->setValue(value);
       return true;
-      }
-    else if(Command == "spin" && Arguments == "up")
-      {
+    }
+    else if (Command == "spin" && Arguments == "up")
+    {
       object->stepUp();
       return true;
-      }
-    else if(Command == "spin" && Arguments == "down")
-      {
+    }
+    else if (Command == "spin" && Arguments == "down")
+    {
       object->stepDown();
       return true;
-      }
     }
+  }
 
   qCritical() << "calling set_double on unhandled type " << Object;
   Error = true;
   return true;
 }
-

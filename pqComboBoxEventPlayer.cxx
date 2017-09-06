@@ -30,8 +30,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 ========================================================================*/
 #include "pqComboBoxEventPlayer.h"
-#include "pqObjectNaming.h"
 #include "pqEventTypes.h"
+#include "pqObjectNaming.h"
 
 #include <QComboBox>
 #include <QDebug>
@@ -49,25 +49,24 @@ pqComboBoxEventPlayer::~pqComboBoxEventPlayer()
 
 //-----------------------------------------------------------------------------
 bool pqComboBoxEventPlayer::playEvent(
-  QObject* object, const QString& command,
-  const QString& arguments, int eventType, bool& error)
+  QObject* object, const QString& command, const QString& arguments, int eventType, bool& error)
 {
   QComboBox* comboBox = qobject_cast<QComboBox*>(object);
   if (!comboBox)
-    {
+  {
     return false;
-    }
+  }
 
   if (eventType == pqEventTypes::ACTION_EVENT)
-    {
+  {
     if (command == "activated" || command == "editTextChanged")
-      {
+    {
       int index = comboBox->findText(arguments);
       if (index != -1)
-        {
+      {
         comboBox->setCurrentIndex(index);
         if (command == "activated")
-          {
+        {
 #if QT_VERSION >= 0x050000
           emit comboBox->activated(index);
 #else
@@ -75,29 +74,30 @@ bool pqComboBoxEventPlayer::playEvent(
           emit this->activated(index);
           QObject::disconnect(this, SIGNAL(activated(int)), comboBox, SIGNAL(activated(int)));
 #endif
-          }
-        }
-      else
-        {
-        QString possibles;
-        for (int i = 0; i<comboBox->count(); i++)
-          {
-          possibles += QString("\t") + comboBox->itemText(i) + QString("\n");
-          }
-        qCritical() << "Unable to find " << arguments << " in combo box: "
-          << pqObjectNaming::GetName(*comboBox)
-          << "\nPossible values are:\n" << possibles;
-        error = true;
-        }
-      if (command == "set_string")
-        {
-        // Legacy support
-        qCritical() << "set_string should be handled by pqAbstractStringEventTranslator already, something hase gone wrong";
-        error = true;
         }
       }
-    return true;
+      else
+      {
+        QString possibles;
+        for (int i = 0; i < comboBox->count(); i++)
+        {
+          possibles += QString("\t") + comboBox->itemText(i) + QString("\n");
+        }
+        qCritical() << "Unable to find " << arguments
+                    << " in combo box: " << pqObjectNaming::GetName(*comboBox)
+                    << "\nPossible values are:\n"
+                    << possibles;
+        error = true;
+      }
+      if (command == "set_string")
+      {
+        // Legacy support
+        qCritical() << "set_string should be handled by pqAbstractStringEventTranslator already, "
+                       "something hase gone wrong";
+        error = true;
+      }
     }
+    return true;
+  }
   return this->Superclass::playEvent(object, command, arguments, eventType, error);
 }
-

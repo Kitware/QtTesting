@@ -32,8 +32,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #ifndef __pqTimer_h
 #define __pqTimer_h
 
-#include <QTimer>
 #include "QtTestingExport.h"
+#include <QTimer>
 
 /// pqTimer is a extension for QTimer which ensures that the timer is registered
 /// with the pqEventDispatcher. Register timers with pqEventDispatcher ensures
@@ -44,8 +44,9 @@ class QTTESTING_EXPORT pqTimer : public QTimer
 {
   Q_OBJECT
   typedef QTimer Superclass;
+
 public:
-  pqTimer(QObject* parent=0);
+  pqTimer(QObject* parent = 0);
   ~pqTimer() override;
 
   /// This static function calls a slot after a given time interval.

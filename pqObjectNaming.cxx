@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -51,14 +51,14 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QStackedWidget>
 #include <QTabBar>
 #include <QTabWidget>
-#include <QtDebug>
 #include <QTextStream>
 #include <QToolBar>
 #include <QToolButton>
+#include <QtDebug>
 
 namespace
 {
-  QString ErrorMessage;
+QString ErrorMessage;
 }
 
 /** Returns the name of an object as if it was unnamed.*/
@@ -67,63 +67,61 @@ static const QString InternalGetNameAsUnnamed(QObject& Object)
   QString result;
 
   QObjectList siblings;
-  if(Object.parent())
-    {
+  if (Object.parent())
+  {
     siblings = Object.parent()->children();
-    }
+  }
   else
-    {
+  {
     QWidgetList widgets = QApplication::topLevelWidgets();
-    for(int i = 0; i != widgets.size(); ++i)
-      {
+    for (int i = 0; i != widgets.size(); ++i)
+    {
       siblings.push_back(widgets[i]);
-      }
     }
-      
+  }
+
   const QString type = Object.metaObject()->className();
-  
+
   // order of top level widgets is not guarenteed
-  // we can someone counter that by checking visibility, 
+  // we can someone counter that by checking visibility,
   // as we usually only test visible widgets, we would get the right one
   int invisible_index = 0;
   int visible_index = 0;
-  for(int i = 0; i != siblings.size(); ++i)
-    {
+  for (int i = 0; i != siblings.size(); ++i)
+  {
     QObject* test = siblings[i];
-    if(test == &Object)
-      {
+    if (test == &Object)
+    {
       break;
-      }
-    else if(
-      type == test->metaObject()->className()
-      && test->objectName().isEmpty())
-      {
+    }
+    else if (type == test->metaObject()->className() && test->objectName().isEmpty())
+    {
       QWidget* widget = qobject_cast<QWidget*>(test);
-      if(widget && widget->isVisible())
-        {
+      if (widget && widget->isVisible())
+      {
         ++visible_index;
-        }
+      }
       else
-        {
+      {
         ++invisible_index;
-        }
       }
     }
-    
+  }
+
   int index = invisible_index;
-  if(QWidget* const widget = qobject_cast<QWidget*>(&Object))
+  if (QWidget* const widget = qobject_cast<QWidget*>(&Object))
+  {
+    if (widget->isVisible())
     {
-    if(widget->isVisible())
-      {
       result += QString::number(1);
       index = visible_index;
-      }
-    else
-      {
-      result += QString::number(0);
-      }
     }
-  
+    else
+    {
+      result += QString::number(0);
+    }
+  }
+
   result += type + QString::number(index);
 
   result.replace("/", "|");
@@ -137,48 +135,48 @@ static const QString InternalGetName(QObject& Object)
 {
   QString result = Object.objectName();
 
-  if(result.isEmpty())
-    {
-    result = InternalGetNameAsUnnamed(Object);
-    }
-
-  if(qobject_cast<QApplication*>(&Object))
+  if (result.isEmpty())
   {
-      result.append("-app");
+    result = InternalGetNameAsUnnamed(Object);
+  }
+
+  if (qobject_cast<QApplication*>(&Object))
+  {
+    result.append("-app");
   }
 
   result.replace("/", "|");
   return result;
 }
 
-
 const QString pqObjectNaming::GetName(QObject& Object)
 {
   QString name = InternalGetName(Object);
-  if(name.isEmpty())
-    {
+  if (name.isEmpty())
+  {
     qCritical() << "Cannot record event for unnamed object " << &Object;
     return QString();
-    }
-  
-  for(QObject* p = Object.parent(); p; p = p->parent())
-    {
+  }
+
+  for (QObject* p = Object.parent(); p; p = p->parent())
+  {
     const QString parent_name = InternalGetName(*p);
-    
-    if(parent_name.isEmpty())
-      {
-      qCritical() << "Cannot record event for incompletely-named object " << name << " " << &Object << " with parent " << p;
+
+    if (parent_name.isEmpty())
+    {
+      qCritical() << "Cannot record event for incompletely-named object " << name << " " << &Object
+                  << " with parent " << p;
       return QString();
-      }
-      
+    }
+
     name = parent_name + "/" + name;
-    
-    if(!p->parent() && !QApplication::topLevelWidgets().contains(qobject_cast<QWidget*>(p)))
-      {
+
+    if (!p->parent() && !QApplication::topLevelWidgets().contains(qobject_cast<QWidget*>(p)))
+    {
       qCritical() << "Object " << p << " is not a top-level widget";
       return QString();
-      }
     }
+  }
 
   return name;
 }
@@ -187,134 +185,132 @@ QObject* pqObjectNaming::GetObject(const QString& Name)
 {
   QObject* result = 0;
   QObject* lastObject = 0;
-  if(Name.isEmpty())
-    {
+  if (Name.isEmpty())
+  {
     return 0;
-    }
+  }
 
   const QStringList names = Name.split("/");
 
   // see if QApplication is the requested object
   QString app_name = InternalGetName(*QApplication::instance());
-  if( app_name == Name)
+  if (app_name == Name)
   {
-      return QApplication::instance();
+    return QApplication::instance();
   }
 
   const QWidgetList top_level_widgets = QApplication::topLevelWidgets();
-  for(int i = 0; i != top_level_widgets.size(); ++i)
-    {
+  for (int i = 0; i != top_level_widgets.size(); ++i)
+  {
     QObject* object = top_level_widgets[i];
     const QString name = InternalGetName(*object);
     const QString alt_name = InternalGetNameAsUnnamed(*object);
-    
-    if(name == names[0] || alt_name == names[0])
-      {
+
+    if (name == names[0] || alt_name == names[0])
+    {
       result = object;
       lastObject = object;
       break;
-      }
     }
-    
-  for(int j = 1; j < names.size(); ++j)
-    {
+  }
+
+  for (int j = 1; j < names.size(); ++j)
+  {
     const QObjectList& children = result ? result->children() : QObjectList();
-    
+
     result = 0;
     QString objectName = names[j];
-    for(int k = 0; k != children.size(); ++k)
-      {
+    for (int k = 0; k != children.size(); ++k)
+    {
       QObject* child = children[k];
       const QString name = InternalGetName(*child);
       const QString alt_name = InternalGetNameAsUnnamed(*child);
 
-      if(name == objectName || alt_name == objectName)
-        {
+      if (name == objectName || alt_name == objectName)
+      {
         result = child;
         lastObject = child;
         break;
-        }
+      }
 
       // Sometimes, when playing, widget are visible when they were not during recording,
       // try again with visibility at 1.
-      if (k == children.size() - 1 &&
-          result == 0 &&
-          !objectName.isEmpty() &&
-          objectName[0] == '0')
-        {
+      if (k == children.size() - 1 && result == 0 && !objectName.isEmpty() && objectName[0] == '0')
+      {
         objectName[0] = '1';
         k = 0;
-        }
       }
     }
-    
-  if(result)
+  }
+
+  if (result)
     return result;
 
   ErrorMessage.clear();
   QTextStream stream(&ErrorMessage);
-  stream << "Couldn't find object `"<< Name << "`\n";
+  stream << "Couldn't find object `" << Name << "`\n";
   if (lastObject)
-    {
+  {
     stream << "Found up to `" << pqObjectNaming::GetName(*lastObject) << "`\n";
-    }
+  }
 
   // controls how many matches to dump in error message.
   QString matchLimitEnv = QString::fromLocal8Bit(qgetenv("PQOBJECTNAMING_MATCH_LIMIT"));
   const int matchLimit = matchLimitEnv.isEmpty() ? 20 : matchLimitEnv.toInt();
 
   bool foundMatch = false;
-  if(lastObject)
+  if (lastObject)
+  {
+    const QObjectList matches = lastObject->findChildren<QObject*>(names[names.size() - 1]);
+    for (int cc = 0; (matchLimit <= 0 || cc < matchLimit) && cc < matches.size(); ++cc)
     {
-    const QObjectList matches = lastObject->findChildren<QObject*>(names[names.size()-1]);
-    for (int cc=0; (matchLimit <= 0 || cc < matchLimit) && cc < matches.size(); ++cc)
-      {
       stream << "\tPossible match: `" << pqObjectNaming::GetName(*matches[cc]) << "`\n";
-      }
-    if (matchLimit > 0 && matches.size() > matchLimit)
-      {
-      stream << "\tPossible match: .... (and " << (matches.size() - matchLimit) << " more!)\n"
-             << "\tSet PQOBJECTNAMING_MATCH_LIMIT environment var to a +'ve number to limit entries (or 0 for unlimited).\n";
-      }
     }
-  if (!foundMatch)
+    if (matchLimit > 0 && matches.size() > matchLimit)
     {
-    const QObjectList matches = lastObject->findChildren<QObject*>();
-    for (int cc=0; (matchLimit <= 0 || cc < matchLimit) && cc < matches.size(); ++cc)
-      {
-      stream << "\tAvailable widget: `" << pqObjectNaming::GetName(*matches[cc]) << "`\n";
-      }
-    if (matchLimit > 0 && matches.size() > matchLimit)
-      {
-      stream << "\tAvailable widget: .... (and " << (matches.size() - matchLimit) << " more!)\n"
-             << "\tSet PQOBJECTNAMING_MATCH_LIMIT environment var to a +'ve number to limit entries (or 0 for unlimited).\n";
-      }
+      stream << "\tPossible match: .... (and " << (matches.size() - matchLimit) << " more!)\n"
+             << "\tSet PQOBJECTNAMING_MATCH_LIMIT environment var to a +'ve number to limit "
+                "entries (or 0 for unlimited).\n";
     }
+  }
+  if (!foundMatch)
+  {
+    const QObjectList matches = lastObject->findChildren<QObject*>();
+    for (int cc = 0; (matchLimit <= 0 || cc < matchLimit) && cc < matches.size(); ++cc)
+    {
+      stream << "\tAvailable widget: `" << pqObjectNaming::GetName(*matches[cc]) << "`\n";
+    }
+    if (matchLimit > 0 && matches.size() > matchLimit)
+    {
+      stream << "\tAvailable widget: .... (and " << (matches.size() - matchLimit) << " more!)\n"
+             << "\tSet PQOBJECTNAMING_MATCH_LIMIT environment var to a +'ve number to limit "
+                "entries (or 0 for unlimited).\n";
+    }
+  }
   return 0;
 }
 
 void pqObjectNaming::DumpHierarchy(QStringList& results)
 {
   const QWidgetList widgets = QApplication::topLevelWidgets();
-  for(int i = 0; i != widgets.size(); ++i)
-    {
+  for (int i = 0; i != widgets.size(); ++i)
+  {
     DumpHierarchy(*widgets[i], results);
-    }
+  }
 }
 
 void pqObjectNaming::DumpHierarchy(QObject& object, QStringList& results)
 {
   results << GetName(object);
-  
+
   const QObjectList children = object.children();
-  for(int i = 0; i != children.size(); ++i)
-    {
+  for (int i = 0; i != children.size(); ++i)
+  {
     DumpHierarchy(*children[i], results);
-    }
+  }
 }
 
 QString pqObjectNaming::lastErrorMessage()
 {
   return ErrorMessage;
 }
-

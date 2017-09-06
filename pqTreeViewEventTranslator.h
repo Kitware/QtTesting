@@ -41,8 +41,9 @@ class QTTESTING_EXPORT pqTreeViewEventTranslator : public pqAbstractItemViewEven
 {
   Q_OBJECT
   typedef pqAbstractItemViewEventTranslatorBase Superclass;
+
 public:
-  pqTreeViewEventTranslator(QObject* parent=0);
+  pqTreeViewEventTranslator(QObject* parent = 0);
   ~pqTreeViewEventTranslator() override;
 
   /// Connect QTree signals to this class slots
@@ -60,7 +61,7 @@ protected slots:
 
 private:
   pqTreeViewEventTranslator(const pqTreeViewEventTranslator&); // Not implemented.
-  void operator=(const pqTreeViewEventTranslator&); // Not implemented.
+  void operator=(const pqTreeViewEventTranslator&);            // Not implemented.
 };
 
 #endif

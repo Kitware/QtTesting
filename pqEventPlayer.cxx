@@ -32,10 +32,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "pqEventPlayer.h"
 
+#include "pq3DViewEventPlayer.h"
 #include "pqAbstractActivateEventPlayer.h"
 #include "pqAbstractBooleanEventPlayer.h"
 #include "pqAbstractDoubleEventPlayer.h"
-#include "pq3DViewEventPlayer.h"
 #include "pqAbstractIntEventPlayer.h"
 #include "pqAbstractItemViewEventPlayer.h"
 #include "pqAbstractMiscellaneousEventPlayer.h"
@@ -43,17 +43,17 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqBasicWidgetEventPlayer.h"
 #include "pqComboBoxEventPlayer.h"
 #include "pqCommentEventPlayer.h"
+#include "pqEventTypes.h"
 #include "pqListViewEventPlayer.h"
 #include "pqNativeFileDialogEventPlayer.h"
 #include "pqObjectNaming.h"
 #include "pqTabBarEventPlayer.h"
 #include "pqTableViewEventPlayer.h"
 #include "pqTreeViewEventPlayer.h"
-#include "pqEventTypes.h"
 
 #include <QApplication>
-#include <QWidget>
 #include <QDebug>
+#include <QWidget>
 
 // ----------------------------------------------------------------------------
 pqEventPlayer::pqEventPlayer()
@@ -95,19 +95,18 @@ QList<pqWidgetEventPlayer*> pqEventPlayer::players() const
 // ----------------------------------------------------------------------------
 void pqEventPlayer::addWidgetEventPlayer(pqWidgetEventPlayer* Player)
 {
-  if(Player)
-    {
+  if (Player)
+  {
     // We Check if the Player has already been added previously
-    int index =
-      this->getWidgetEventPlayerIndex(QString(Player->metaObject()->className()));
+    int index = this->getWidgetEventPlayerIndex(QString(Player->metaObject()->className()));
     if (index != -1)
-      {
+    {
       return;
-      }
+    }
 
     this->Players.push_front(Player);
     Player->setParent(this);
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -115,9 +114,9 @@ bool pqEventPlayer::removeWidgetEventPlayer(const QString& className)
 {
   int index = this->getWidgetEventPlayerIndex(className);
   if (index == -1)
-    {
+  {
     return false;
-    }
+  }
 
   this->Players.removeAt(index);
   return true;
@@ -128,9 +127,9 @@ pqWidgetEventPlayer* pqEventPlayer::getWidgetEventPlayer(const QString& classNam
 {
   int index = this->getWidgetEventPlayerIndex(className);
   if (index == -1)
-    {
+  {
     return 0;
-    }
+  }
 
   return this->Players.at(index);
 }
@@ -138,106 +137,95 @@ pqWidgetEventPlayer* pqEventPlayer::getWidgetEventPlayer(const QString& classNam
 // ----------------------------------------------------------------------------
 int pqEventPlayer::getWidgetEventPlayerIndex(const QString& className)
 {
-  for(int i = 0 ; i < this->Players.count() ; ++i)
-    {
+  for (int i = 0; i < this->Players.count(); ++i)
+  {
     if (this->Players.at(i)->metaObject()->className() == className)
-      {
+    {
       return i;
-      }
     }
+  }
   return -1;
 }
 
 // ----------------------------------------------------------------------------
-void pqEventPlayer::playEvent(const QString& objectString,
-                              const QString& command,
-                              const QString& arguments,
-                              bool& error)
+void pqEventPlayer::playEvent(
+  const QString& objectString, const QString& command, const QString& arguments, bool& error)
 {
   this->playEvent(objectString, command, arguments, pqEventTypes::ACTION_EVENT, error);
 }
 
 // ----------------------------------------------------------------------------
-void pqEventPlayer::playEvent(const QString& objectString,
-                              const QString& command,
-                              const QString& arguments,
-                              int eventType,
-                              bool& error)
+void pqEventPlayer::playEvent(const QString& objectString, const QString& command,
+  const QString& arguments, int eventType, bool& error)
 {
   emit this->eventAboutToBePlayed(objectString, command, arguments);
   // If we can't find an object with the right name, we're done ...
   QObject* const object = pqObjectNaming::GetObject(objectString);
 
   // Scroll bar depends on monitor's resolution
-  if(!object && objectString.contains(QString("QScrollBar")))
-    {
+  if (!object && objectString.contains(QString("QScrollBar")))
+  {
     emit this->eventPlayed(objectString, command, arguments);
     error = false;
     return;
-    }
+  }
 
-  if(!object && !command.startsWith("comment"))
-    {
+  if (!object && !command.startsWith("comment"))
+  {
     QString errorMsg = pqObjectNaming::lastErrorMessage();
     qCritical() << (errorMsg.toLocal8Bit().data());
     emit this->errorMessage(errorMsg);
     error = true;
     return;
-    }
+  }
 
   // Loop through players until the event gets handled ...
   bool accepted = false;
   bool tmpError = false;
   if (command.startsWith("comment"))
-    {
-    pqWidgetEventPlayer* widgetPlayer =
-        this->getWidgetEventPlayer(QString("pqCommentEventPlayer"));
-    pqCommentEventPlayer* commentPlayer =
-        qobject_cast<pqCommentEventPlayer*>(widgetPlayer);
+  {
+    pqWidgetEventPlayer* widgetPlayer = this->getWidgetEventPlayer(QString("pqCommentEventPlayer"));
+    pqCommentEventPlayer* commentPlayer = qobject_cast<pqCommentEventPlayer*>(widgetPlayer);
     if (commentPlayer)
-      {
-      accepted = commentPlayer->playEvent(object, command, arguments, tmpError);
-      }
-    }
-  else
     {
-    for(int i = 0; i != this->Players.size(); ++i)
-      {
+      accepted = commentPlayer->playEvent(object, command, arguments, tmpError);
+    }
+  }
+  else
+  {
+    for (int i = 0; i != this->Players.size(); ++i)
+    {
       accepted = this->Players[i]->playEvent(object, command, arguments, eventType, tmpError);
-      if(accepted)
-        {
+      if (accepted)
+      {
         break;
-        }
       }
     }
+  }
 
   // The event wasn't handled at all ...
-  if(!accepted)
-    {
-    QString errorMessage =
-        QString("Unhandled event %1 object %2\n")
-          .arg(command, object ? object->objectName() : objectString);
+  if (!accepted)
+  {
+    QString errorMessage = QString("Unhandled event %1 object %2\n")
+                             .arg(command, object ? object->objectName() : objectString);
     qCritical() << errorMessage;
     emit this->errorMessage(errorMessage);
     error = true;
     return;
-    }
+  }
 
   // The event was handled, but there was a problem ...
-  if(accepted && tmpError)
-    {
-    QString errorMessage =
-        QString("Event error %1 object %2 with args:%3\n")
-          .arg(command, object ? object->objectName() : objectString,
-               arguments);
+  if (accepted && tmpError)
+  {
+    QString errorMessage = QString("Event error %1 object %2 with args:%3\n")
+                             .arg(command, object ? object->objectName() : objectString, arguments);
     qCritical() << errorMessage;
     emit this->errorMessage(errorMessage);
     error = true;
     return;
-    }
+  }
 
   // The event was handled successfully ...
   emit this->eventPlayed(objectString, command, arguments);
   error = false;
 }
-

@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -35,42 +35,43 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QComboBox>
 #include <QEvent>
 
-pqComboBoxEventTranslator::pqComboBoxEventTranslator(QObject* p) 
-  : pqWidgetEventTranslator(p),
-  CurrentObject(0)
+pqComboBoxEventTranslator::pqComboBoxEventTranslator(QObject* p)
+  : pqWidgetEventTranslator(p)
+  , CurrentObject(0)
 {
 }
 
 bool pqComboBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& Error)
 {
   QComboBox* combo = NULL;
-  for(QObject* test = Object; combo == NULL && test != NULL; test = test->parent())
-    {
+  for (QObject* test = Object; combo == NULL && test != NULL; test = test->parent())
+  {
     combo = qobject_cast<QComboBox*>(test);
-    }
+  }
 
-  if(!combo)
-    {
+  if (!combo)
+  {
     // not for me
     return false;
-    }
+  }
 
-  if(Event->type() == QEvent::Enter && Object == combo)
+  if (Event->type() == QEvent::Enter && Object == combo)
+  {
+    if (this->CurrentObject != Object)
     {
-    if(this->CurrentObject != Object)
+      if (this->CurrentObject)
       {
-      if(this->CurrentObject)
-        {
         disconnect(this->CurrentObject, 0, this, 0);
-        }
-      
+      }
+
       this->CurrentObject = Object;
       connect(combo, SIGNAL(destroyed(QObject*)), this, SLOT(onDestroyed(QObject*)));
       connect(combo, SIGNAL(activated(const QString&)), this, SLOT(onActivated(const QString&)));
-      connect(combo, SIGNAL(editTextChanged(const QString&)), this, SLOT(onEditTextChanged(const QString&)));
-      }
-    return true;
+      connect(combo, SIGNAL(editTextChanged(const QString&)), this,
+        SLOT(onEditTextChanged(const QString&)));
     }
+    return true;
+  }
   return this->Superclass::translateEvent(Object, Event, Error);
 }
 

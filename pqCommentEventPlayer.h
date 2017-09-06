@@ -47,17 +47,18 @@ class QTTESTING_EXPORT pqCommentEventPlayer : public pqWidgetEventPlayer
   typedef pqWidgetEventPlayer Superclass;
 
 public:
-  pqCommentEventPlayer(pqTestUtility* testUtility, QObject* p =0);
+  pqCommentEventPlayer(pqTestUtility* testUtility, QObject* p = 0);
   ~pqCommentEventPlayer() override;
 
   using Superclass::playEvent;
-  bool playEvent(QObject* Object, const QString &Command, const QString &Arguments, bool &Error) override;
+  bool playEvent(
+    QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
 
 signals:
   void comment(const QString&);
 
 private:
-  pqCommentEventPlayer(const pqCommentEventPlayer&); // Not implemented
+  pqCommentEventPlayer(const pqCommentEventPlayer&);            // Not implemented
   pqCommentEventPlayer& operator=(const pqCommentEventPlayer&); // Not implemented
 
   pqTestUtility* TestUtility;

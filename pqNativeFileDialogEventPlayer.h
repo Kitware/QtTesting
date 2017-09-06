@@ -44,18 +44,18 @@ Records usage of native file dialogs in test cases.
 \sa pqEventPlayer
 */
 
-class QTTESTING_EXPORT pqNativeFileDialogEventPlayer :
-  public pqWidgetEventPlayer
+class QTTESTING_EXPORT pqNativeFileDialogEventPlayer : public pqWidgetEventPlayer
 {
   Q_OBJECT
   typedef pqWidgetEventPlayer Superclass;
 
 public:
-  pqNativeFileDialogEventPlayer(pqTestUtility* util, QObject* p=0);
+  pqNativeFileDialogEventPlayer(pqTestUtility* util, QObject* p = 0);
   ~pqNativeFileDialogEventPlayer() override;
 
   using Superclass::playEvent;
-  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
+  bool playEvent(
+    QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
 
 protected slots:
   void start();

@@ -38,85 +38,82 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QMenu>
 #include <QMenuBar>
 #include <QPushButton>
-#include <QtDebug>
 #include <QToolButton>
+#include <QtDebug>
 
 #include "pqEventDispatcher.h"
 
-pqAbstractActivateEventPlayer::pqAbstractActivateEventPlayer(QObject * p)
+pqAbstractActivateEventPlayer::pqAbstractActivateEventPlayer(QObject* p)
   : pqWidgetEventPlayer(p)
 {
 }
 
-bool pqAbstractActivateEventPlayer::playEvent(QObject* Object,
-                                              const QString& Command,
-                                              const QString& Arguments,
-                                              bool& Error)
+bool pqAbstractActivateEventPlayer::playEvent(
+  QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
 {
-    if(Command != "activate" && Command != "longActivate")
-      return false;
+  if (Command != "activate" && Command != "longActivate")
+    return false;
 
-  if (QMenuBar* const menu_bar  = qobject_cast<QMenuBar*>(Object))
-    {
+  if (QMenuBar* const menu_bar = qobject_cast<QMenuBar*>(Object))
+  {
     QAction* action = findAction(menu_bar, Arguments);
     if (action)
-      {
+    {
       menu_bar->setActiveAction(action);
       return true;
-      }
+    }
 
     qCritical() << "couldn't find action " << Arguments;
     Error = true;
     return true;
-    }
+  }
 
-  if(QMenu* const object = qobject_cast<QMenu*>(Object))
-    {
+  if (QMenu* const object = qobject_cast<QMenu*>(Object))
+  {
     QAction* action = findAction(object, Arguments);
 
-    if(!action)
-      {
+    if (!action)
+    {
       qCritical() << "couldn't find action " << Arguments;
       Error = true;
       return true;
-      }
+    }
 
     // get a list of menus that must be navigated to
     // click on the action
     QObjectList menus;
-    for(QObject* p = object;
-        qobject_cast<QMenu*>(p) || qobject_cast<QMenuBar*>(p);
-        p = p->parent())
-      {
+    for (QObject* p = object; qobject_cast<QMenu*>(p) || qobject_cast<QMenuBar*>(p);
+         p = p->parent())
+    {
       menus.push_front(p);
-      }
+    }
 
     // unfold menus to make action visible
     int i;
     int numMenus = menus.size() - 1;
-    for(i=0; i < numMenus; ++i)
-      {
+    for (i = 0; i < numMenus; ++i)
+    {
       QObject* p = menus[i];
-      QMenu* next = qobject_cast<QMenu*>(menus[i+1]);
-      if(QMenuBar* menu_bar = qobject_cast<QMenuBar*>(p))
-        {
+      QMenu* next = qobject_cast<QMenu*>(menus[i + 1]);
+      if (QMenuBar* menu_bar = qobject_cast<QMenuBar*>(p))
+      {
         menu_bar->setActiveAction(next->menuAction());
         int max_wait = 0;
-        while(!next->isVisible() && (++max_wait) <= 2)
-          {
-          pqEventDispatcher::processEventsAndWait(100);
-          }
-        }
-      else if(QMenu* menu = qobject_cast<QMenu*>(p))
+        while (!next->isVisible() && (++max_wait) <= 2)
         {
-        menu->setActiveAction(next->menuAction());
-        int max_wait = 0;
-        while(!next->isVisible() && (++max_wait) <= 2)
-          {
           pqEventDispatcher::processEventsAndWait(100);
-          }
         }
       }
+      else if (QMenu* menu = qobject_cast<QMenu*>(p))
+      {
+        menu->setActiveAction(next->menuAction());
+        int max_wait = 0;
+        while (!next->isVisible() && (++max_wait) <= 2)
+        {
+          pqEventDispatcher::processEventsAndWait(100);
+        }
+      }
+    }
 
     // set active action, will cause scrollable menus to scroll
     // to make action visible
@@ -129,35 +126,35 @@ bool pqAbstractActivateEventPlayer::playEvent(QObject* Object,
     qApp->notify(object, &keyDown);
     qApp->notify(object, &keyUp);
 
-    //QApplication::processEvents();
+    // QApplication::processEvents();
     return true;
-    }
+  }
 
-  if(QAbstractButton* const object = qobject_cast<QAbstractButton*>(Object))
-    {
+  if (QAbstractButton* const object = qobject_cast<QAbstractButton*>(Object))
+  {
     if (Command == "activate")
-      {
+    {
       object->click();
-      //QApplication::processEvents();
+      // QApplication::processEvents();
       return true;
-      }
-    if(Command == "longActivate")
-      {
+    }
+    if (Command == "longActivate")
+    {
       QToolButton* tButton = qobject_cast<QToolButton*>(Object);
-      if(tButton)
-        {
+      if (tButton)
+      {
         tButton->showMenu();
         return true;
-        }
       }
     }
+  }
 
   if (QAction* const action = qobject_cast<QAction*>(Object))
-    {
+  {
     action->activate(QAction::Trigger);
-    //QApplication::processEvents();
+    // QApplication::processEvents();
     return true;
-    }
+  }
 
   qCritical() << "calling activate on unhandled type " << Object;
   Error = true;
@@ -168,26 +165,26 @@ QAction* pqAbstractActivateEventPlayer::findAction(QMenuBar* p, const QString& n
 {
   QList<QAction*> actions = p->actions();
   QAction* action = NULL;
-  foreach(QAction* a, actions)
+  foreach (QAction* a, actions)
+  {
+    if (a->menu()->objectName() == name)
     {
-    if(a->menu()->objectName() == name)
-      {
       action = a;
       break;
-      }
     }
+  }
 
-  if(!action)
+  if (!action)
+  {
+    foreach (QAction* a, actions)
     {
-    foreach(QAction* a, actions)
+      if (a->text() == name)
       {
-      if(a->text() == name)
-        {
         action = a;
         break;
-        }
       }
     }
+  }
 
   return action;
 }
@@ -196,26 +193,26 @@ QAction* pqAbstractActivateEventPlayer::findAction(QMenu* p, const QString& name
 {
   QList<QAction*> actions = p->actions();
   QAction* action = NULL;
-  foreach(QAction* a, actions)
+  foreach (QAction* a, actions)
+  {
+    if (a->objectName() == name)
     {
-    if(a->objectName() == name)
-      {
       action = a;
       break;
-      }
     }
+  }
 
-  if(!action)
+  if (!action)
+  {
+    foreach (QAction* a, actions)
     {
-    foreach(QAction* a, actions)
+      if (a->text() == name)
       {
-      if(a->text() == name)
-        {
         action = a;
         break;
-        }
       }
     }
+  }
 
   return action;
 }

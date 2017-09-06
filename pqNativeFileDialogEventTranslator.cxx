@@ -32,94 +32,97 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "pqNativeFileDialogEventTranslator.h"
 
-#include <QEvent>
-#include <QFileDialog>
-#include <QApplication>
 #include "pqEventTranslator.h"
 #include "pqTestUtility.h"
+#include <QApplication>
+#include <QEvent>
+#include <QFileDialog>
 
 #if QT_VERSION < QT_VERSION_CHECK(5, 3, 0)
 
-typedef QString (*_qt_filedialog_existing_directory_hook)(QWidget *parent, const QString &caption, const QString &dir, QFileDialog::Options options);
+typedef QString (*_qt_filedialog_existing_directory_hook)(
+  QWidget* parent, const QString& caption, const QString& dir, QFileDialog::Options options);
 extern Q_DECL_IMPORT _qt_filedialog_existing_directory_hook qt_filedialog_existing_directory_hook;
 
-typedef QString (*_qt_filedialog_open_filename_hook)(QWidget * parent, const QString &caption, const QString &dir, const QString &filter, QString *selectedFilter, QFileDialog::Options options);
+typedef QString (*_qt_filedialog_open_filename_hook)(QWidget* parent, const QString& caption,
+  const QString& dir, const QString& filter, QString* selectedFilter, QFileDialog::Options options);
 extern Q_DECL_IMPORT _qt_filedialog_open_filename_hook qt_filedialog_open_filename_hook;
 
-typedef QStringList (*_qt_filedialog_open_filenames_hook)(QWidget * parent, const QString &caption, const QString &dir, const QString &filter, QString *selectedFilter, QFileDialog::Options options);
+typedef QStringList (*_qt_filedialog_open_filenames_hook)(QWidget* parent, const QString& caption,
+  const QString& dir, const QString& filter, QString* selectedFilter, QFileDialog::Options options);
 extern Q_DECL_IMPORT _qt_filedialog_open_filenames_hook qt_filedialog_open_filenames_hook;
 
-typedef QString (*_qt_filedialog_save_filename_hook)(QWidget * parent, const QString &caption, const QString &dir, const QString &filter, QString *selectedFilter, QFileDialog::Options options);
+typedef QString (*_qt_filedialog_save_filename_hook)(QWidget* parent, const QString& caption,
+  const QString& dir, const QString& filter, QString* selectedFilter, QFileDialog::Options options);
 extern Q_DECL_IMPORT _qt_filedialog_save_filename_hook qt_filedialog_save_filename_hook;
 
 namespace
 {
-    pqNativeFileDialogEventTranslator* self;
-    _qt_filedialog_existing_directory_hook old_existing_directory_hook;
-    _qt_filedialog_open_filename_hook old_open_filename_hook;
-    _qt_filedialog_open_filenames_hook old_open_filenames_hook;
-    _qt_filedialog_save_filename_hook old_save_filename_hook;
+pqNativeFileDialogEventTranslator* self;
+_qt_filedialog_existing_directory_hook old_existing_directory_hook;
+_qt_filedialog_open_filename_hook old_open_filename_hook;
+_qt_filedialog_open_filenames_hook old_open_filenames_hook;
+_qt_filedialog_save_filename_hook old_save_filename_hook;
 
-    QString existing_directory_hook(QWidget* parent, const QString& caption, const QString& dir,
-                               QFileDialog::Options options)
-    {
-        qt_filedialog_existing_directory_hook = 0;
+QString existing_directory_hook(
+  QWidget* parent, const QString& caption, const QString& dir, QFileDialog::Options options)
+{
+  qt_filedialog_existing_directory_hook = 0;
 
-        QString path = QFileDialog::getExistingDirectory(parent, caption, dir, options);
-        self->record("DirOpen", path);
+  QString path = QFileDialog::getExistingDirectory(parent, caption, dir, options);
+  self->record("DirOpen", path);
 
-        qt_filedialog_existing_directory_hook = existing_directory_hook;
-        return path;
-    }
-
-
-    QString open_filename_hook(QWidget* parent, const QString& caption, const QString& dir,
-                               const QString& filter, QString *selectedFilter,
-                               QFileDialog::Options options)
-    {
-        qt_filedialog_open_filename_hook = 0;
-
-        QString file = QFileDialog::getOpenFileName(parent, caption, dir, filter, selectedFilter, options);
-        self->record("FileOpen", file);
-
-        qt_filedialog_open_filename_hook = open_filename_hook;
-        return file;
-    }
-
-    QStringList open_filenames_hook(QWidget* parent, const QString& caption, const QString& dir,
-                               const QString& filter, QString *selectedFilter,
-                               QFileDialog::Options options)
-    {
-        qt_filedialog_open_filenames_hook = 0;
-
-        QStringList files = QFileDialog::getOpenFileNames(parent, caption, dir, filter, selectedFilter, options);
-        self->record("FilesOpen", files.join(";"));
-
-        qt_filedialog_open_filenames_hook = open_filenames_hook;
-        return files;
-    }
-
-    QString save_filename_hook(QWidget* parent, const QString& caption, const QString& dir,
-                               const QString& filter, QString *selectedFilter,
-                               QFileDialog::Options options)
-    {
-        qt_filedialog_save_filename_hook = 0;
-
-        QString file = QFileDialog::getSaveFileName(parent, caption, dir, filter, selectedFilter, options);
-        self->record("FileSave", file);
-
-        qt_filedialog_save_filename_hook = save_filename_hook;
-        return file;
-    }
-
+  qt_filedialog_existing_directory_hook = existing_directory_hook;
+  return path;
 }
 
-
-pqNativeFileDialogEventTranslator::pqNativeFileDialogEventTranslator(pqTestUtility* util, QObject* p)
-    : pqWidgetEventTranslator(p), mUtil(util)
+QString open_filename_hook(QWidget* parent, const QString& caption, const QString& dir,
+  const QString& filter, QString* selectedFilter, QFileDialog::Options options)
 {
-    QObject::connect(mUtil->eventTranslator(), SIGNAL(started()), this, SLOT(start()));
-    QObject::connect(mUtil->eventTranslator(), SIGNAL(stopped()), this, SLOT(stop()));
+  qt_filedialog_open_filename_hook = 0;
+
+  QString file =
+    QFileDialog::getOpenFileName(parent, caption, dir, filter, selectedFilter, options);
+  self->record("FileOpen", file);
+
+  qt_filedialog_open_filename_hook = open_filename_hook;
+  return file;
+}
+
+QStringList open_filenames_hook(QWidget* parent, const QString& caption, const QString& dir,
+  const QString& filter, QString* selectedFilter, QFileDialog::Options options)
+{
+  qt_filedialog_open_filenames_hook = 0;
+
+  QStringList files =
+    QFileDialog::getOpenFileNames(parent, caption, dir, filter, selectedFilter, options);
+  self->record("FilesOpen", files.join(";"));
+
+  qt_filedialog_open_filenames_hook = open_filenames_hook;
+  return files;
+}
+
+QString save_filename_hook(QWidget* parent, const QString& caption, const QString& dir,
+  const QString& filter, QString* selectedFilter, QFileDialog::Options options)
+{
+  qt_filedialog_save_filename_hook = 0;
+
+  QString file =
+    QFileDialog::getSaveFileName(parent, caption, dir, filter, selectedFilter, options);
+  self->record("FileSave", file);
+
+  qt_filedialog_save_filename_hook = save_filename_hook;
+  return file;
+}
+}
+
+pqNativeFileDialogEventTranslator::pqNativeFileDialogEventTranslator(
+  pqTestUtility* util, QObject* p)
+  : pqWidgetEventTranslator(p)
+  , mUtil(util)
+{
+  QObject::connect(mUtil->eventTranslator(), SIGNAL(started()), this, SLOT(start()));
+  QObject::connect(mUtil->eventTranslator(), SIGNAL(stopped()), this, SLOT(stop()));
 }
 
 pqNativeFileDialogEventTranslator::~pqNativeFileDialogEventTranslator()
@@ -128,65 +131,66 @@ pqNativeFileDialogEventTranslator::~pqNativeFileDialogEventTranslator()
 
 void pqNativeFileDialogEventTranslator::start()
 {
-    self = this;
+  self = this;
 
-    old_existing_directory_hook = qt_filedialog_existing_directory_hook;
-    qt_filedialog_existing_directory_hook = existing_directory_hook;
+  old_existing_directory_hook = qt_filedialog_existing_directory_hook;
+  qt_filedialog_existing_directory_hook = existing_directory_hook;
 
-    old_open_filename_hook = qt_filedialog_open_filename_hook;
-    qt_filedialog_open_filename_hook = open_filename_hook;
+  old_open_filename_hook = qt_filedialog_open_filename_hook;
+  qt_filedialog_open_filename_hook = open_filename_hook;
 
-    old_open_filenames_hook = qt_filedialog_open_filenames_hook;
-    qt_filedialog_open_filenames_hook = open_filenames_hook;
+  old_open_filenames_hook = qt_filedialog_open_filenames_hook;
+  qt_filedialog_open_filenames_hook = open_filenames_hook;
 
-    old_save_filename_hook = qt_filedialog_save_filename_hook;
-    qt_filedialog_save_filename_hook = save_filename_hook;
-
+  old_save_filename_hook = qt_filedialog_save_filename_hook;
+  qt_filedialog_save_filename_hook = save_filename_hook;
 }
 
 void pqNativeFileDialogEventTranslator::stop()
 {
-    self = NULL;
+  self = NULL;
 
-    qt_filedialog_existing_directory_hook = old_existing_directory_hook;
-    qt_filedialog_open_filename_hook = old_open_filename_hook;
-    qt_filedialog_open_filenames_hook = old_open_filenames_hook;
-    qt_filedialog_save_filename_hook = old_save_filename_hook;
+  qt_filedialog_existing_directory_hook = old_existing_directory_hook;
+  qt_filedialog_open_filename_hook = old_open_filename_hook;
+  qt_filedialog_open_filenames_hook = old_open_filenames_hook;
+  qt_filedialog_save_filename_hook = old_save_filename_hook;
 }
 
-bool pqNativeFileDialogEventTranslator::translateEvent(QObject* Object, QEvent* pqNotUsed(Event),
-						       bool& pqNotUsed(Error))
+bool pqNativeFileDialogEventTranslator::translateEvent(
+  QObject* Object, QEvent* pqNotUsed(Event), bool& pqNotUsed(Error))
 {
-    // capture events under a filedialog and consume them
-    QObject* tmp = Object;
-    while(tmp)
+  // capture events under a filedialog and consume them
+  QObject* tmp = Object;
+  while (tmp)
+  {
+    if (qobject_cast<QFileDialog*>(tmp))
     {
-        if(qobject_cast<QFileDialog*>(tmp))
-        {
-            return true;
-        }
-        tmp = tmp->parent();
+      return true;
     }
+    tmp = tmp->parent();
+  }
 
-    return false;
+  return false;
 }
 
 void pqNativeFileDialogEventTranslator::record(const QString& command, const QString& args)
 {
-    QStringList files = args.split(";");
-    QStringList normalized_files;
+  QStringList files = args.split(";");
+  QStringList normalized_files;
 
-    foreach(QString file, files)
-    {
-        normalized_files.append(mUtil->convertToDataDirectory(file));
-    }
+  foreach (QString file, files)
+  {
+    normalized_files.append(mUtil->convertToDataDirectory(file));
+  }
 
-    emit this->recordEvent(QApplication::instance(), command, normalized_files.join(";"));
+  emit this->recordEvent(QApplication::instance(), command, normalized_files.join(";"));
 }
 
 #else
 pqNativeFileDialogEventTranslator::pqNativeFileDialogEventTranslator(
-  pqTestUtility* util, QObject* p) : pqWidgetEventTranslator(p), mUtil(util)
+  pqTestUtility* util, QObject* p)
+  : pqWidgetEventTranslator(p)
+  , mUtil(util)
 {
 }
 pqNativeFileDialogEventTranslator::~pqNativeFileDialogEventTranslator()
@@ -204,7 +208,7 @@ void pqNativeFileDialogEventTranslator::stop()
 bool pqNativeFileDialogEventTranslator::translateEvent(
   QObject* pqNotUsed(Object), QEvent* pqNotUsed(Event), bool& pqNotUsed(Error))
 {
-    return false;
+  return false;
 }
 
 void pqNativeFileDialogEventTranslator::record(const QString& command, const QString& args)

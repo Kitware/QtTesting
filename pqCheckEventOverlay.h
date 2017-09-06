@@ -44,7 +44,7 @@ class pqCheckEventOverlay : public QWidget
   typedef QWidget Superclass;
 
 public:
-  pqCheckEventOverlay(QWidget * parent = 0);
+  pqCheckEventOverlay(QWidget* parent = 0);
 
   // true if the overlayed widget can be checked, false otherwise
   bool Valid;
@@ -63,7 +63,7 @@ public:
   static const int OVERLAY_PEN_WIDTH = 5;
 
 protected:
-  void paintEvent(QPaintEvent *) override;
+  void paintEvent(QPaintEvent*) override;
 };
 
 #endif
