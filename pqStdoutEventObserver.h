@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -44,17 +44,13 @@ slot to the pqEventTranslator::recordEvent() signal.
 \sa pqEventTranslator, pqEventObserverXML
 */
 
-class QTTESTING_EXPORT pqStdoutEventObserver :
-  public QObject
+class QTTESTING_EXPORT pqStdoutEventObserver : public QObject
 {
   Q_OBJECT
 
 public slots:
   void onRecordEvent(
-    const QString& Widget,
-    const QString& Command,
-    const QString& Arguments,
-    const int& eventType);
+    const QString& Widget, const QString& Command, const QString& Arguments, const int& eventType);
 };
 
 #endif // !_pqStdoutEventObserver_h

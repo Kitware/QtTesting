@@ -45,18 +45,17 @@ pqTableViewEventPlayer::~pqTableViewEventPlayer()
 
 //-----------------------------------------------------------------------------0000000
 bool pqTableViewEventPlayer::playEvent(
-  QObject* object, const QString& command,
-  const QString& arguments, int eventType, bool& error)
+  QObject* object, const QString& command, const QString& arguments, int eventType, bool& error)
 {
-  QTableView* tableView= qobject_cast<QTableView*>(object);
-  if(!tableView)
-    {
+  QTableView* tableView = qobject_cast<QTableView*>(object);
+  if (!tableView)
+  {
     // mouse events go to the viewport widget
     tableView = qobject_cast<QTableView*>(object->parent());
-    }
-  if(!tableView)
-    {
+  }
+  if (!tableView)
+  {
     return false;
-    }
+  }
   return this->Superclass::playEvent(object, command, arguments, eventType, error);
 }

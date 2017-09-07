@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -39,12 +39,12 @@ class QMenuBar;
 class QMenu;
 
 /**
-Concrete implementation of pqWidgetEventPlayer that handles playback of "activate" events for buttons and menus.
+Concrete implementation of pqWidgetEventPlayer that handles playback of "activate" events for
+buttons and menus.
 
 \sa pqEventPlayer
 */
-class QTTESTING_EXPORT pqAbstractActivateEventPlayer :
-  public pqWidgetEventPlayer
+class QTTESTING_EXPORT pqAbstractActivateEventPlayer : public pqWidgetEventPlayer
 {
   Q_OBJECT
   typedef pqWidgetEventPlayer Superclass;
@@ -53,10 +53,10 @@ public:
   pqAbstractActivateEventPlayer(QObject* p = 0);
 
   using Superclass::playEvent;
-  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
+  bool playEvent(
+    QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
 
 private:
-
   QAction* findAction(QMenu* p, const QString& name);
   QAction* findAction(QMenuBar* p, const QString& name);
 
@@ -65,4 +65,3 @@ private:
 };
 
 #endif // !_pqAbstractActivateEventPlayer_h
-

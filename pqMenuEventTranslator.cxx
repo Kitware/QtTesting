@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -33,13 +33,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqMenuEventTranslator.h"
 
 #include <QEvent>
-#include <QMouseEvent>
 #include <QKeyEvent>
 #include <QMenu>
 #include <QMenuBar>
+#include <QMouseEvent>
 
 pqMenuEventTranslator::pqMenuEventTranslator(QObject* p)
-: pqWidgetEventTranslator(p)
+  : pqWidgetEventTranslator(p)
 {
 }
 
@@ -47,72 +47,70 @@ pqMenuEventTranslator::~pqMenuEventTranslator()
 {
 }
 
-bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event,
-                                           bool& Error)
+bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& Error)
 {
   QMenu* const menu = qobject_cast<QMenu*>(Object);
   QMenuBar* const menubar = qobject_cast<QMenuBar*>(Object);
-  if(!menu && !menubar)
-    {
+  if (!menu && !menubar)
+  {
     return false;
-    }
+  }
 
   if (menubar)
-    {
+  {
     QMouseEvent* e = dynamic_cast<QMouseEvent*>(Event);
     if (e && e->button() == Qt::LeftButton)
-      {
+    {
       QAction* action = menubar->actionAt(e->pos());
       if (action && action->menu())
-        {
+      {
         QString which = action->menu()->objectName();
-        if(which.isEmpty())
-          {
-          which = action->text();
-          }
-        emit recordEvent(menubar, "activate", which);
-        }
-      }
-    return true;
-    }
-
-  if(Event->type() == QEvent::KeyPress)
-    {
-    QKeyEvent* e = static_cast<QKeyEvent*>(Event);
-    if(e->key() == Qt::Key_Enter)
-      {
-      QAction* action = menu->activeAction();
-      if(action)
+        if (which.isEmpty())
         {
-        QString which = action->objectName();
-        if(which == QString::null)
-          {
           which = action->text();
-          }
-        emit recordEvent(menu, "activate", which);
         }
+        emit recordEvent(menubar, "activate", which);
       }
-    return true;
     }
+    return true;
+  }
 
-  if(Event->type() == QEvent::MouseButtonRelease)
+  if (Event->type() == QEvent::KeyPress)
+  {
+    QKeyEvent* e = static_cast<QKeyEvent*>(Event);
+    if (e->key() == Qt::Key_Enter)
     {
-    QMouseEvent* e = static_cast<QMouseEvent*>(Event);
-    if(e->button() == Qt::LeftButton)
+      QAction* action = menu->activeAction();
+      if (action)
       {
+        QString which = action->objectName();
+        if (which == QString::null)
+        {
+          which = action->text();
+        }
+        emit recordEvent(menu, "activate", which);
+      }
+    }
+    return true;
+  }
+
+  if (Event->type() == QEvent::MouseButtonRelease)
+  {
+    QMouseEvent* e = static_cast<QMouseEvent*>(Event);
+    if (e->button() == Qt::LeftButton)
+    {
       QAction* action = menu->actionAt(e->pos());
       if (action && !action->menu())
-        {
+      {
         QString which = action->objectName();
-        if(which == QString::null)
-          {
+        if (which == QString::null)
+        {
           which = action->text();
-          }
-        emit recordEvent(menu, "activate", which);
         }
+        emit recordEvent(menu, "activate", which);
       }
-    return true;
     }
+    return true;
+  }
   return this->Superclass::translateEvent(Object, Event, Error);
 }
-

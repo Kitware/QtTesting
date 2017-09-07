@@ -44,22 +44,26 @@ class pqWidgetEventTranslator;
 
 /**
 Manages serialization of user interaction for test-cases, demos, tutorials, etc.
-pqEventTranslator installs itself as a global Qt event "filter" that receives notification of every Qt event.  Each event is passed
-through a collection of pqWidgetEventTranslator objects, until one of them "handles" the event.  The pqWidgetEventTranslator objects
-convert low-level Qt events (mouse move, button down, key released, etc) into high-level ParaView events (button clicked, row selected, etc)
-that can be serialized as text.  Once an event translator is found, the recordEvent() signal is emitted with the name of the widget
-that is receiving the event, plus the serialized event.  Observers such as pqEventObserverXML connect to the recordEvent() signal and
+pqEventTranslator installs itself as a global Qt event "filter" that receives notification of every
+Qt event.  Each event is passed
+through a collection of pqWidgetEventTranslator objects, until one of them "handles" the event.  The
+pqWidgetEventTranslator objects
+convert low-level Qt events (mouse move, button down, key released, etc) into high-level ParaView
+events (button clicked, row selected, etc)
+that can be serialized as text.  Once an event translator is found, the recordEvent() signal is
+emitted with the name of the widget
+that is receiving the event, plus the serialized event.  Observers such as pqEventObserverXML
+connect to the recordEvent() signal and
 handle storage of the events.
 
 \sa pqWidgetEventTranslator, pqEventObserverStdout, pqEventObserverXML, pqEventPlayer.
 */
-class QTTESTING_EXPORT pqEventTranslator :
-  public QObject
+class QTTESTING_EXPORT pqEventTranslator : public QObject
 {
   Q_OBJECT
 
 public:
-  pqEventTranslator(QObject* p=0);
+  pqEventTranslator(QObject* p = 0);
   ~pqEventTranslator() override;
 
   /** Adds the default set of widget translators to the working set.
@@ -88,7 +92,8 @@ public:
   /// translating events which command is equivalent to the regexp
   /// (useful to prevent recording UI events from being
   /// captured as part of the recording)
-  void ignoreObject(QObject* object, QRegExp commandFilter = QRegExp("*", Qt::CaseInsensitive, QRegExp::Wildcard));
+  void ignoreObject(
+    QObject* object, QRegExp commandFilter = QRegExp("*", Qt::CaseInsensitive, QRegExp::Wildcard));
 
   /// start listening to the GUI and translating events
   void start();
@@ -109,7 +114,8 @@ signals:
   /// This signal will be emitted every time a translator generates a
   /// high-level ParaView event.  Observers should connect to this signal
   /// to serialize high-level events.
-  void recordEvent(const QString& Object, const QString& Command, const QString& Arguments, int eventType);
+  void recordEvent(
+    const QString& Object, const QString& Command, const QString& Arguments, int eventType);
 
   /// this signals when recording starts
   void started();
@@ -119,7 +125,8 @@ signals:
 
 private slots:
   // Slot called when recording an event
-  void onRecordEvent(QObject* Object, const QString& Command, const QString& Arguments, int eventType);
+  void onRecordEvent(
+    QObject* Object, const QString& Command, const QString& Arguments, int eventType);
 
   // Legacy convenient slot for pqEventTypes::ACTION_EVENT events
   void onRecordEvent(QObject* Object, const QString& Command, const QString& Arguments);

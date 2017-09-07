@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -52,16 +52,13 @@ must ensure that it goes out of scope before trying to playback the stream.
 class QTTESTING_EXPORT pqPythonEventObserver : public pqEventObserver
 {
   Q_OBJECT
-  
+
 public:
-  pqPythonEventObserver(QObject* p=0);
+  pqPythonEventObserver(QObject* p = 0);
   ~pqPythonEventObserver();
 
   void onRecordEvent(
-    const QString& Widget,
-    const QString& Command,
-    const QString& Arguments,
-    const int& eventType);
+    const QString& Widget, const QString& Command, const QString& Arguments, const int& eventType);
 
   void setStream(QTextStream*);
 
@@ -71,4 +68,3 @@ private:
 };
 
 #endif // !_pqPythonEventObserver_h
-

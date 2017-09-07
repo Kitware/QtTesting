@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -32,9 +32,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "pqSpinBoxEventTranslator.h"
 
-#include <QSpinBox>
-#include <QMouseEvent>
 #include <QKeyEvent>
+#include <QMouseEvent>
+#include <QSpinBox>
 #include <QStyle>
 #include <QStyleOptionSpinBox>
 
@@ -46,60 +46,58 @@ pqSpinBoxEventTranslator::pqSpinBoxEventTranslator(QObject* p)
 }
 
 // ----------------------------------------------------------------------------
-bool pqSpinBoxEventTranslator::translateEvent(QObject* Object,
-                                              QEvent* Event,
-                                              bool& Error)
+bool pqSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& Error)
 {
   QSpinBox* object = qobject_cast<QSpinBox*>(Object);
-  
+
   // consume line edit events if part of spin box
-  if(!object && qobject_cast<QSpinBox*>(Object->parent()))
-    {
+  if (!object && qobject_cast<QSpinBox*>(Object->parent()))
+  {
     return true;
-    }
+  }
 
-  if(!object)
-      return false;
+  if (!object)
+    return false;
 
-  if(Event->type() == QEvent::Enter && Object==object)
+  if (Event->type() == QEvent::Enter && Object == object)
+  {
+    if (this->CurrentObject != Object)
     {
-    if(this->CurrentObject != Object)
+      if (this->CurrentObject)
       {
-      if(this->CurrentObject)
-        {
         disconnect(this->CurrentObject, 0, this, 0);
-        }
+      }
 
       this->CurrentObject = Object;
       this->Value = object->value();
-      connect(object, SIGNAL(valueChanged(int)),this, SLOT(onValueChanged(int)));
+      connect(object, SIGNAL(valueChanged(int)), this, SLOT(onValueChanged(int)));
       connect(object, SIGNAL(destroyed(QObject*)), this, SLOT(onDestroyed(QObject*)));
-      }
-    return true;
     }
+    return true;
+  }
 
-  if (Event->type() == QEvent::Leave && Object==object)
-    {
+  if (Event->type() == QEvent::Leave && Object == object)
+  {
     disconnect(this->CurrentObject, 0, this, 0);
     this->CurrentObject = 0;
     return true;
-    }
+  }
 
-  if(Event->type() == QEvent::KeyRelease && Object == object)
-    {
+  if (Event->type() == QEvent::KeyRelease && Object == object)
+  {
     QKeyEvent* ke = static_cast<QKeyEvent*>(Event);
     QString keyText = ke->text();
     this->Value = object->value();
-    if(keyText.length() && keyText.at(0).isPrint())
-      {
+    if (keyText.length() && keyText.at(0).isPrint())
+    {
       emit recordEvent(object, "set_int", QString("%1").arg(object->value()));
-      }
-    else
-      {
-      emit recordEvent(object, "key", QString("%1").arg(ke->key()));
-      }
-    return true;
     }
+    else
+    {
+      emit recordEvent(object, "key", QString("%1").arg(ke->key()));
+    }
+    return true;
+  }
   return this->Superclass::translateEvent(Object, Event, Error);
 }
 
@@ -112,7 +110,5 @@ void pqSpinBoxEventTranslator::onDestroyed(QObject* /*Object*/)
 // ----------------------------------------------------------------------------
 void pqSpinBoxEventTranslator::onValueChanged(int number)
 {
-  emit recordEvent(this->CurrentObject, "set_int", QString("%1")
-                   .arg(number));
+  emit recordEvent(this->CurrentObject, "set_int", QString("%1").arg(number));
 }
-

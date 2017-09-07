@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -58,18 +58,9 @@ public:
   returning "true" if they handled the command, and setting Error
   to "true" if there were any problems. */
   virtual bool playEvent(
-    QObject* object,
-    const QString& command,
-    const QString& arguments,
-    bool& error);
+    QObject* object, const QString& command, const QString& arguments, bool& error);
   virtual bool playEvent(
-    QObject* object,
-    const QString& command,
-    const QString& arguments,
-    int eventType,
-    bool& error);
-
+    QObject* object, const QString& command, const QString& arguments, int eventType, bool& error);
 };
 
 #endif // !_pqWidgetEventPlayer_h
-

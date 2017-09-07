@@ -32,8 +32,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "pqTreeViewEventTranslator.h"
 
-#include <QTreeView>
 #include <QHeaderView>
+#include <QTreeView>
 
 //-----------------------------------------------------------------------------
 pqTreeViewEventTranslator::pqTreeViewEventTranslator(QObject* parentObject)
@@ -50,10 +50,10 @@ pqTreeViewEventTranslator::~pqTreeViewEventTranslator()
 void pqTreeViewEventTranslator::connectWidgetToSlots(QAbstractItemView* abstractItemView)
 {
   this->Superclass::connectWidgetToSlots(abstractItemView);
-  QObject::connect(abstractItemView, SIGNAL(expanded(const QModelIndex&)),
-                   this, SLOT(onExpanded(const QModelIndex&)));
-  QObject::connect(abstractItemView, SIGNAL(collapsed(const QModelIndex&)),
-                   this, SLOT(onCollapsed(const QModelIndex&)));
+  QObject::connect(abstractItemView, SIGNAL(expanded(const QModelIndex&)), this,
+    SLOT(onExpanded(const QModelIndex&)));
+  QObject::connect(abstractItemView, SIGNAL(collapsed(const QModelIndex&)), this,
+    SLOT(onCollapsed(const QModelIndex&)));
 }
 
 //-----------------------------------------------------------------------------
@@ -62,8 +62,7 @@ void pqTreeViewEventTranslator::onExpanded(const QModelIndex& index)
   QTreeView* treeView = qobject_cast<QTreeView*>(this->sender());
 
   // record the check state change if the item is user-checkable.
-  emit this->recordEvent(treeView, "expand",
-    this->getIndexAsString(index));
+  emit this->recordEvent(treeView, "expand", this->getIndexAsString(index));
 }
 
 //-----------------------------------------------------------------------------
@@ -72,22 +71,20 @@ void pqTreeViewEventTranslator::onCollapsed(const QModelIndex& index)
   QTreeView* treeView = qobject_cast<QTreeView*>(this->sender());
 
   // record the check state change if the item is user-checkable.
-  emit this->recordEvent(treeView, "collapse",
-    this->getIndexAsString(index));
+  emit this->recordEvent(treeView, "collapse", this->getIndexAsString(index));
 }
 
 //-----------------------------------------------------------------------------
 void pqTreeViewEventTranslator::onEnteredCheck(const QModelIndex& item)
 {
-  //Recover treeview
+  // Recover treeview
   QTreeView* treeView = qobject_cast<QTreeView*>(this->AbstractItemView);
 
   // Recover a visual rectangle corresponding to the item
   QRect visualRect = treeView->visualRect(item);
 
   // Translating it of margins, as they are missing from visual rect
-  visualRect.translate(treeView->contentsMargins().left(),
-                      treeView->contentsMargins().top());
+  visualRect.translate(treeView->contentsMargins().left(), treeView->contentsMargins().top());
 
   // As well as header
   visualRect.translate(0, treeView->header()->height());
@@ -102,15 +99,15 @@ QAbstractItemView* pqTreeViewEventTranslator::findCorrectedAbstractItemView(QObj
 {
   // Ignore QHeaderView event specifically
   if (qobject_cast<QHeaderView*>(object))
-    {
+  {
     return NULL;
-    }
+  }
 
   QAbstractItemView* abstractItemView = qobject_cast<QTreeView*>(object);
-  if(! abstractItemView)
-    {
+  if (!abstractItemView)
+  {
     // mouse events go to the viewport widget
     abstractItemView = qobject_cast<QTreeView*>(object->parent());
-    }
+  }
   return abstractItemView;
 }

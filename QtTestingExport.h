@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -36,21 +36,21 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "QtTestingConfigure.h"
 
 #if defined(QTTESTING_BUILD_SHARED_LIBS)
-# if defined(QtTesting_EXPORTS)
-#  if defined(WIN32)
-#   define QTTESTING_EXPORT __declspec(dllexport)
-#  elif defined(__GNUC__) && __GNUC__ >= 4
-#   define QTTESTING_EXPORT __attribute__ ((visibility("default")))
-#  endif
-# else
-#  if defined(WIN32)
-#   define QTTESTING_EXPORT __declspec(dllimport)
-#  endif
-# endif
+#if defined(QtTesting_EXPORTS)
+#if defined(WIN32)
+#define QTTESTING_EXPORT __declspec(dllexport)
+#elif defined(__GNUC__) && __GNUC__ >= 4
+#define QTTESTING_EXPORT __attribute__((visibility("default")))
+#endif
+#else
+#if defined(WIN32)
+#define QTTESTING_EXPORT __declspec(dllimport)
+#endif
+#endif
 #endif
 
 #ifndef QTTESTING_EXPORT
-# define QTTESTING_EXPORT
+#define QTTESTING_EXPORT
 #endif
 
 #endif // !_QtTestingExport_h

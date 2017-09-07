@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -36,22 +36,22 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqWidgetEventPlayer.h"
 
 /**
-Concrete implementation of pqWidgetEventPlayer that handles playback of "activate" events for buttons and menus.
+Concrete implementation of pqWidgetEventPlayer that handles playback of "activate" events for
+buttons and menus.
 
 \sa pqEventPlayer
 */
-class pqBasicWidgetEventPlayer :
-  public pqWidgetEventPlayer
+class pqBasicWidgetEventPlayer : public pqWidgetEventPlayer
 {
   Q_OBJECT
   typedef pqWidgetEventPlayer Superclass;
 
 public:
-  pqBasicWidgetEventPlayer(QObject* p=0);
+  pqBasicWidgetEventPlayer(QObject* p = 0);
 
   using Superclass::playEvent;
-  bool playEvent(QObject* object, const QString& command, 
-                 const QString& arguments, int eventType, bool& error) override;
+  bool playEvent(QObject* object, const QString& command, const QString& arguments, int eventType,
+    bool& error) override;
 
 private:
   pqBasicWidgetEventPlayer(const pqBasicWidgetEventPlayer&);
@@ -59,4 +59,3 @@ private:
 };
 
 #endif // !_pqBasicWidgetEventPlayer_h
-

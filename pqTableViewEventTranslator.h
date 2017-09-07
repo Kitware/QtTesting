@@ -41,8 +41,9 @@ class QTTESTING_EXPORT pqTableViewEventTranslator : public pqAbstractItemViewEve
 {
   Q_OBJECT
   typedef pqAbstractItemViewEventTranslatorBase Superclass;
+
 public:
-  pqTableViewEventTranslator(QObject* parent=0);
+  pqTableViewEventTranslator(QObject* parent = 0);
   ~pqTableViewEventTranslator() override;
 
   /// find and set the corrected abstract item view
@@ -54,7 +55,7 @@ protected slots:
 
 private:
   pqTableViewEventTranslator(const pqTableViewEventTranslator&); // Not implemented.
-  void operator=(const pqTableViewEventTranslator&); // Not implemented.
+  void operator=(const pqTableViewEventTranslator&);             // Not implemented.
 };
 
 #endif

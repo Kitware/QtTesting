@@ -42,14 +42,13 @@ Translates low-level Qt events into high-level ParaView events that can be recor
 \sa pqEventTranslator
 */
 
-class QTTESTING_EXPORT pq3DViewEventTranslator :
-  public pqWidgetEventTranslator
+class QTTESTING_EXPORT pq3DViewEventTranslator : public pqWidgetEventTranslator
 {
   Q_OBJECT
   typedef pqWidgetEventTranslator Superclass;
 
 public:
-  pq3DViewEventTranslator(const QByteArray& classname, QObject* p=0);
+  pq3DViewEventTranslator(const QByteArray& classname, QObject* p = 0);
   ~pq3DViewEventTranslator() override;
 
   using Superclass::translateEvent;
@@ -62,7 +61,6 @@ protected:
 private:
   pq3DViewEventTranslator(const pq3DViewEventTranslator&);
   pq3DViewEventTranslator& operator=(const pq3DViewEventTranslator&);
-
 };
 
 #endif // !_pq3DViewEventTranslator_h

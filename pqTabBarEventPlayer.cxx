@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -46,53 +46,53 @@ pqTabBarEventPlayer::pqTabBarEventPlayer(QObject* p)
 bool pqTabBarEventPlayer::playEvent(
   QObject* target, const QString& command, const QString& arguments, bool& error_flag)
 {
-/*  if (command != "set_tab"  && command != "set_tab_with_text")
-    {
-    // I don't handle this. Return false
-    return false;
-    }*/
+  /*  if (command != "set_tab"  && command != "set_tab_with_text")
+      {
+      // I don't handle this. Return false
+      return false;
+      }*/
 
   const QString value = arguments;
-    
+
   QTabBar* const tab_bar = qobject_cast<QTabBar*>(target);
   if (!tab_bar)
-    {
+  {
     return false;
-    }
+  }
 
-  if (command=="set_tab")
-    {
+  if (command == "set_tab")
+  {
     // "set_tab" saves tab index. This was done in the past. Newly recorded
     // tests will use set_tab_with_text for more reliable playback.
     bool ok = false;
     int which = value.toInt(&ok);
-    if(!ok)
-      {
+    if (!ok)
+    {
       qCritical() << "calling set_tab with invalid argument on " << target;
       error_flag = true;
-      }
-    else if(tab_bar->count() < which)
-      {
+    }
+    else if (tab_bar->count() < which)
+    {
       qCritical() << "calling set_tab with out of bounds index on " << target;
       error_flag = true;
-      }
-    else
-      {
-      tab_bar->setCurrentIndex(which);
-      }
-    return true;
     }
+    else
+    {
+      tab_bar->setCurrentIndex(which);
+    }
+    return true;
+  }
 
   if (command == "set_tab_with_text")
+  {
+    for (int cc = 0; cc < tab_bar->count(); cc++)
     {
-    for (int cc=0 ; cc < tab_bar->count(); cc++)
-      {
       if (tab_bar->tabText(cc) == value)
-        {
+      {
         tab_bar->setCurrentIndex(cc);
         return true;
-        }
       }
+    }
 
     // With Qt 4.8, we have started seeing change in the order of the
     // tab-widgets created for docked panels. That results in the names not
@@ -100,37 +100,36 @@ bool pqTabBarEventPlayer::playEvent(
     // an attempt to locate a sibling tab-bar that has a pane with the expected
     // name. If none is found, then alone do we give up.
     if (tab_bar->parentWidget())
-      {
+    {
       QObjectList siblings = tab_bar->parentWidget()->children();
       foreach (QObject* sibling_object, siblings)
-        {
+      {
         QTabBar* sibling_tab_bar = qobject_cast<QTabBar*>(sibling_object);
-        for (int cc=0 ; sibling_tab_bar != NULL && cc < sibling_tab_bar->count(); cc++)
-          {
+        for (int cc = 0; sibling_tab_bar != NULL && cc < sibling_tab_bar->count(); cc++)
+        {
           if (sibling_tab_bar->tabText(cc) == value)
-            {
+          {
             sibling_tab_bar->setCurrentIndex(cc);
             return true;
-            }
           }
         }
       }
+    }
 
     qCritical() << "calling set_tab with unknown tab " << value;
     qCritical() << "Available tabs are (count=" << tab_bar->count() << ")";
-    for (int cc=0 ; cc < tab_bar->count(); cc++)
-      {
+    for (int cc = 0; cc < tab_bar->count(); cc++)
+    {
       qCritical() << "    " << tab_bar->tabText(cc);
-      }
+    }
     error_flag = true;
     return true;
-    }
+  }
 
   if (!this->Superclass::playEvent(target, command, arguments, error_flag))
-    {
+  {
     qCritical() << "calling set_tab on unhandled type " << target;
     error_flag = true;
-    }
+  }
   return true;
 }
-

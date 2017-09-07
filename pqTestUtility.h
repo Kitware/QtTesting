@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -66,7 +66,6 @@ public:
   ~pqTestUtility() override;
 
 public:
-
   /// Get the event dispatcher. Dispatcher is used to play tests back.
   pqEventDispatcher* dispatcher();
 
@@ -88,19 +87,17 @@ public:
 
   /// Return a QMap of all the eventSources.
   QMap<QString, pqEventSource*> eventSources() const;
-  
+
   /// add an event observer for recording files
   /// An pqXMLEventObserver is automatically added if XML support is enabled.
   /// A pqPythonEventObserver is automatically added if Python support is enabled.
-  void addEventObserver(const QString& fileExtension, 
-                          pqEventObserver* translator);
+  void addEventObserver(const QString& fileExtension, pqEventObserver* translator);
 
   /// Return a QMap of all the event Observers.
   QMap<QString, pqEventObserver*> eventObservers() const;
 
   /// Returns if the utility is currently playing a test.
-  bool playingTest() const
-    { return this->PlayingTest; }
+  bool playingTest() const { return this->PlayingTest; }
 
   /// Plays back the test given by the filename(s). This is a blocking call i.e.
   /// it does not return until the test has been played or aborted due to
@@ -130,7 +127,7 @@ public:
   QString convertFromDataDirectory(const QString& file);
 
   // Get current test filname if any
-  const QString& filename() const {return this->Filename;};
+  const QString& filename() const { return this->Filename; };
 
   /// True if a dialog is opened when recording, false otherwise
   bool recordWithDialog() const;
@@ -153,28 +150,27 @@ signals:
   void playbackStopped(const QString& filename, bool error);
 
 private:
-  QMap<QString, QDir>::iterator findBestIterator(const QString& file,
-                                                 QMap<QString, QDir>::iterator startIter);
+  QMap<QString, QDir>::iterator findBestIterator(
+    const QString& file, QMap<QString, QDir>::iterator startIter);
   bool objectStatePropertyAlreadyAdded(QObject* object, const QString& property);
 
 protected:
-  pqEventRecorder     Recorder;
-  pqEventDispatcher   Dispatcher;
-  pqEventPlayer       Player;
-  pqEventTranslator   Translator;
-  bool                PlayingTest;
-  bool                RecordWithDialog;
+  pqEventRecorder Recorder;
+  pqEventDispatcher Dispatcher;
+  pqEventPlayer Player;
+  pqEventTranslator Translator;
+  bool PlayingTest;
+  bool RecordWithDialog;
 
-  QString             Filename;
-  QIODevice*          File;
-  QString             FileSuffix;
+  QString Filename;
+  QIODevice* File;
+  QString FileSuffix;
 
-  QMap<QString, pqEventSource*>   EventSources;
+  QMap<QString, pqEventSource*> EventSources;
   QMap<QString, pqEventObserver*> EventObservers;
 
-  QMap<QString, QDir>          DataDirectories;
-  QMap<QObject*, QStringList>  ObjectStateProperty;
-
+  QMap<QString, QDir> DataDirectories;
+  QMap<QObject*, QStringList> ObjectStateProperty;
 };
 
 #endif // !_pqTestUtility_h

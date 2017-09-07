@@ -37,16 +37,15 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QObject>
 
 // QtTesting inlcudes
-#include "pqTestUtility.h"
 #include "QtTestingExport.h"
+#include "pqTestUtility.h"
 
 /// pqEventComment is responsible for adding any kind of events that are not added
 /// by widgets.
 /// For exemple, you can add an event to block the playback, to show a custom
 /// comment etc ...
 
-class QTTESTING_EXPORT pqEventComment :
-  public QObject
+class QTTESTING_EXPORT pqEventComment : public QObject
 {
   Q_OBJECT
   typedef QObject Superclass;
@@ -68,9 +67,7 @@ signals:
   void recordComment(QObject* widget, const QString& type, const QString& argument);
 
 protected:
-  void recordComment(const QString& command,
-                     const QString& arguments,
-                     QObject* = 0);
+  void recordComment(const QString& command, const QString& arguments, QObject* = 0);
 
   pqTestUtility* TestUtility;
 };

@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -35,60 +35,58 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QContextMenuEvent>
 #include <QCoreApplication>
 #include <QPoint>
-#include <QtDebug>
 #include <QWidget>
+#include <QtDebug>
 
 #include "pqEventTypes.h"
 
-pqWidgetEventPlayer::pqWidgetEventPlayer(QObject* p) 
-  : QObject(p)  
+pqWidgetEventPlayer::pqWidgetEventPlayer(QObject* p)
+  : QObject(p)
 {
 }
 
-pqWidgetEventPlayer::~pqWidgetEventPlayer() 
+pqWidgetEventPlayer::~pqWidgetEventPlayer()
 {
 }
 
 bool pqWidgetEventPlayer::playEvent(
-  QObject* object, const QString& command, 
-  const QString& arguments, bool& error)
+  QObject* object, const QString& command, const QString& arguments, bool& error)
 {
   QWidget* widget = qobject_cast<QWidget*>(object);
-  if(widget)
+  if (widget)
+  {
+    if (command == "contextMenu")
     {
-    if(command == "contextMenu")
-      {
       QPoint pt(widget->x(), widget->y());
       QPoint globalPt = widget->mapToGlobal(pt);
       QContextMenuEvent e(QContextMenuEvent::Other, pt, globalPt);
       qApp->notify(widget, &e);
       return true;
-      }
+    }
     else if (command == "size")
-      {
+    {
       QStringList entries = arguments.split(',');
       if (entries.size() == 2)
-        {
+      {
         QSize sz = widget->size();
         error = (sz.width() != entries[0].toInt() || sz.height() != entries[1].toInt());
         if (error)
-          {
+        {
           qCritical() << "Size mismatch: (" << arguments << ") != " << sz;
-          }
-        return true;
         }
+        return true;
       }
     }
+  }
   return false;
 }
 
-bool pqWidgetEventPlayer::playEvent(QObject* object, const QString& command,
-    const QString& arguments, int eventType, bool& error)
+bool pqWidgetEventPlayer::playEvent(
+  QObject* object, const QString& command, const QString& arguments, int eventType, bool& error)
 {
   if (eventType == pqEventTypes::ACTION_EVENT)
-    {
+  {
     return this->playEvent(object, command, arguments, error);
-    }
+  }
   return false;
 }
-

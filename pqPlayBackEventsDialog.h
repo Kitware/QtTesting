@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -40,22 +40,24 @@ class pqEventPlayer;
 class pqEventDispatcher;
 class pqTestUtility;
 
-/// Provides a standard dialog that will PlayBack user input to an XML file as long as the dialog remains open
+/// Provides a standard dialog that will PlayBack user input to an XML file as long as the dialog
+/// remains open
 class QTTESTING_EXPORT pqPlayBackEventsDialog : public QDialog
 {
   Q_OBJECT
-  
+
   typedef QDialog Superclass;
+
 public:
   /**
   Creates the dialog and begins translating user input with the supplied translator.
   */
-  pqPlayBackEventsDialog(pqEventPlayer& Player,pqEventDispatcher& Source,
-                         pqTestUtility* TestUtility, QWidget* Parent);
+  pqPlayBackEventsDialog(
+    pqEventPlayer& Player, pqEventDispatcher& Source, pqTestUtility* TestUtility, QWidget* Parent);
   ~pqPlayBackEventsDialog() override;
 
 private slots:
-  void onEventAboutToBePlayed(const QString&,const QString&,const QString&);
+  void onEventAboutToBePlayed(const QString&, const QString&, const QString&);
   void loadFiles();
   void insertFiles();
   void removeFiles();
@@ -86,4 +88,3 @@ private:
 };
 
 #endif // !_pqPlayBackEventsDialog_h
-

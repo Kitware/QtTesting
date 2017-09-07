@@ -41,7 +41,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqEventTypes.h"
 
 // ----------------------------------------------------------------------------
-pqEventRecorder::pqEventRecorder(QObject *parent)
+pqEventRecorder::pqEventRecorder(QObject* parent)
   : Superclass(parent)
 {
   this->ActiveObserver = 0;
@@ -62,22 +62,20 @@ pqEventRecorder::~pqEventRecorder()
 void pqEventRecorder::setContinuousFlush(bool value)
 {
   if (!this->ActiveObserver)
-    {
+  {
     return;
-    }
+  }
 
   if (value)
-    {
-    QObject::connect(this->ActiveObserver,
-                     SIGNAL(eventRecorded(QString,QString,QString, int)),
-                     this, SLOT(flush()));
-    }
+  {
+    QObject::connect(this->ActiveObserver, SIGNAL(eventRecorded(QString, QString, QString, int)),
+      this, SLOT(flush()));
+  }
   else
-    {
-    QObject::disconnect(this->ActiveObserver,
-                        SIGNAL(eventRecorded(QString,QString,QString, int)),
-                        this, SLOT(flush()));
-    }
+  {
+    QObject::disconnect(this->ActiveObserver, SIGNAL(eventRecorded(QString, QString, QString, int)),
+      this, SLOT(flush()));
+  }
   this->ContinuousFlush = value;
 }
 
@@ -137,10 +135,10 @@ pqEventObserver* pqEventRecorder::observer() const
 void pqEventRecorder::setTranslator(pqEventTranslator* translator)
 {
   this->ActiveTranslator = translator;
-  if( this->ActiveTranslator != NULL)
-    {
+  if (this->ActiveTranslator != NULL)
+  {
     this->ActiveTranslator->recordInteractionTimings(this->RecordInteractionTimings);
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -152,21 +150,19 @@ pqEventTranslator* pqEventRecorder::translator() const
 // ----------------------------------------------------------------------------
 bool pqEventRecorder::isRecording() const
 {
-  if( this->ActiveTranslator != NULL)
-    {
+  if (this->ActiveTranslator != NULL)
+  {
     return this->ActiveTranslator->isRecording();
-    }
+  }
   else
-    {
+  {
     return false;
-    }
+  }
 }
 
 // ----------------------------------------------------------------------------
-void pqEventRecorder::recordEvents(pqEventTranslator* translator,
-                                   pqEventObserver* observer,
-                                   QIODevice* file,
-                                   bool continuousFlush)
+void pqEventRecorder::recordEvents(
+  pqEventTranslator* translator, pqEventObserver* observer, QIODevice* file, bool continuousFlush)
 {
   this->setTranslator(translator);
   this->setObserver(observer);
@@ -186,15 +182,12 @@ void pqEventRecorder::flush()
 void pqEventRecorder::start()
 {
   if (!this->File || !this->ActiveObserver || !this->ActiveTranslator)
-    {
+  {
     return;
-    }
+  }
 
-  QObject::connect(
-    this->ActiveTranslator,
-    SIGNAL(recordEvent(QString,QString,QString, int)),
-    this->ActiveObserver,
-    SLOT(onRecordEvent(QString,QString,QString, int)));
+  QObject::connect(this->ActiveTranslator, SIGNAL(recordEvent(QString, QString, QString, int)),
+    this->ActiveObserver, SLOT(onRecordEvent(QString, QString, QString, int)));
 
   // Set the device
   this->Stream.setDevice(this->File);
@@ -215,11 +208,8 @@ void pqEventRecorder::start()
 // ----------------------------------------------------------------------------
 void pqEventRecorder::stop(int value)
 {
-  QObject::disconnect(
-    this->ActiveTranslator,
-    SIGNAL(recordEvent(QString,QString,QString, int)),
-    this->ActiveObserver,
-    SLOT(onRecordEvent(QString,QString,QString, int)));
+  QObject::disconnect(this->ActiveTranslator, SIGNAL(recordEvent(QString, QString, QString, int)),
+    this->ActiveObserver, SLOT(onRecordEvent(QString, QString, QString, int)));
 
   this->ActiveObserver->setStream(NULL);
   this->ActiveTranslator->stop();
@@ -227,9 +217,9 @@ void pqEventRecorder::stop(int value)
   this->ActiveTranslator->record(false);
 
   if (!value)
-    {
+  {
     return;
-    }
+  }
 
   this->flush();
   emit this->stopped();

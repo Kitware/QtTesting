@@ -41,14 +41,13 @@ Translates low-level Qt events into high-level ParaView events that can be recor
 \sa pqEventTranslator
 */
 
-class QTTESTING_EXPORT pqComboBoxEventTranslator :
-  public pqWidgetEventTranslator
+class QTTESTING_EXPORT pqComboBoxEventTranslator : public pqWidgetEventTranslator
 {
   Q_OBJECT
   typedef pqWidgetEventTranslator Superclass;
 
 public:
-  pqComboBoxEventTranslator(QObject* p=0);
+  pqComboBoxEventTranslator(QObject* p = 0);
 
   using Superclass::translateEvent;
   bool translateEvent(QObject* Object, QEvent* Event, bool& Error) override;
@@ -66,4 +65,3 @@ private slots:
 };
 
 #endif // !_pqComboBoxEventTranslator_h
-

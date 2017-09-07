@@ -41,8 +41,9 @@ class QTTESTING_EXPORT pqListViewEventTranslator : public pqAbstractItemViewEven
 {
   Q_OBJECT
   typedef pqAbstractItemViewEventTranslatorBase Superclass;
+
 public:
-  pqListViewEventTranslator(QObject* parent=0);
+  pqListViewEventTranslator(QObject* parent = 0);
   ~pqListViewEventTranslator() override;
 
   /// find and set the corrected abstract item view
@@ -54,7 +55,7 @@ protected slots:
 
 private:
   pqListViewEventTranslator(const pqListViewEventTranslator&); // Not implemented.
-  void operator=(const pqListViewEventTranslator&); // Not implemented.
+  void operator=(const pqListViewEventTranslator&);            // Not implemented.
 };
 
 #endif

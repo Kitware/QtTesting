@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -32,24 +32,24 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "pqAbstractSliderEventTranslator.h"
 
-#include <QScrollBar>
 #include <QAbstractSlider>
 #include <QEvent>
+#include <QScrollBar>
 
 pqAbstractSliderEventTranslator::pqAbstractSliderEventTranslator(QObject* p)
-  : pqWidgetEventTranslator(p),
-  CurrentObject(0)
+  : pqWidgetEventTranslator(p)
+  , CurrentObject(0)
 {
 }
 
 bool pqAbstractSliderEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& Error)
 {
   QAbstractSlider* const object = qobject_cast<QAbstractSlider*>(Object);
-  if(!object || qobject_cast<QScrollBar*>(object))
+  if (!object || qobject_cast<QScrollBar*>(object))
     return false;
-    
-  switch(Event->type())
-    {
+
+  switch (Event->type())
+  {
     case QEvent::Enter:
       this->CurrentObject = Object;
       connect(object, SIGNAL(valueChanged(int)), this, SLOT(onValueChanged(int)));
@@ -62,7 +62,7 @@ bool pqAbstractSliderEventTranslator::translateEvent(QObject* Object, QEvent* Ev
       break;
     default:
       break;
-    }
+  }
   return this->Superclass::translateEvent(Object, Event, Error);
 }
 

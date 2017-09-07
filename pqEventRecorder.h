@@ -60,7 +60,7 @@ class QTTESTING_EXPORT pqEventRecorder : public QObject
   typedef QObject Superclass;
 
 public:
-  explicit pqEventRecorder(QObject *parent = 0);
+  explicit pqEventRecorder(QObject* parent = 0);
   ~pqEventRecorder() override;
 
   bool continuousFlush() const;
@@ -77,10 +77,8 @@ public:
 
   bool isRecording() const;
 
-  void recordEvents(pqEventTranslator* translator,
-                    pqEventObserver* observer,
-                    QIODevice* file,
-                    bool continuousFlush);
+  void recordEvents(pqEventTranslator* translator, pqEventObserver* observer, QIODevice* file,
+    bool continuousFlush);
 
 signals:
   void started();
@@ -124,13 +122,13 @@ public slots:
   void setRecordInteractionTimings(bool value);
 
 protected:
-  pqEventObserver*    ActiveObserver;
-  pqEventTranslator*  ActiveTranslator;
-  QIODevice*          File;
+  pqEventObserver* ActiveObserver;
+  pqEventTranslator* ActiveTranslator;
+  QIODevice* File;
 
-  bool                ContinuousFlush;
-  bool                RecordInteractionTimings;
-  QTextStream         Stream;
+  bool ContinuousFlush;
+  bool RecordInteractionTimings;
+  QTextStream Stream;
 };
 
 #endif // !_pqEventRecorder_h

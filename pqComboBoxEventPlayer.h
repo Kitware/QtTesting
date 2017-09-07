@@ -40,14 +40,15 @@ class QTTESTING_EXPORT pqComboBoxEventPlayer : public pqWidgetEventPlayer
 {
   Q_OBJECT
   typedef pqWidgetEventPlayer Superclass;
+
 public:
-  pqComboBoxEventPlayer(QObject* parent=0);
+  pqComboBoxEventPlayer(QObject* parent = 0);
   ~pqComboBoxEventPlayer() override;
 
   /// Play an event on a QComboBox
   using Superclass::playEvent;
-  bool playEvent(QObject* object, const QString& command,
-                 const QString& arguments, int eventType, bool& error) override;
+  bool playEvent(QObject* object, const QString& command, const QString& arguments, int eventType,
+    bool& error) override;
 
 signals:
   // Transition signal to call combo box activated signal
@@ -55,7 +56,7 @@ signals:
 
 private:
   pqComboBoxEventPlayer(const pqComboBoxEventPlayer&); // Not implemented.
-  void operator=(const pqComboBoxEventPlayer&); // Not implemented.
+  void operator=(const pqComboBoxEventPlayer&);        // Not implemented.
 };
 
 #endif

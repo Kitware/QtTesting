@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -35,10 +35,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "QtTestingExport.h"
 
-#include <QObject>
-#include <QTimer>
-#include <QTime>
 #include <QEventLoop>
+#include <QObject>
+#include <QTime>
+#include <QTimer>
 
 class pqEventPlayer;
 class pqEventSource;
@@ -69,9 +69,10 @@ class pqEventSource;
 class QTTESTING_EXPORT pqEventDispatcher : public QObject
 {
   Q_OBJECT
-  typedef QObject Superclass; 
+  typedef QObject Superclass;
+
 public:
-  pqEventDispatcher(QObject* parent=0);
+  pqEventDispatcher(QObject* parent = 0);
   ~pqEventDispatcher() override;
 
   /// Retrieves events from the given event source, dispatching them to
@@ -91,8 +92,8 @@ public:
       on slow processors that hang tests.*/
   static void processEventsAndWait(int ms);
 
-    /** proccessEvents method for widgets and paraview to use instead of
-    calling Qt version, since that will break test playback*/
+  /** proccessEvents method for widgets and paraview to use instead of
+  calling Qt version, since that will break test playback*/
   static void processEvents(QEventLoop::ProcessEventsFlags flags = QEventLoop::AllEvents);
 
   /// register a timer that needs to be ensured to have timed-out after every
@@ -120,7 +121,7 @@ signals:
 protected slots:
   /// Plays a single event. this->PlayBackFinished and this->PlayBackStatus are
   /// updated by this method.
-  void playEvent(int indent=0);
+  void playEvent(int indent = 0);
   void playEventOnBlocking();
 
   /// Called when the mainThread is about to block.

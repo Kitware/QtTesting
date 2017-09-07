@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -41,14 +41,13 @@ Translates low-level Qt events into high-level ParaView events that can be recor
 \sa pqEventTranslator
 */
 
-class QTTESTING_EXPORT pqDoubleSpinBoxEventTranslator :
-  public pqWidgetEventTranslator
+class QTTESTING_EXPORT pqDoubleSpinBoxEventTranslator : public pqWidgetEventTranslator
 {
   Q_OBJECT
   typedef pqWidgetEventTranslator Superclass;
-  
+
 public:
-  pqDoubleSpinBoxEventTranslator(QObject* p=0);
+  pqDoubleSpinBoxEventTranslator(QObject* p = 0);
 
   using Superclass::translateEvent;
   bool translateEvent(QObject* Object, QEvent* Event, bool& Error) override;
@@ -57,14 +56,12 @@ private:
   pqDoubleSpinBoxEventTranslator(const pqDoubleSpinBoxEventTranslator&);
   pqDoubleSpinBoxEventTranslator& operator=(const pqDoubleSpinBoxEventTranslator&);
 
-  int      Value;
+  int Value;
   QObject* CurrentObject;
 
 private slots:
   void onDestroyed(QObject*);
   void onValueChanged(double number);
-
 };
 
 #endif // !_pqDoubleSpinBoxEventTranslator_h
-

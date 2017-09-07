@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -51,21 +51,16 @@ public:
 
   /** Called by the dispatcher on the GUI thread.
     Retrieves the next available event.  Returns true if an event was
-    returned, false if there are no more events. 
+    returned, false if there are no more events.
     In the case of a threaded event source, this function is called by the GUI
     thread and waits for the other thread to pos and event. */
-  virtual int getNextEvent(
-    QString& object,
-    QString& command,
-    QString& arguments);
-  
+  virtual int getNextEvent(QString& object, QString& command, QString& arguments);
+
   /** The testing thread may post an event for the GUI to process.
-      This function blocks until there are no previously queued 
+      This function blocks until there are no previously queued
       events to play.
       If the event plays successfully, true is returned. */
-  bool postNextEvent(const QString& object,
-                     const QString& command,
-                     const QString& argument);
+  bool postNextEvent(const QString& object, const QString& command, const QString& argument);
 
   /** tell this source to stop */
   void stop() override;
@@ -73,7 +68,7 @@ public:
   /** Wait for the GUI thread to acknowledge an event.
       A previously locked mutex must be passed in.
       For use by the testing thread.
-      If return value is false, an error occurred and 
+      If return value is false, an error occurred and
       the testing thread should terminate. */
   bool waitForGUI();
 
@@ -83,7 +78,7 @@ public:
 
   // helper method to sleep.
   static void msleep(int msecs);
-  
+
 private slots:
 
   void relayEvent(QString object, QString command, QString arguments);
@@ -96,15 +91,13 @@ protected:
   // pass in zero for success, non-zero for failure
   void done(int);
 
-  // run the thread, return 
+  // run the thread, return
   virtual void run() = 0;
 
 private:
   class pqInternal;
   pqInternal* Internal;
   friend class pqInternal;
-
 };
 
 #endif // !_pqThreadedEventSource_h
-

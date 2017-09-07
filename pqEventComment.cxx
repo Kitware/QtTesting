@@ -37,8 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqEventComment.h"
 
 // ----------------------------------------------------------------------------
-pqEventComment::pqEventComment(pqTestUtility* util,
-                               QObject* parent)
+pqEventComment::pqEventComment(pqTestUtility* util, QObject* parent)
   : Superclass(parent)
 {
   this->TestUtility = util;
@@ -63,15 +62,14 @@ void pqEventComment::recordCommentBlock(const QString& arguments)
 }
 
 // ----------------------------------------------------------------------------
-void pqEventComment::recordComment(const QString& command,
-                                   const QString& arguments,
-                                   QObject* object)
+void pqEventComment::recordComment(
+  const QString& command, const QString& arguments, QObject* object)
 {
   if (arguments.isEmpty())
-    {
+  {
     qCritical() << "The comment is empty ! No comment has been added !";
     return;
-    }
+  }
 
   emit this->recordComment(object, command, arguments);
 }

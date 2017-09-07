@@ -7,7 +7,7 @@
    All rights reserved.
 
    ParaView is a free software; you can redistribute it and/or modify it
-   under the terms of the ParaView license version 1.2. 
+   under the terms of the ParaView license version 1.2.
 
    See License_v1.2.txt for the full ParaView license.
    A copy of this license can be obtained by contacting
@@ -30,32 +30,29 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 =========================================================================*/
 
-
 #include "pqThreadedEventSource.h"
 
 #include <QMutex>
-#include <QWaitCondition>
-#include <QThread>
 #include <QString>
+#include <QThread>
+#include <QWaitCondition>
 
 #include "pqEventDispatcher.h"
 
 class pqThreadedEventSource::pqInternal : public QThread
 {
   friend class pqThreadedEventSource;
+
 public:
   pqInternal(pqThreadedEventSource& source)
-    : Source(source), 
-      ShouldStop(0),
-      GotEvent(0)
-    {
-    }
-  
-  void run() override
-    {
-    Source.run();
-    }
-  
+    : Source(source)
+    , ShouldStop(0)
+    , GotEvent(0)
+  {
+  }
+
+  void run() override { Source.run(); }
+
   pqThreadedEventSource& Source;
 
   QWaitCondition WaitCondition;
@@ -69,11 +66,8 @@ public:
 
   class ThreadHelper : public QThread
   {
-    public:
-      static void msleep(int msecs)
-        {
-        QThread::msleep(msecs);
-        }
+  public:
+    static void msleep(int msecs) { QThread::msleep(msecs); }
   };
 };
 
@@ -90,34 +84,30 @@ pqThreadedEventSource::~pqThreadedEventSource()
   delete this->Internal;
 }
 
-
-int pqThreadedEventSource::getNextEvent(
-    QString& object,
-    QString& command,
-    QString& arguments)
+int pqThreadedEventSource::getNextEvent(QString& object, QString& command, QString& arguments)
 {
 
-  while(!this->Internal->GotEvent)
-    {
+  while (!this->Internal->GotEvent)
+  {
     // wait for the other thread to post an event, while
     // we keep the GUI alive.
     pqEventDispatcher::processEventsAndWait(100);
-    }
+  }
 
   object = this->Internal->CurrentObject;
   command = this->Internal->CurrentCommand;
   arguments = this->Internal->CurrentArgument;
   this->Internal->GotEvent = 0;
   this->guiAcknowledge();
-  
-  if(object == QString::null)
+
+  if (object == QString::null)
+  {
+    if (arguments == "failure")
     {
-    if(arguments == "failure")
-      {
       return FAILURE;
-      }
-    return DONE;
     }
+    return DONE;
+  }
 
   return SUCCESS;
 }
@@ -130,15 +120,11 @@ void pqThreadedEventSource::relayEvent(QString object, QString command, QString 
   this->Internal->GotEvent = 1;
 }
 
-
-bool pqThreadedEventSource::postNextEvent(const QString& object,
-                   const QString& command,
-                   const QString& argument)
+bool pqThreadedEventSource::postNextEvent(
+  const QString& object, const QString& command, const QString& argument)
 {
-  QMetaObject::invokeMethod(this, "relayEvent", Qt::QueuedConnection, 
-                            Q_ARG(QString, object),
-                            Q_ARG(QString, command),
-                            Q_ARG(QString, argument));
+  QMetaObject::invokeMethod(this, "relayEvent", Qt::QueuedConnection, Q_ARG(QString, object),
+    Q_ARG(QString, command), Q_ARG(QString, argument));
 
   return this->waitForGUI();
 }
@@ -159,12 +145,11 @@ bool pqThreadedEventSource::waitForGUI()
 {
   this->Internal->Waiting = 1;
 
-  while(this->Internal->Waiting == 1 &&
-        this->Internal->ShouldStop == 0)
-    {
+  while (this->Internal->Waiting == 1 && this->Internal->ShouldStop == 0)
+  {
     pqInternal::ThreadHelper::msleep(50);
-    }
-  
+  }
+
   this->Internal->Waiting = 0;
 
   return !this->Internal->ShouldStop;
@@ -172,11 +157,11 @@ bool pqThreadedEventSource::waitForGUI()
 
 void pqThreadedEventSource::guiAcknowledge()
 {
-  while(this->Internal->Waiting == 0)
-    {
+  while (this->Internal->Waiting == 0)
+  {
     pqInternal::ThreadHelper::msleep(50);
-    }
-  
+  }
+
   this->Internal->Waiting = 0;
 }
 
@@ -187,11 +172,10 @@ void pqThreadedEventSource::msleep(int msec)
 
 void pqThreadedEventSource::done(int success)
 {
-  if(success == 0)
-    {
+  if (success == 0)
+  {
     this->postNextEvent(QString(), QString(), QString());
     return;
-    }
+  }
   this->postNextEvent(QString(), QString(), "failure");
 }
-

@@ -45,8 +45,9 @@ class QTTESTING_EXPORT pqAbstractItemViewEventTranslatorBase : public pqWidgetEv
 {
   Q_OBJECT
   typedef pqWidgetEventTranslator Superclass;
+
 public:
-  pqAbstractItemViewEventTranslatorBase(QObject* parent=0);
+  pqAbstractItemViewEventTranslatorBase(QObject* parent = 0);
   ~pqAbstractItemViewEventTranslatorBase() override;
 
   /// Overridden to handle events on QAbstractItemView
@@ -66,7 +67,7 @@ protected slots:
   virtual void onCurrentChanged(const QModelIndex&);
 
   /// Compute a visual rectangle for the item and signal it
-  virtual void onEnteredCheck(const QModelIndex&)=0;
+  virtual void onEnteredCheck(const QModelIndex&) = 0;
   virtual void onViewportEnteredCheck();
 
 protected:
@@ -80,7 +81,8 @@ protected:
   QPoint LastPos;
 
 private:
-  pqAbstractItemViewEventTranslatorBase(const pqAbstractItemViewEventTranslatorBase&); // Not implemented.
+  pqAbstractItemViewEventTranslatorBase(
+    const pqAbstractItemViewEventTranslatorBase&);              // Not implemented.
   void operator=(const pqAbstractItemViewEventTranslatorBase&); // Not implemented.
 };
 
