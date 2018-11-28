@@ -65,8 +65,6 @@ private:
   pqRecordEventsDialog& operator=(const pqRecordEventsDialog&);
   ~pqRecordEventsDialog() override;
 
-  void ignoreObject(QObject* object);
-
   struct pqImplementation;
   pqImplementation* const Implementation;
 };

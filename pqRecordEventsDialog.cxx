@@ -83,7 +83,7 @@ pqRecordEventsDialog::pqRecordEventsDialog(
   this->Implementation->Ui.setupUi(this);
   this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
 
-  this->ignoreObject(this);
+  this->Implementation->TestUtility->eventTranslator()->ignoreObject(this);
 
   this->setWindowTitle(tr("Recording User Input"));
   this->setObjectName("");
@@ -115,16 +115,6 @@ pqRecordEventsDialog::pqRecordEventsDialog(
 pqRecordEventsDialog::~pqRecordEventsDialog()
 {
   delete Implementation;
-}
-
-// ----------------------------------------------------------------------------
-void pqRecordEventsDialog::ignoreObject(QObject* object)
-{
-  this->Implementation->TestUtility->eventTranslator()->ignoreObject(object);
-  foreach (QObject* child, object->children())
-  {
-    this->ignoreObject(child);
-  }
 }
 
 // ----------------------------------------------------------------------------

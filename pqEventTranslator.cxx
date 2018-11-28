@@ -400,11 +400,16 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
           }
         }
 
-        // Ignore object if specified
-        if (this->Implementation->IgnoredObjects.contains(widget))
+        // If an object or a parent of it is ignored, ignore it.
+        QObject* tmpObject = widget;
+        do
         {
-          return false;
+          if (this->Implementation->IgnoredObjects.contains(tmpObject))
+          {
+            return false;
+          }
         }
+        while (tmpObject = tmpObject->parent());
 
         // Do not check QToolBar as they can generate buggy overlay
         if (qobject_cast<QToolBar*>(widget) != NULL)
@@ -581,14 +586,19 @@ void pqEventTranslator::onRecordEvent(
 void pqEventTranslator::onRecordEvent(
   QObject* Object, const QString& Command, const QString& Arguments, int eventType)
 {
-  if (this->Implementation->IgnoredObjects.contains(Object))
+  QObject* tmpObject = Object;
+  do
   {
-    QRegExp commandFilter = this->Implementation->IgnoredObjects.value(Object);
-    if (Command.contains(commandFilter))
+    if (this->Implementation->IgnoredObjects.contains(tmpObject))
     {
-      return;
+      QRegExp commandFilter = this->Implementation->IgnoredObjects.value(tmpObject);
+      if (Command.contains(commandFilter))
+      {
+        return;
+      }
     }
   }
+  while (tmpObject = tmpObject->parent());
 
   QString name;
   if (eventType == pqEventTypes::ACTION_EVENT)
