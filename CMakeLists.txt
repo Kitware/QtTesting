@@ -202,19 +202,27 @@ SET(QtTesting_DEVEL_HEADERS
   ${QtTesting_BINARY_DIR}/QtTestingConfigure.h
 )
 
-ADD_LIBRARY(QtTesting
-  ${QtTesting_SOURCES}
-  ${QtTesting_DEVEL_HEADERS}
-  ${ui_files}
-  ${rc_files}
-  ${PYTHON_SRCS}
+vtk_module_add_module(ParaView::qttesting
+  SOURCES
+    ${QtTesting_SOURCES}
+    ${ui_files}
+    ${rc_files}
+    ${PYTHON_SRCS}
+  HEADERS
+    ${QtTesting_DEVEL_HEADERS}
+  HEADERS_SUBDIR
+    "vtkqttesting"
 )
+set_target_properties(qttesting
+  PROPERTIES
+    DEFINE_SYMBOL QtTesting_EXPORTS)
+add_library(ParaView::qttesting ALIAS qttesting)
 
 # Set library name to include custom prefixes/suffixes.
-set_property(TARGET QtTesting
+set_property(TARGET qttesting
   PROPERTY OUTPUT_NAME ${QT_TESTING_CUSTOM_LIBRARY_PREFIX}QtTesting${QT_TESTING_CUSTOM_LIBRARY_SUFFIX})
 
-TARGET_LINK_LIBRARIES(QtTesting
+TARGET_LINK_LIBRARIES(qttesting
   ${qt_imported_targets}
 )
 
@@ -226,9 +234,8 @@ TARGET_INCLUDE_DIRECTORIES(
 )
 
 IF(QT_TESTING_WITH_PYTHON)
-  TARGET_LINK_LIBRARIES(QtTesting
-    ${PYTHON_LIBRARIES}
-    ${PYTHON_UTIL_LIBRARY_LIB}
+  TARGET_LINK_LIBRARIES(qttesting
+    VTK::Python
   )
 ENDIF()
 
@@ -236,11 +243,13 @@ SET(QTTESTING_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 CONFIGURE_FILE(${QtTesting_SOURCE_DIR}/QtTestingConfigure.h.in
                ${QtTesting_BINARY_DIR}/QtTestingConfigure.h)
 
-INSTALL(TARGETS QtTesting
+if (FALSE)
+INSTALL(TARGETS qttesting
   EXPORT ${QT_TESTING_INSTALL_EXPORT_NAME}
   RUNTIME DESTINATION ${QtTesting_INSTALL_BIN_DIR} COMPONENT Runtime
   LIBRARY DESTINATION ${QtTesting_INSTALL_LIB_DIR} COMPONENT Runtime
   ARCHIVE DESTINATION ${QtTesting_INSTALL_LIB_DIR} COMPONENT Development)
+endif ()
 
 
 if (NOT DEFINED BUILD_EXAMPLES)
@@ -255,7 +264,7 @@ IF(BUILD_TESTING)
   add_subdirectory(Testing)
 ENDIF()
 
-export(TARGETS QtTesting FILE ${QtTesting_BINARY_DIR}/QtTestingExports.cmake)
+export(TARGETS qttesting FILE ${QtTesting_BINARY_DIR}/QtTestingExports.cmake)
 
 # Set up the build export configuration
 set(QtTesting_EXPORT_FILE "${QtTesting_BINARY_DIR}/QtTestingConfig.cmake")
