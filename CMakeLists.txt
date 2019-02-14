@@ -217,6 +217,11 @@ set_target_properties(qttesting
   PROPERTIES
     DEFINE_SYMBOL QtTesting_EXPORTS)
 add_library(ParaView::qttesting ALIAS qttesting)
+target_include_directories(qttesting
+  PUBLIC
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
+    "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
+    "$<INSTALL_INTERFACE:${_vtk_build_HEADERS_DESTINATION}/vtkqttesting>")
 
 # Set library name to include custom prefixes/suffixes.
 set_property(TARGET qttesting
