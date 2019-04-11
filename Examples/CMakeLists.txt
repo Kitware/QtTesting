@@ -31,6 +31,6 @@ add_executable (TestingDemo
   )
 
 target_link_libraries(TestingDemo
-  QtTesting)
+  qttesting ${qt_imported_targets})
 set_target_properties(TestingDemo PROPERTIES
   COMPILE_FLAGS "${Qt5Widgets_EXECUTABLE_COMPILE_FLAGS}")
