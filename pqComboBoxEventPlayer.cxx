@@ -67,14 +67,12 @@ bool pqComboBoxEventPlayer::playEvent(
         comboBox->setCurrentIndex(index);
         if (command == "activated")
         {
-#if QT_VERSION >= 0x050000
           emit comboBox->activated(index);
-#else
-          QObject::connect(this, SIGNAL(activated(int)), comboBox, SIGNAL(activated(int)));
-          emit this->activated(index);
-          QObject::disconnect(this, SIGNAL(activated(int)), comboBox, SIGNAL(activated(int)));
-#endif
         }
+      }
+      else if (comboBox->isEditable() && command == "editTextChanged")
+      {
+        comboBox->setCurrentText(arguments);
       }
       else
       {
@@ -87,13 +85,6 @@ bool pqComboBoxEventPlayer::playEvent(
                     << " in combo box: " << pqObjectNaming::GetName(*comboBox)
                     << "\nPossible values are:\n"
                     << possibles;
-        error = true;
-      }
-      if (command == "set_string")
-      {
-        // Legacy support
-        qCritical() << "set_string should be handled by pqAbstractStringEventTranslator already, "
-                       "something hase gone wrong";
         error = true;
       }
     }
