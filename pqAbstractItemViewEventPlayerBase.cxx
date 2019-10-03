@@ -144,6 +144,18 @@ bool pqAbstractItemViewEventPlayerBase::playEvent(
       abstractItemView->edit(index);
       return true;
     }
+    else if (command == "doubleClick")
+    {
+      QString strIndex = arguments;
+      QModelIndex index =
+        pqAbstractItemViewEventPlayerBase::GetIndex(strIndex, abstractItemView, error);
+      if (error)
+      {
+        return true;
+      }
+      abstractItemView->doubleClicked(index);
+      return true;
+    }
     else if (command == "editCancel")
     {
       QString strIndex = arguments;

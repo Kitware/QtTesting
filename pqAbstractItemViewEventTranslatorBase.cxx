@@ -253,6 +253,7 @@ void pqAbstractItemViewEventTranslatorBase::onDoubleClicked(const QModelIndex& i
     QAbstractItemView::DoubleClicked)
   {
     this->Editing = true;
+    emit this->recordEvent(abstractItemView, "doubleClick", indexString);
     emit this->recordEvent(abstractItemView, "edit", indexString);
   }
 }

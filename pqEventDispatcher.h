@@ -119,9 +119,6 @@ signals:
   void paused();
 
 protected slots:
-  /// Plays a single event. this->PlayBackFinished and this->PlayBackStatus are
-  /// updated by this method.
-  void playEvent(int indent = 0);
   void playEventOnBlocking();
 
   /// Called when the mainThread is about to block.
@@ -137,6 +134,10 @@ public slots:
   void run(bool value);
   void stop();
   void oneStep();
+
+  /// Plays a single event. this->PlayBackFinished and this->PlayBackStatus are
+  /// updated by this method.
+  void playEvent(int indent = 0);
 
 protected:
   bool PlayBackFinished;
