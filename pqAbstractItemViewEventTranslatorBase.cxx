@@ -209,6 +209,9 @@ void pqAbstractItemViewEventTranslatorBase::connectWidgetToSlots(
   QObject::connect(abstractItemView->selectionModel(),
     SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)), this,
     SLOT(onCurrentChanged(const QModelIndex&)));
+  QObject::connect(abstractItemView->selectionModel(),
+    SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this,
+    SLOT(onSelectionChanged(const QItemSelection&)));
 }
 
 //-----------------------------------------------------------------------------
@@ -248,7 +251,6 @@ void pqAbstractItemViewEventTranslatorBase::onDoubleClicked(const QModelIndex& i
 {
   QAbstractItemView* abstractItemView = qobject_cast<QAbstractItemView*>(this->sender());
   QString indexString = this->getIndexAsString(index);
-  // record the check state change if the item is user-checkable.
   if ((abstractItemView->editTriggers() & QAbstractItemView::DoubleClicked) ==
     QAbstractItemView::DoubleClicked)
   {
@@ -272,10 +274,48 @@ QString pqAbstractItemViewEventTranslatorBase::getIndexAsString(const QModelInde
   return indexString;
 }
 
+QString pqAbstractItemViewEventTranslatorBase::getIndicesAsString(
+  const QModelIndexList& selectedIndices)
+{
+  QString listString;
+  foreach (QModelIndex idx, selectedIndices)
+  {
+    listString.append(QString("%1,").arg(this->getIndexAsString(idx)));
+  }
+  // remove the last ",".
+  listString.chop(1);
+  return listString;
+}
+
 //-----------------------------------------------------------------------------
 void pqAbstractItemViewEventTranslatorBase::onCurrentChanged(const QModelIndex& index)
 {
   emit this->recordEvent(this->AbstractItemView, "setCurrent", this->getIndexAsString(index));
+}
+
+//-----------------------------------------------------------------------------
+void pqAbstractItemViewEventTranslatorBase::onSelectionChanged(const QItemSelection& selected)
+{
+  // see if the view supports multi-select
+  auto selMode = this->AbstractItemView->selectionMode();
+  if (!(QAbstractItemView::SingleSelection == selMode || QAbstractItemView::NoSelection == selMode))
+  {
+    // selected and deselected args build on current selection. Retrieve the total selection instead
+    QItemSelectionModel* selModel = qobject_cast<QItemSelectionModel*>(this->sender());
+
+    QModelIndexList selectedIndices;
+    QItemSelection selection = selModel->selection();
+    // selections are a list of disjoint ranges, record the bounds of each.
+    // this works better for playback than recording all the selected indexes.
+    foreach (QItemSelectionRange selRange, selection)
+    {
+      selectedIndices.push_back(selRange.topLeft());
+      selectedIndices.push_back(selRange.bottomRight());
+    }
+
+    emit this->recordEvent(
+      this->AbstractItemView, "setSelection", this->getIndicesAsString(selectedIndices));
+  }
 }
 
 //-----------------------------------------------------------------------------
