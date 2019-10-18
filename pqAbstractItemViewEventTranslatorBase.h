@@ -33,10 +33,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #define __pqAbstractItemViewEventTranslatorBase_h
 
 #include "pqWidgetEventTranslator.h"
+#include <QAbstractItemModel> // for QModelIndexList
 #include <QPointer>
 
 class QModelIndex;
 class QAbstractItemView;
+class QItemSelection;
 
 /// Event recorder for QAbstractItemView. Records the toggling of the check states for
 /// tree widget items. The recorded state can be played back using
@@ -65,6 +67,7 @@ protected slots:
   virtual void onActivated(const QModelIndex&);
   virtual void onDoubleClicked(const QModelIndex&);
   virtual void onCurrentChanged(const QModelIndex&);
+  virtual void onSelectionChanged(const QItemSelection&);
 
   /// Compute a visual rectangle for the item and signal it
   virtual void onEnteredCheck(const QModelIndex&) = 0;
@@ -72,6 +75,7 @@ protected slots:
 
 protected:
   QString getIndexAsString(const QModelIndex& item);
+  QString getIndicesAsString(const QModelIndexList& selectedIndices);
 
   QPointer<QAbstractItemView> AbstractItemView;
   const QModelIndex* ModelItemCheck;
