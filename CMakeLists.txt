@@ -340,7 +340,9 @@ INSTALL(TARGETS QtTesting
   ARCHIVE DESTINATION ${QtTesting_INSTALL_LIB_DIR} COMPONENT Development)
 
 
-option(BUILD_EXAMPLES "Build examples" OFF)
+if (NOT DEFINED BUILD_EXAMPLES)
+  option(BUILD_EXAMPLES "Build examples" OFF)
+endif ()
 if (BUILD_EXAMPLES)
   add_subdirectory(Examples)
 endif ()
