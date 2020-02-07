@@ -251,7 +251,7 @@ QObject* pqObjectNaming::GetObject(const QString& Name)
   stream << "Couldn't find object `" << Name << "`\n";
   if (lastObject)
   {
-    stream << "Found up to `" << pqObjectNaming::GetName(*lastObject) << "`\n";
+    stream << "Found up to          `" << pqObjectNaming::GetName(*lastObject) << "`\n";
   }
 
   // controls how many matches to dump in error message.
