@@ -37,6 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QPoint>
 #include <QWidget>
 #include <QtDebug>
+#include <cmath> // for std::abs
 
 #include "pqEventTypes.h"
 
@@ -76,6 +77,32 @@ bool pqWidgetEventPlayer::playEvent(
         }
         return true;
       }
+    }
+    else if (command == "sizeGreaterOrEqual")
+    {
+      QStringList entries = arguments.split(',');
+      if (entries.size() == 2)
+      {
+        QSize sz = widget->size();
+        error = (sz.width() < entries[0].toInt() || sz.height() < entries[1].toInt());
+        if (error)
+        {
+          qCritical() << "Size mismatch: (" << arguments << ") > " << sz;
+        }
+        return true;
+      }
+    }
+    else if (command == "aspectRatio")
+    {
+      double targetAspectRatio = arguments.toDouble();
+      QSize sz = widget->size();
+      double aspectRatio = static_cast<double>(sz.width()) / sz.height();
+      error = (std::abs(targetAspectRatio - aspectRatio) > 1e-2);
+      if (error)
+      {
+        qCritical() << "Ratio mismatch: (" << targetAspectRatio << ") != " << aspectRatio;
+      }
+      return true;
     }
   }
   return false;
