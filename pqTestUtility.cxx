@@ -259,7 +259,7 @@ bool pqTestUtility::playTests(const QStringList& filenames)
     }
     QFileInfo info(filename);
     emit this->playbackStarted(filename);
-    QString suffix = info.completeSuffix();
+    QString suffix = info.suffix();
     QMap<QString, pqEventSource*>::iterator iter;
     iter = this->EventSources.find(suffix);
     if (info.isReadable() && iter != this->EventSources.end())
@@ -350,7 +350,7 @@ void pqTestUtility::recordTests(const QString& filename)
   this->Filename = filename;
   this->File = new QFile(filename);
   QFileInfo info(filename);
-  this->FileSuffix = info.completeSuffix();
+  this->FileSuffix = info.suffix();
   this->recordTests();
 }
 
