@@ -52,6 +52,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 class pqEventObserver;
 class pqEventSource;
+class pqPlayBackEventsDialog;
 
 /// Organizes basic functionality for regression testing
 class QTTESTING_EXPORT pqTestUtility : public QObject
@@ -135,7 +136,9 @@ public:
   void setRecordWithDialog(bool withDialog);
 public slots:
   bool playTests(const QString& filename);
-  void openPlayerDialog();
+
+  /// @note Dialog is deleted on close.
+  pqPlayBackEventsDialog* openPlayerDialog();
 
   void stopTests();
   void stopRecords(int value);
