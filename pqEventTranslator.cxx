@@ -590,6 +590,12 @@ void pqEventTranslator::onRecordEvent(
     }
   }
 
+  if (QVariant blockRecordCommands = Object->property("BlockRecordCommands");
+      blockRecordCommands.isValid() && Command.contains(blockRecordCommands.toRegExp()))
+  {
+    return;
+  }
+
   QString name;
   if (eventType == pqEventTypes::ACTION_EVENT)
   {

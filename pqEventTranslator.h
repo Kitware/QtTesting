@@ -88,10 +88,16 @@ public:
   /// Return the pqEventComment, to be able to add any comment events
   pqEventComment* eventComment() const;
 
-  /// Adds a Qt object to a list of objects that should be ignored when
-  /// translating events which command is equivalent to the regexp
+  /// Adds @a object to a list of objects that will be ignored when
+  /// translating events that have a command matching @a commandFilter
   /// (useful to prevent recording UI events from being
   /// captured as part of the recording)
+  ///
+  /// You may also choose to ignore commands by setting the
+  /// "BlockRecordCommands" property of @a object to a QRegExp that will
+  /// match the commands to block.  This is useful for temporarily blocking
+  /// a command when a programatically change will fire a signal that generates
+  /// a command.
   void ignoreObject(
     QObject* object, QRegExp commandFilter = QRegExp("*", Qt::CaseInsensitive, QRegExp::Wildcard));
 
