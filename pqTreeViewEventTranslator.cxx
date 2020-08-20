@@ -47,9 +47,8 @@ pqTreeViewEventTranslator::~pqTreeViewEventTranslator()
 }
 
 //-----------------------------------------------------------------------------
-void pqTreeViewEventTranslator::connectWidgetToSlots(QAbstractItemView* abstractItemView)
+void pqTreeViewEventTranslator::monitorSignalsInternal(QAbstractItemView* abstractItemView)
 {
-  this->Superclass::connectWidgetToSlots(abstractItemView);
   QObject::connect(abstractItemView, SIGNAL(expanded(const QModelIndex&)), this,
     SLOT(onExpanded(const QModelIndex&)));
   QObject::connect(abstractItemView, SIGNAL(collapsed(const QModelIndex&)), this,

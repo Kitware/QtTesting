@@ -39,6 +39,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class QModelIndex;
 class QAbstractItemView;
 class QItemSelection;
+class QItemSelectionModel;
 
 /// Event recorder for QAbstractItemView. Records the toggling of the check states for
 /// tree widget items. The recorded state can be played back using
@@ -55,9 +56,6 @@ public:
   /// Overridden to handle events on QAbstractItemView
   using pqWidgetEventTranslator::translateEvent;
   bool translateEvent(QObject* object, QEvent* event, int eventType, bool& error) override;
-
-  /// Connect the QAbstractItemView signals to this classe slots
-  virtual void connectWidgetToSlots(QAbstractItemView* abstractItemView);
 
   /// find and set the corrected abstract item view
   virtual QAbstractItemView* findCorrectedAbstractItemView(QObject* object) const = 0;
@@ -77,7 +75,16 @@ protected:
   QString getIndexAsString(const QModelIndex& item);
   QString getIndicesAsString(const QModelIndexList& selectedIndices);
 
+  /// Record events from @a abstractItemView when signals are fired.
+  /// @sa monitorSignalsInternal()
+  void monitorSignals(QAbstractItemView* abstractItemView);
+
+  /// Subclasses (pqTreeViewEventTranslator, possibly others) override this to monitor
+  /// additional view specific signals
+  virtual void monitorSignalsInternal(QAbstractItemView* abstractItemView) {}
+
   QPointer<QAbstractItemView> AbstractItemView;
+  QPointer<QItemSelectionModel> ItemSelectionModel;
   const QModelIndex* ModelItemCheck;
   bool Editing;
   bool AbstractItemViewMouseTracking;
