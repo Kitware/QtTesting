@@ -33,6 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqEventTypes.h"
 
 #include <QAbstractItemView>
+#include <QContextMenuEvent>
 #include <QEvent>
 #include <QKeyEvent>
 #include <QVariant>
@@ -127,6 +128,13 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
         }
         return true;
         break;
+      }
+      case QEvent::ContextMenu:
+      {
+        auto contextMenuEvent = dynamic_cast<QContextMenuEvent*>(event);
+        emit this->recordEvent(abstractItemView, "openContextMenu",
+          this->getIndexAsString(abstractItemView->indexAt(contextMenuEvent->pos())));
+        return true;
       }
       default:
       {
