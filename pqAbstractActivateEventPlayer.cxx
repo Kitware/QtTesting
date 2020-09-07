@@ -68,13 +68,12 @@ bool pqAbstractActivateEventPlayer::playEvent(
     return true;
   }
 
-  if (QMenu* const object = qobject_cast<QMenu*>(Object))
+  if (QMenu* qmenu = qobject_cast<QMenu*>(Object))
   {
-    QAction* action = findAction(object, Arguments);
+    QAction* action = findAction(qmenu, Arguments);
 
     if (!action)
     {
-      qCritical() << "couldn't find action " << Arguments;
       Error = true;
       return true;
     }
@@ -82,8 +81,7 @@ bool pqAbstractActivateEventPlayer::playEvent(
     // get a list of menus that must be navigated to
     // click on the action
     QObjectList menus;
-    for (QObject* p = object; qobject_cast<QMenu*>(p) || qobject_cast<QMenuBar*>(p);
-         p = p->parent())
+    for (QObject* p = qmenu; qobject_cast<QMenu*>(p) || qobject_cast<QMenuBar*>(p); p = p->parent())
     {
       menus.push_front(p);
     }
@@ -117,14 +115,14 @@ bool pqAbstractActivateEventPlayer::playEvent(
 
     // set active action, will cause scrollable menus to scroll
     // to make action visible
-    object->setActiveAction(action);
+    qmenu->setActiveAction(action);
 
     // activate the action item
     QKeyEvent keyDown(QEvent::KeyPress, Qt::Key_Enter, Qt::NoModifier);
     QKeyEvent keyUp(QEvent::KeyRelease, Qt::Key_Enter, Qt::NoModifier);
 
-    qApp->notify(object, &keyDown);
-    qApp->notify(object, &keyUp);
+    qApp->notify(qmenu, &keyDown);
+    qApp->notify(qmenu, &keyUp);
 
     // QApplication::processEvents();
     return true;
@@ -191,11 +189,13 @@ QAction* pqAbstractActivateEventPlayer::findAction(QMenuBar* p, const QString& n
 
 QAction* pqAbstractActivateEventPlayer::findAction(QMenu* p, const QString& name)
 {
+  QStringList checked;
   QList<QAction*> actions = p->actions();
   QAction* action = NULL;
   foreach (QAction* a, actions)
   {
-    if (a->objectName() == name)
+    checked.append(a->objectName());
+    if (checked.back() == name)
     {
       action = a;
       break;
@@ -206,12 +206,20 @@ QAction* pqAbstractActivateEventPlayer::findAction(QMenu* p, const QString& name
   {
     foreach (QAction* a, actions)
     {
-      if (a->text() == name)
+      checked.append(a->text());
+      if (checked.back() == name)
       {
         action = a;
         break;
       }
     }
+  }
+
+  if (!action)
+  {
+    checked.removeDuplicates();
+    qCritical() << "Unable to find action " << name << " in " << p->objectName()
+                << ".  Available actions: " << checked.join(", ");
   }
 
   return action;
