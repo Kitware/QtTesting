@@ -57,8 +57,12 @@ QModelIndex pqAbstractItemViewEventPlayerBase::GetIndex(
   int sep = itemStr.indexOf(",");
   QString strIndex = itemStr.left(sep);
 
-  // Recover model index
+// Recover model index
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QStringList indices = strIndex.split(".", Qt::SkipEmptyParts);
+#else
   QStringList indices = strIndex.split(".", QString::SkipEmptyParts);
+#endif
   QModelIndex index;
   if (indices.size() < 2)
   {
@@ -113,11 +117,12 @@ bool pqAbstractItemViewEventPlayerBase::playEvent(
       return false;
     }
 
-    QRegExp regExp1("^([\\d\\.]+),(\\d+)$");
-    if (command == "setCheckState" && regExp1.indexIn(arguments) != -1)
+    QRegularExpression regExp1("^([\\d\\.]+),(\\d+)$");
+    QRegularExpressionMatch match = regExp1.match(arguments);
+    if (command == "setCheckState" && match.hasMatch())
     {
-      QString strIndex = regExp1.cap(1);
-      int check_state = regExp1.cap(2).toInt();
+      QString strIndex = match.captured(1);
+      int check_state = match.captured(2).toInt();
 
       QModelIndex index =
         pqAbstractItemViewEventPlayerBase::GetIndex(strIndex, abstractItemView, error);

@@ -172,9 +172,7 @@ static void mouseEvent(QTest::MouseAction action, QWidget* widget, Qt::MouseButt
 
   stateKey &= static_cast<unsigned int>(Qt::KeyboardModifierMask);
 
-  QMouseEvent me(QEvent::User, QPoint(), Qt::LeftButton, button, stateKey);
-
-  me = QMouseEvent(QEvent::MouseMove, pos, widget->mapToGlobal(pos), button, button, stateKey);
+  QMouseEvent me(QEvent::MouseMove, pos, widget->mapToGlobal(pos), button, button, stateKey);
   QSpontaneKeyEvent::setSpontaneous(&me);
   if (!qApp->notify(widget, &me))
   {
@@ -187,8 +185,8 @@ static void mouseEvent(QTest::MouseAction action, QWidget* widget, Qt::MouseButt
   }
 }
 
-inline void mouseMove(QWidget* widget, Qt::MouseButton button, Qt::KeyboardModifiers stateKey = 0,
-  QPoint pos = QPoint(), int delay = -1)
+inline void mouseMove(QWidget* widget, Qt::MouseButton button,
+  Qt::KeyboardModifiers stateKey = Qt::NoModifier, QPoint pos = QPoint(), int delay = -1)
 {
   ctkTest::mouseEvent(QTest::MouseMove, widget, button, stateKey, pos, delay);
 }

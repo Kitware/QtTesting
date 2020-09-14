@@ -63,8 +63,9 @@ bool pqTreeViewEventPlayer::playEvent(
     return false;
   }
 
-  QRegExp regExp0("^([\\d\\.]+),(\\d+),(\\d+)$");
-  if (command == "setTreeItemCheckState" && regExp0.indexIn(arguments) != -1)
+  QRegularExpression regExp0("^([\\d\\.]+),(\\d+),(\\d+)$");
+  QRegularExpressionMatch match = regExp0.match(arguments);
+  if (command == "setTreeItemCheckState" && match.hasMatch())
   {
     // legacy command recorded from tree widgets.
     QTreeWidget* treeWidget = qobject_cast<QTreeWidget*>(object);
@@ -72,11 +73,14 @@ bool pqTreeViewEventPlayer::playEvent(
     {
       return false;
     }
-    QString str_index = regExp0.cap(1);
-    int column = regExp0.cap(2).toInt();
-    int check_state = regExp0.cap(3).toInt();
-
+    QString str_index = match.captured(1);
+    int column = match.captured(2).toInt();
+    int check_state = match.captured(3).toInt();
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+    QStringList indices = str_index.split(".", Qt::SkipEmptyParts);
+#else
     QStringList indices = str_index.split(".", QString::SkipEmptyParts);
+#endif
     QTreeWidgetItem* cur_item = NULL;
     foreach (QString cur_index, indices)
     {

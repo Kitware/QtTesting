@@ -48,7 +48,11 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 /// Converts a string representation of a model index into the real thing
 static QModelIndex OldGetIndex(QAbstractItemView& View, const QString& Name)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QStringList rows = Name.split('/', Qt::SkipEmptyParts);
+#else
   QStringList rows = Name.split('/', QString::SkipEmptyParts);
+#endif
   QString column;
 
   if (rows.size())
@@ -88,7 +92,11 @@ static QModelIndex GetIndexByItemName(QAbstractItemView& View, const QString& Na
 
 static QModelIndex GetIndex(QAbstractItemView* View, const QString& Name)
 {
+#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
+  QStringList idxs = Name.split('/', Qt::SkipEmptyParts);
+#else
   QStringList idxs = Name.split('/', QString::SkipEmptyParts);
+#endif
 
   QModelIndex index;
   for (int i = 0; i != idxs.size(); ++i)
@@ -200,7 +208,8 @@ bool pqAbstractItemViewEventPlayer::playEvent(
       if (Command == "mouseWheel")
       {
         int delta = args[0].toInt();
-        QWheelEvent we(QPoint(x, y), delta, buttons, keym);
+        QWheelEvent we(QPointF(x, y), QPointF(x, y), QPoint(0, 0), QPoint(0, delta), buttons, keym,
+          Qt::NoScrollPhase, false);
         QCoreApplication::sendEvent(Object, &we);
         return true;
       }

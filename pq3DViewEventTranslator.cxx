@@ -88,7 +88,10 @@ bool pq3DViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
       QMouseEvent e(QEvent::MouseButtonPress, QPoint(), Qt::MouseButton(), Qt::MouseButtons(),
         Qt::KeyboardModifiers());
 
+#if QT_VERSION < 0x060000
+      // FIXME: QMouseEvent copy ctor is private in Qt6
       lastMoveEvent = e;
+#endif
       return true;
       break;
     }
@@ -101,7 +104,10 @@ bool pq3DViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
         QMouseEvent e(QEvent::MouseMove, QPoint(mouseEvent->x(), mouseEvent->y()),
           mouseEvent->button(), mouseEvent->buttons(), mouseEvent->modifiers());
 
+#if QT_VERSION < 0x060000
+        // FIXME: QMouseEvent copy ctor is private in Qt6
         lastMoveEvent = e;
+#endif
       }
       return true;
       break;

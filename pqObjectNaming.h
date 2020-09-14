@@ -38,7 +38,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "QtTestingExport.h"
 
 class QObject;
+#if QT_VERSION < 0x060000
 class QStringList;
+#endif
 
 /// Provides functionality to ensuring that Qt objects can be uniquely identified for recording and
 /// playback of regression tests

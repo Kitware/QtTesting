@@ -137,7 +137,7 @@ static PyObject* QtTesting_getProperty(PyObject* /*self*/, PyObject* args)
 
   PropertyObject = object;
   PropertyResult = property;
-  PropertyValue = QString::null;
+  PropertyValue = QString();
 
   if (Instance && QThread::currentThread() != QApplication::instance()->thread())
   {
@@ -158,13 +158,13 @@ static PyObject* QtTesting_getProperty(PyObject* /*self*/, PyObject* args)
     return NULL;
   }
 
-  if (PropertyObject == QString::null)
+  if (PropertyObject.isNull())
   {
     PyErr_SetString(PyExc_ValueError, "object not found");
     return NULL;
   }
 
-  if (PropertyResult == QString::null)
+  if (PropertyResult.isNull())
   {
     PyErr_SetString(PyExc_ValueError, "property not found");
     return NULL;
@@ -210,13 +210,13 @@ static PyObject* QtTesting_setProperty(PyObject* /*self*/, PyObject* args)
     return NULL;
   }
 
-  if (PropertyObject == QString::null)
+  if (PropertyObject.isNull())
   {
     PyErr_SetString(PyExc_ValueError, "object not found");
     return NULL;
   }
 
-  if (PropertyResult == QString::null)
+  if (PropertyResult.isNull())
   {
     PyErr_SetString(PyExc_ValueError, "property not found");
     return NULL;
@@ -267,7 +267,7 @@ static PyObject* QtTesting_getChildren(PyObject* /*self*/, PyObject* args)
     return NULL;
   }
 
-  if (PropertyObject == QString::null)
+  if (PropertyObject.isNull())
   {
     PyErr_SetString(PyExc_ValueError, "object not found");
     return NULL;
@@ -315,12 +315,12 @@ static PyObject* QtTesting_invokeMethod(PyObject* /*self*/, PyObject* args)
     return NULL;
   }
 
-  if (PropertyObject == QString::null)
+  if (PropertyObject.isNull())
   {
     PyErr_SetString(PyExc_ValueError, "object not found");
     return NULL;
   }
-  else if (PropertyValue == QString::null)
+  else if (PropertyValue.isNull())
   {
     PyErr_SetString(PyExc_ValueError, "method not found");
     return NULL;
@@ -401,13 +401,13 @@ QString pqPythonEventSource::getProperty(QString& object, QString& prop)
   QObject* qobject = pqObjectNaming::GetObject(object);
   if (!qobject)
   {
-    object = QString::null;
+    object = QString();
     return QString();
   }
   int idx = qobject->metaObject()->indexOfProperty(prop.toUtf8().data());
   if (idx == -1)
   {
-    prop = QString::null;
+    prop = QString();
     return QString();
   }
   else
@@ -438,14 +438,14 @@ void pqPythonEventSource::setProperty(QString& object, QString& prop, const QStr
   QObject* qobject = pqObjectNaming::GetObject(object);
   if (!qobject)
   {
-    object = QString::null;
+    object = QString();
     return;
   }
 
   int idx = qobject->metaObject()->indexOfProperty(prop.toUtf8().data());
   if (idx == -1)
   {
-    prop = QString::null;
+    prop = QString();
     return;
   }
   else
@@ -475,7 +475,7 @@ QStringList pqPythonEventSource::getChildren(QString& object)
   QObject* qobject = pqObjectNaming::GetObject(object);
   if (!qobject)
   {
-    object = QString::null;
+    object = QString();
   }
   else
   {
@@ -541,13 +541,13 @@ QString pqPythonEventSource::invokeMethod(QString& object, QString& method)
   QObject* qobject = pqObjectNaming::GetObject(object);
   if (!qobject)
   {
-    object = QString::null;
+    object = QString();
   }
   else
   {
     if (!QMetaObject::invokeMethod(qobject, method.toUtf8().data(), Q_RETURN_ARG(QVariant, ret)))
     {
-      method = QString::null;
+      method = QString();
     }
   }
   return ret.toString();

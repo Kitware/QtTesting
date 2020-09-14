@@ -36,7 +36,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "QtTestingExport.h"
 #include <QObject>
 #include <QRect>
-#include <QRegExp>
+#include <QRegularExpression>
 
 class pqEventComment;
 class pqTestUtility;
@@ -98,8 +98,8 @@ public:
   /// match the commands to block.  This is useful for temporarily blocking
   /// a command when a programatically change will fire a signal that generates
   /// a command.
-  void ignoreObject(
-    QObject* object, QRegExp commandFilter = QRegExp("*", Qt::CaseInsensitive, QRegExp::Wildcard));
+  void ignoreObject(QObject* object, QRegularExpression commandFilter = QRegularExpression(
+                                       "*", QRegularExpression::CaseInsensitiveOption));
 
   /// start listening to the GUI and translating events
   void start();
