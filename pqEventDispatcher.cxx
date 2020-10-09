@@ -330,7 +330,7 @@ void pqEventDispatcher::playEvent(int indent)
   unsigned long local_counter = counter++;
   QString pretty_name = object.mid(object.lastIndexOf('/'));
   bool print_debug = getenv("PV_DEBUG_TEST") != NULL;
-#if defined(WIN32) || defined(__APPLE__) // temporary debugging on both platforms.
+#if defined(_WIN32) || defined(__APPLE__) // temporary debugging on both platforms.
   print_debug = true;
 #endif
   if (print_debug)
