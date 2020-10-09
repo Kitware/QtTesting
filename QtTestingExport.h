@@ -37,13 +37,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #if defined(QTTESTING_BUILD_SHARED_LIBS)
 #if defined(QtTesting_EXPORTS)
-#if defined(WIN32)
+#if defined(_WIN32)
 #define QTTESTING_EXPORT __declspec(dllexport)
 #elif defined(__GNUC__) && __GNUC__ >= 4
 #define QTTESTING_EXPORT __attribute__((visibility("default")))
 #endif
 #else
-#if defined(WIN32)
+#if defined(_WIN32)
 #define QTTESTING_EXPORT __declspec(dllimport)
 #endif
 #endif
