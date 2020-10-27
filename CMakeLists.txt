@@ -322,6 +322,13 @@ TARGET_LINK_LIBRARIES(QtTesting
   ${qt_imported_targets}
 )
 
+TARGET_INCLUDE_DIRECTORIES(
+  QtTesting
+  PUBLIC
+    $<INSTALL_INTERFACE:${QtTesting_INSTALL_INCLUDE_DIR}>
+    $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+)
+
 IF(QT_TESTING_WITH_PYTHON)
   TARGET_LINK_LIBRARIES(QtTesting
     ${PYTHON_LIBRARIES}
@@ -383,6 +390,21 @@ configure_file(
   "${QtTesting_EXPORT_INSTALL_FILE}"
   @ONLY
 )
+
+include(CMakePackageConfigHelpers)
+
+# Configure '<PROJECT-NAME>Config.cmake'
+# Use variables:
+#   * targets_export_name
+#   * PROJECT_NAME
+configure_package_config_file(
+  "${PROJECT_NAME}Config-install.cmake.in"
+  "${QtTesting_EXPORT_INSTALL_FILE}"
+  INSTALL_DESTINATION "${QtTesting_INSTALL_CMAKE_DIR}"
+  NO_CHECK_REQUIRED_COMPONENTS_MACRO
+)
+
+
 
 IF(NOT QtTesting_INSTALL_NO_DEVELOPMENT)
   install( FILES ${QtTesting_DEVEL_HEADERS}
