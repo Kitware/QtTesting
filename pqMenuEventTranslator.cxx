@@ -32,6 +32,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "pqMenuEventTranslator.h"
 
+#include <QAction>
 #include <QEvent>
 #include <QKeyEvent>
 #include <QMenu>
@@ -75,26 +76,91 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool&
     return true;
   }
 
-  if (Event->type() == QEvent::KeyPress)
-  {
-    QKeyEvent* e = static_cast<QKeyEvent*>(Event);
-    if (e->key() == Qt::Key_Enter)
+  const auto actionArgument = [](QAction* action) -> QString {
+    QString argument = action->objectName();
+    if (argument.isNull())
     {
-      QAction* action = menu->activeAction();
-      if (action)
+      argument = action->text();
+    }
+    return argument;
+  };
+
+  if (Event->type() == QEvent::Show)
+  {
+    // If this menu has any sub-menu's record this menu as the parent for subsequent enter event.
+    for (auto action : menu->actions())
+    {
+      if (action->menu())
       {
-        QString which = action->objectName();
-        if (which == QString::null)
-        {
-          which = action->text();
-        }
-        emit recordEvent(menu, "activate", which);
+        this->SubMenuParent[action] = menu;
+      }
+    }
+
+    return true;
+  }
+  else if (Event->type() == QEvent::Enter)
+  {
+    // Note: Using QEvent::Enter instead of QEvent::FocusIn here because the menu
+    // can be activated without first getting focus.
+    if (this->SubMenuParent.find(menu->menuAction()) != this->SubMenuParent.end())
+    { // Then a previous menu has recorded this action as a sub-menu
+      emit recordEvent(
+        this->SubMenuParent[menu->menuAction()], "activate", actionArgument(menu->menuAction()));
+    }
+  }
+  else if (Event->type() == QEvent::Close || Event->type() == QEvent::Hide)
+  {
+    // Clean up sub-menu mapping
+    for (auto it = this->SubMenuParent.begin(); it != this->SubMenuParent.end();)
+    {
+      if (it->second == menu)
+      {
+        it = this->SubMenuParent.erase(it);
+      }
+      else
+      {
+        ++it;
       }
     }
     return true;
   }
+  else if (Event->type() == QEvent::KeyPress)
+  {
 
-  if (Event->type() == QEvent::MouseButtonRelease)
+    QKeyEvent* e = static_cast<QKeyEvent*>(Event);
+    if (e->key() == Qt::Key_Enter || e->key() == Qt::Key_Return)
+    {
+      QAction* action = menu->activeAction();
+      if (action)
+      {
+        emit recordEvent(menu, "activate", actionArgument(action));
+      }
+    }
+    else if (e->key() == Qt::Key_Right)
+    {
+      QAction* action = menu->activeAction();
+      if (action && action->menu())
+      {
+        emit recordEvent(menu, "activate", actionArgument(action));
+      }
+    }
+    else
+    {
+      for (auto action : menu->actions())
+      {
+        const QKeySequence mnemonic = QKeySequence::mnemonic(action->text());
+        if (!mnemonic.isEmpty())
+        { // Then the action has a keyboard accelerator
+          if (mnemonic == QKeySequence(e->modifiers() + e->key()))
+          {
+            emit recordEvent(menu, "activate", actionArgument(action));
+          }
+        }
+      }
+    }
+    return true;
+  }
+  else if (Event->type() == QEvent::MouseButtonRelease)
   {
     QMouseEvent* e = static_cast<QMouseEvent*>(Event);
     if (e->button() == Qt::LeftButton)
@@ -102,12 +168,7 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool&
       QAction* action = menu->actionAt(e->pos());
       if (action && !action->menu())
       {
-        QString which = action->objectName();
-        if (which == QString::null)
-        {
-          which = action->text();
-        }
-        emit recordEvent(menu, "activate", which);
+        emit recordEvent(menu, "activate", actionArgument(action));
       }
     }
     return true;
