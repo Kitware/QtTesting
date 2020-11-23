@@ -33,6 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqTabBarEventPlayer.h"
 
 #include <QLineEdit>
+#include <QMainWindow>
 #include <QTabBar>
 #include <QtDebug>
 
@@ -46,22 +47,23 @@ pqTabBarEventPlayer::pqTabBarEventPlayer(QObject* p)
 bool pqTabBarEventPlayer::playEvent(
   QObject* target, const QString& command, const QString& arguments, bool& error_flag)
 {
-  /*  if (command != "set_tab"  && command != "set_tab_with_text")
-      {
-      // I don't handle this. Return false
-      return false;
-      }*/
-
   const QString value = arguments;
 
   QTabBar* const tab_bar = qobject_cast<QTabBar*>(target);
-  if (!tab_bar)
+  QMainWindow* const main_window = qobject_cast<QMainWindow*>(target);
+  if (!(tab_bar || main_window))
   {
     return false;
   }
 
   if (command == "set_tab")
   {
+    if (!tab_bar)
+    {
+      qCritical() << "calling set_tab on unhandled type " << target;
+      error_flag = true;
+    }
+
     // "set_tab" saves tab index. This was done in the past. Newly recorded
     // tests will use set_tab_with_text for more reliable playback.
     bool ok = false;
@@ -82,54 +84,60 @@ bool pqTabBarEventPlayer::playEvent(
     }
     return true;
   }
-
-  if (command == "set_tab_with_text")
+  else if (command == "set_tab_with_text")
   {
-    for (int cc = 0; cc < tab_bar->count(); cc++)
+    if (tab_bar)
     {
-      if (tab_bar->tabText(cc) == value)
+      for (int cc = 0; cc < tab_bar->count(); cc++)
       {
-        tab_bar->setCurrentIndex(cc);
-        return true;
-      }
-    }
-
-    // With Qt 4.8, we have started seeing change in the order of the
-    // tab-widgets created for docked panels. That results in the names not
-    // aligning to the ones used while recording the test. In that case, we make
-    // an attempt to locate a sibling tab-bar that has a pane with the expected
-    // name. If none is found, then alone do we give up.
-    if (tab_bar->parentWidget())
-    {
-      QObjectList siblings = tab_bar->parentWidget()->children();
-      foreach (QObject* sibling_object, siblings)
-      {
-        QTabBar* sibling_tab_bar = qobject_cast<QTabBar*>(sibling_object);
-        for (int cc = 0; sibling_tab_bar != NULL && cc < sibling_tab_bar->count(); cc++)
+        if (tab_bar->tabText(cc) == value)
         {
-          if (sibling_tab_bar->tabText(cc) == value)
+          tab_bar->setCurrentIndex(cc);
+          return true;
+        }
+      }
+
+      QString error_message;
+      QTextStream errorStream(&error_message);
+      errorStream << "calling set_tab_with_text with unknown tab " << value
+                  << "Available tabs are (count=" << tab_bar->count() << ")";
+      for (int tab_index = 0; tab_index < tab_bar->count(); tab_index++)
+      {
+        errorStream << '\t' << tab_bar->tabText(tab_index);
+      }
+      qCritical() << error_message;
+      error_flag = true;
+    }
+    else if (main_window)
+    {
+      // Special code for DockWidget tabs (and other unnamaed QMainWindow tabs). See comment in
+      // pqTabBarEventTranslator for full explanation.
+      QList<QTabBar*> main_window_tab_bars =
+        main_window->findChildren<QTabBar*>(QString(), Qt::FindDirectChildrenOnly);
+      for (QTabBar* possible_dock_widget_tab : main_window_tab_bars)
+      {
+        if (possible_dock_widget_tab->objectName().isEmpty())
+        {
+          for (int tab_index = 0; tab_index < possible_dock_widget_tab->count(); ++tab_index)
           {
-            sibling_tab_bar->setCurrentIndex(cc);
-            return true;
+            if (possible_dock_widget_tab->tabText(tab_index) == value)
+            {
+              possible_dock_widget_tab->setCurrentIndex(tab_index);
+              return true;
+            }
           }
         }
       }
+      qCritical() << "Could not find any tabs named " << value << " in the main window";
+      error_flag = true;
     }
-
-    qCritical() << "calling set_tab with unknown tab " << value;
-    qCritical() << "Available tabs are (count=" << tab_bar->count() << ")";
-    for (int cc = 0; cc < tab_bar->count(); cc++)
+    else
     {
-      qCritical() << "    " << tab_bar->tabText(cc);
+      qCritical() << "calling set_tab_with_text on unhandled type " << target;
+      error_flag = true;
     }
-    error_flag = true;
     return true;
   }
 
-  if (!this->Superclass::playEvent(target, command, arguments, error_flag))
-  {
-    qCritical() << "calling set_tab on unhandled type " << target;
-    error_flag = true;
-  }
-  return true;
+  return false;
 }
