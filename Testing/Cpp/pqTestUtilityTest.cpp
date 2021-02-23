@@ -31,6 +31,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 =========================================================================*/
 
 // Qt includes
+#include <QDir>
 #include <QLineEdit>
 #include <QMap>
 
@@ -59,8 +60,8 @@ private Q_SLOTS:
   void testAddObjectStateProperty();
   void testAddObjectStateProperty_data();
 
-//  void testRemoveObjectStateProperty();
-//  void testRemoveObjectStateProperty_data();
+  //  void testRemoveObjectStateProperty();
+  //  void testRemoveObjectStateProperty_data();
 
   void testAddDataDirectory();
   void testAddDataDirectory_data();
@@ -119,22 +120,14 @@ void pqTestUtilityTester::testAddEventSource_data()
   pqDummyEventSource* dummySource3 = new pqDummyEventSource();
   pqDummyEventSource* dummySource4 = new pqDummyEventSource();
   pqDummyEventSource* dummySource5 = new pqDummyEventSource();
-  QTest::newRow("null") << QString("")
-                        << qobject_cast<QObject*>(nullSource) << 0
-                        << QString("null")
+  QTest::newRow("null") << QString("") << qobject_cast<QObject*>(nullSource) << 0 << QString("null")
                         << qobject_cast<QObject*>(nullSource) << 0;
-  QTest::newRow("same") << QString("py")
-                        << qobject_cast<QObject*>(dummySource1) << 1
-                        << QString("py")
-                        << qobject_cast<QObject*>(dummySource1) << 1;
-  QTest::newRow("same") << QString("py")
-                        << qobject_cast<QObject*>(dummySource2) << 1
-                        << QString("py")
-                        << qobject_cast<QObject*>(dummySource3) << 1;
-  QTest::newRow("diff") << QString("py")
-                        << qobject_cast<QObject*>(dummySource4) << 1
-                        << QString("xml")
-                        << qobject_cast<QObject*>(dummySource5) << 2;
+  QTest::newRow("same") << QString("py") << qobject_cast<QObject*>(dummySource1) << 1
+                        << QString("py") << qobject_cast<QObject*>(dummySource1) << 1;
+  QTest::newRow("same") << QString("py") << qobject_cast<QObject*>(dummySource2) << 1
+                        << QString("py") << qobject_cast<QObject*>(dummySource3) << 1;
+  QTest::newRow("diff") << QString("py") << qobject_cast<QObject*>(dummySource4) << 1
+                        << QString("xml") << qobject_cast<QObject*>(dummySource5) << 2;
 }
 
 // ----------------------------------------------------------------------------
@@ -171,22 +164,14 @@ void pqTestUtilityTester::testAddEventObserver_data()
   pqDummyEventObserver* dummyObserver3 = new pqDummyEventObserver();
   pqDummyEventObserver* dummyObserver4 = new pqDummyEventObserver();
   pqDummyEventObserver* dummyObserver5 = new pqDummyEventObserver();
-  QTest::newRow("null") << QString("")
-                        << qobject_cast<QObject*>(nullObserver) << 0
-                        << QString("null")
-                        << qobject_cast<QObject*>(nullObserver) << 0;
-  QTest::newRow("all_same") << QString("py")
-                            << qobject_cast<QObject*>(dummyObserver1) << 1
-                            << QString("py")
-                            << qobject_cast<QObject*>(dummyObserver1) << 1;
-  QTest::newRow("only_same_key") << QString("py")
-                                 << qobject_cast<QObject*>(dummyObserver2) << 1
-                                 << QString("py")
-                                 << qobject_cast<QObject*>(dummyObserver3) << 1;
-  QTest::newRow("diff") << QString("py")
-                        << qobject_cast<QObject*>(dummyObserver4) << 1
-                        << QString("xml")
-                        << qobject_cast<QObject*>(dummyObserver5) << 2;
+  QTest::newRow("null") << QString("") << qobject_cast<QObject*>(nullObserver) << 0
+                        << QString("null") << qobject_cast<QObject*>(nullObserver) << 0;
+  QTest::newRow("all_same") << QString("py") << qobject_cast<QObject*>(dummyObserver1) << 1
+                            << QString("py") << qobject_cast<QObject*>(dummyObserver1) << 1;
+  QTest::newRow("only_same_key") << QString("py") << qobject_cast<QObject*>(dummyObserver2) << 1
+                                 << QString("py") << qobject_cast<QObject*>(dummyObserver3) << 1;
+  QTest::newRow("diff") << QString("py") << qobject_cast<QObject*>(dummyObserver4) << 1
+                        << QString("xml") << qobject_cast<QObject*>(dummyObserver5) << 2;
 }
 
 // ----------------------------------------------------------------------------
@@ -204,29 +189,29 @@ void pqTestUtilityTester::testAddObjectStateProperty()
   QFETCH(int, propertyCount2);
 
   testUtility.addObjectStateProperty(object1, property1);
-  int nbObject =  testUtility.objectStateProperty().count();
+  int nbObject = testUtility.objectStateProperty().count();
   QCOMPARE(nbObject, objectCount1);
   if (nbObject > 0)
-    {
+  {
     int nbProperty1 = 0;
     foreach (QStringList list, testUtility.objectStateProperty().values())
-      {
+    {
       nbProperty1 += list.count();
-      }
-    QCOMPARE(nbProperty1, propertyCount1);
     }
+    QCOMPARE(nbProperty1, propertyCount1);
+  }
   testUtility.addObjectStateProperty(object2, property2);
-  nbObject =  testUtility.objectStateProperty().count();
+  nbObject = testUtility.objectStateProperty().count();
   QCOMPARE(nbObject, objectCount2);
   if (nbObject > 0)
-    {
+  {
     int nbProperty2 = 0;
     foreach (QStringList list, testUtility.objectStateProperty().values())
-      {
+    {
       nbProperty2 += list.count();
-      }
-    QCOMPARE(nbProperty2, propertyCount2);
     }
+    QCOMPARE(nbProperty2, propertyCount2);
+  }
 }
 
 // ----------------------------------------------------------------------------
@@ -248,26 +233,20 @@ void pqTestUtilityTester::testAddObjectStateProperty_data()
   QLineEdit* lineEdit4 = new QLineEdit();
   QLineEdit* lineEdit5 = new QLineEdit();
 
-  QTest::newRow("objectNull") << nullObject
-                              << QString("") << 0 << 0
-                              << nullObject
+  QTest::newRow("objectNull") << nullObject << QString("") << 0 << 0 << nullObject
                               << QString("maxLength") << 0 << 0;
-  QTest::newRow("wrongProperty") << qobject_cast<QObject*>(lineEdit1)
-                                 << QString("") << 0 << 0
-                                 << qobject_cast<QObject*>(lineEdit1)
-                                 << QString("wrongProperty") << 0 << 0;
-  QTest::newRow("sameProperty") << qobject_cast<QObject*>(lineEdit2)
-                                << QString("maxLength") << 1 << 1
-                                << qobject_cast<QObject*>(lineEdit2)
-                                << QString("maxLength") << 1 << 1;
-  QTest::newRow("diffProperty") << qobject_cast<QObject*>(lineEdit3)
-                                << QString("maxLength") << 1 << 1
-                                << qobject_cast<QObject*>(lineEdit3)
-                                << QString("readOnly") << 1 << 2;
-  QTest::newRow("diffObject") << qobject_cast<QObject*>(lineEdit4)
-                              << QString("maxLength") << 1 << 1
-                              << qobject_cast<QObject*>(lineEdit5)
-                              << QString("maxLength") << 2 << 2;
+  QTest::newRow("wrongProperty") << qobject_cast<QObject*>(lineEdit1) << QString("") << 0 << 0
+                                 << qobject_cast<QObject*>(lineEdit1) << QString("wrongProperty")
+                                 << 0 << 0;
+  QTest::newRow("sameProperty") << qobject_cast<QObject*>(lineEdit2) << QString("maxLength") << 1
+                                << 1 << qobject_cast<QObject*>(lineEdit2) << QString("maxLength")
+                                << 1 << 1;
+  QTest::newRow("diffProperty") << qobject_cast<QObject*>(lineEdit3) << QString("maxLength") << 1
+                                << 1 << qobject_cast<QObject*>(lineEdit3) << QString("readOnly")
+                                << 1 << 2;
+  QTest::newRow("diffObject") << qobject_cast<QObject*>(lineEdit4) << QString("maxLength") << 1 << 1
+                              << qobject_cast<QObject*>(lineEdit5) << QString("maxLength") << 2
+                              << 2;
 }
 
 // ----------------------------------------------------------------------------
@@ -299,16 +278,15 @@ void pqTestUtilityTester::testAddDataDirectory_data()
   QTest::addColumn<QString>("path2");
   QTest::addColumn<int>("result2");
 
-  QTest::newRow("empty") << QString() << QString() << 0
-                         << QString("label") << QString("") << 0 ;
-  QTest::newRow("allSame") << QString("TEMPLATE") << QString("/home/") << 1
-                           << QString("TEMPLATE") << QString("/home/") << 1;
-  QTest::newRow("sameLabel") << QString("TEMPLATE") << QString("/home/") << 1
-                             << QString("TEMPLATE") << QString("/home/BenLg") << 1;
-  QTest::newRow("samePath") << QString("TEMPLATE") << QString("/home/") << 1
-                            << QString("TEMP") << QString("/home/") << 2;
-  QTest::newRow("diff") << QString("TEMPLATE") << QString("/home/") << 1
-                        << QString("TEMP") << QString("/home/BenLg") << 2;
+  QTest::newRow("empty") << QString() << QString() << 0 << QString("label") << QString("") << 0;
+  QTest::newRow("allSame") << QString("TEMPLATE") << QString("/home/") << 1 << QString("TEMPLATE")
+                           << QString("/home/") << 1;
+  QTest::newRow("sameLabel") << QString("TEMPLATE") << QString("/home/") << 1 << QString("TEMPLATE")
+                             << QString("/home/BenLg") << 1;
+  QTest::newRow("samePath") << QString("TEMPLATE") << QString("/home/") << 1 << QString("TEMP")
+                            << QString("/home/") << 2;
+  QTest::newRow("diff") << QString("TEMPLATE") << QString("/home/") << 1 << QString("TEMP")
+                        << QString("/home/BenLg") << 2;
 }
 
 // ----------------------------------------------------------------------------
@@ -350,8 +328,8 @@ void pqTestUtilityTester::testConvertToDataDirectory()
   QFETCH(QString, path);
   QFETCH(QString, result);
 
-  QString convertPath = testUtility.convertToDataDirectory(path);
-  QCOMPARE(convertPath, result);
+  const QString convertPath = testUtility.convertToDataDirectory(path);
+  QCOMPARE(QDir::cleanPath(convertPath), QDir::cleanPath(result));
 }
 
 // ----------------------------------------------------------------------------
@@ -364,43 +342,49 @@ void pqTestUtilityTester::testConvertToDataDirectory_data()
   QTest::addColumn<QString>("path");
   QTest::addColumn<QString>("result");
 
-  QTest::newRow("0") << "ROOT" << "/home/BenLg"
-                     << "ROOTDATA" << "/home/BenLg/data"
-                     << QString()
-                     << QString();
-  QTest::newRow("1") << "ROOT" << "/home/BenLg"
-                     << "ROOTDATA" << "/home/BenLg/data"
-                     << QString("/home") << QString("/home");
-  QTest::newRow("2") << "ROOT" << "/home/BenLg"
-                     << "ROOTDATA" << "/home/BenLg/data"
-                     << QString("/home/toto/")
-                     << QString("/home/toto/");
-  QTest::newRow("3") << "ROOT" << "/home/BenLg"
-                     << "ROOTDATA" << "/home/BenLg/data"
-                     << QString("/home/BenLg")
-                     << QString("${ROOT}/");
-  QTest::newRow("3") << "ROOT" << "/home/BenLg"
-                     << "ROOTDATA" << "/home/BenLg/data"
-                     << QString("/home/BenLg/toto")
+  QTest::newRow("0") << "ROOT"
+                     << "/home/BenLg"
+                     << "ROOTDATA"
+                     << "/home/BenLg/data" << QString() << QString();
+  QTest::newRow("1") << "ROOT"
+                     << "/home/BenLg"
+                     << "ROOTDATA"
+                     << "/home/BenLg/data" << QString("/home") << QString("/home");
+  QTest::newRow("2") << "ROOT"
+                     << "/home/BenLg"
+                     << "ROOTDATA"
+                     << "/home/BenLg/data" << QString("/home/toto/") << QString("/home/toto/");
+  QTest::newRow("3") << "ROOT"
+                     << "/home/BenLg"
+                     << "ROOTDATA"
+                     << "/home/BenLg/data" << QString("/home/BenLg") << QString("${ROOT}/");
+  QTest::newRow("3") << "ROOT"
+                     << "/home/BenLg"
+                     << "ROOTDATA"
+                     << "/home/BenLg/data" << QString("/home/BenLg/toto")
                      << QString("${ROOT}/toto");
-  QTest::newRow("4") << "ROOT" << "/home/BenLg"
-                     << "ROOTDATA" << "/home/BenLg/data"
-                     << QString("/home/BenLg/data/toto")
+  QTest::newRow("4") << "ROOT"
+                     << "/home/BenLg"
+                     << "ROOTDATA"
+                     << "/home/BenLg/data" << QString("/home/BenLg/data/toto")
                      << QString("${ROOTDATA}/toto");
 
   // Same test as the previous one but we inverse the two dataDirectories
   // to be sure that our function chosse the right one.
-  QTest::newRow("5") << "ROOTDATA" << "/home/BenLg/data"
-                     << "ROOT" << "/home/BenLg"
-                     << QString("/home/BenLg/data/toto")
+  QTest::newRow("5") << "ROOTDATA"
+                     << "/home/BenLg/data"
+                     << "ROOT"
+                     << "/home/BenLg" << QString("/home/BenLg/data/toto")
                      << QString("${ROOTDATA}/toto");
-  QTest::newRow("6") << "ROOT" << "/home/BenLg"
-                     << "ROOTDATA" << "/home/BenLg/data"
-                     << QString("/usr/toto/home/BenLg/toto")
+  QTest::newRow("6") << "ROOT"
+                     << "/home/BenLg"
+                     << "ROOTDATA"
+                     << "/home/BenLg/data" << QString("/usr/toto/home/BenLg/toto")
                      << QString("/usr/toto/home/BenLg/toto");
-  QTest::newRow("7") << "ROOT" << "/home/BenLg"
-                     << "ROOTDATA" << "/home/BenLg/data"
-                     << QString("/usr/home/BenLg/data/toto")
+  QTest::newRow("7") << "ROOT"
+                     << "/home/BenLg"
+                     << "ROOTDATA"
+                     << "/home/BenLg/data" << QString("/usr/home/BenLg/data/toto")
                      << QString("/usr/home/BenLg/data/toto");
 }
 
@@ -435,7 +419,6 @@ void pqTestUtilityTester::testConvertFromDataDirectory_data()
                      << QString("/home/BenLg/data/Ex1/Patient0");
 }
 
-
 // ----------------------------------------------------------------------------
-CTK_TEST_MAIN( pqTestUtilityTest )
+CTK_TEST_MAIN(pqTestUtilityTest)
 #include "moc_pqTestUtilityTest.cpp"
