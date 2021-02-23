@@ -69,7 +69,6 @@ bool pqSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, bo
       }
 
       this->CurrentObject = Object;
-      this->Value = object->value();
       connect(object, SIGNAL(valueChanged(int)), this, SLOT(onValueChanged(int)));
       connect(object, SIGNAL(destroyed(QObject*)), this, SLOT(onDestroyed(QObject*)));
     }
@@ -87,7 +86,6 @@ bool pqSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, bo
   {
     QKeyEvent* ke = static_cast<QKeyEvent*>(Event);
     QString keyText = ke->text();
-    this->Value = object->value();
     if (keyText.length() && keyText.at(0).isPrint())
     {
       emit recordEvent(object, "set_int", QString("%1").arg(object->value()));
