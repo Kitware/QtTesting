@@ -173,7 +173,8 @@ const QString pqObjectNaming::GetName(QObject& Object)
 
     if (!p->parent() && !QApplication::topLevelWidgets().contains(qobject_cast<QWidget*>(p)))
     {
-      qCritical() << "Object " << p << " is not a top-level widget";
+      qCritical() << "Unable to to determine name for Object " << &Object << " because a parent "
+                  << p << " is not a top-level widget. Name so far = " << name;
       return QString();
     }
   }

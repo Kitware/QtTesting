@@ -82,12 +82,10 @@ void pqEventTranslatorTester::testAddWidgetEventTranslator()
 
   // When we add the widgetEventPlayer into the eventPlayer, it is automaticaly
   // reparented to the eventPlayer. So its deletion would be automatic.
-  eventTranslator.addWidgetEventTranslator(
-      dynamic_cast<pqWidgetEventTranslator*>(widget1));
+  eventTranslator.addWidgetEventTranslator(dynamic_cast<pqWidgetEventTranslator*>(widget1));
   QCOMPARE(eventTranslator.translators().count(), newCount1);
 
-  eventTranslator.addWidgetEventTranslator(
-      dynamic_cast<pqWidgetEventTranslator*>(widget2));
+  eventTranslator.addWidgetEventTranslator(dynamic_cast<pqWidgetEventTranslator*>(widget2));
   QCOMPARE(eventTranslator.translators().count(), newCount2);
 }
 
@@ -100,18 +98,16 @@ void pqEventTranslatorTester::testAddWidgetEventTranslator_data()
   QTest::addColumn<int>("newCount2");
 
   pqWidgetEventTranslator* nullWidget = NULL;
-  QTest::newRow("empty_empty")
-      << qobject_cast<QObject*>(nullWidget) << 0
-      << qobject_cast<QObject*>(nullWidget) << 0;
-  QTest::newRow("empty_pqSpinBox")
-      << qobject_cast<QObject*>(nullWidget) << 0
-      << qobject_cast<QObject*>(new pqSpinBoxEventTranslator()) << 1;
+  QTest::newRow("empty_empty") << qobject_cast<QObject*>(nullWidget) << 0
+                               << qobject_cast<QObject*>(nullWidget) << 0;
+  QTest::newRow("empty_pqSpinBox") << qobject_cast<QObject*>(nullWidget) << 0
+                                   << qobject_cast<QObject*>(new pqSpinBoxEventTranslator()) << 1;
   QTest::newRow("pqSpinBox_pqSpinBox")
-      << qobject_cast<QObject*>(new pqSpinBoxEventTranslator()) << 1
-      << qobject_cast<QObject*>(new pqSpinBoxEventTranslator()) << 1;
+    << qobject_cast<QObject*>(new pqSpinBoxEventTranslator()) << 1
+    << qobject_cast<QObject*>(new pqSpinBoxEventTranslator()) << 1;
   QTest::newRow("pqSpinBox_pqTreeView")
-      << qobject_cast<QObject*>(new pqSpinBoxEventTranslator()) << 1
-      << qobject_cast<QObject*>(new pqTreeViewEventTranslator()) << 2;
+    << qobject_cast<QObject*>(new pqSpinBoxEventTranslator()) << 1
+    << qobject_cast<QObject*>(new pqTreeViewEventTranslator()) << 2;
 }
 
 // ----------------------------------------------------------------------------
@@ -125,8 +121,7 @@ void pqEventTranslatorTester::testRemoveWidgetEventTranslator()
   QFETCH(int, newCount);
   QFETCH(bool, thirdResult);
 
-  QCOMPARE(eventTranslator.removeWidgetEventTranslator(nameToRemove),
-           firstResult);
+  QCOMPARE(eventTranslator.removeWidgetEventTranslator(nameToRemove), firstResult);
 
   // When we add the widgetEventPlayer into the eventPlayer, it is automaticaly
   // reparented to the eventPlayer. So its deletion would be automatic.
@@ -134,11 +129,9 @@ void pqEventTranslatorTester::testRemoveWidgetEventTranslator()
   eventTranslator.addWidgetEventTranslator(treeView);
 
   QCOMPARE(eventTranslator.translators().count(), 1);
-  QCOMPARE(eventTranslator.removeWidgetEventTranslator(nameToRemove),
-           secondResult);
+  QCOMPARE(eventTranslator.removeWidgetEventTranslator(nameToRemove), secondResult);
   QCOMPARE(eventTranslator.translators().count(), newCount);
-  QCOMPARE(eventTranslator.removeWidgetEventTranslator(nameToRemove),
-           thirdResult);
+  QCOMPARE(eventTranslator.removeWidgetEventTranslator(nameToRemove), thirdResult);
 }
 
 // ----------------------------------------------------------------------------
@@ -161,22 +154,17 @@ void pqEventTranslatorTester::testGetWidgetEventTranslator()
   pqEventTranslator eventTranslator;
 
   pqSpinBoxEventTranslator* nullWidget = NULL;
-  QCOMPARE(eventTranslator.getWidgetEventTranslator(0),
-           nullWidget);
-  QCOMPARE(eventTranslator.getWidgetEventTranslator("pqSpinBoxEventTranslator"),
-           nullWidget);
+  QCOMPARE(eventTranslator.getWidgetEventTranslator(0), nullWidget);
+  QCOMPARE(eventTranslator.getWidgetEventTranslator("pqSpinBoxEventTranslator"), nullWidget);
 
   // When we add the widgetEventPlayer into the eventPlayer, it is automaticaly
   // reparented to the eventPlayer. So its deletion would be automatic.
   pqSpinBoxEventTranslator* spinBox = new pqSpinBoxEventTranslator();
   eventTranslator.addWidgetEventTranslator(spinBox);
 
-  QCOMPARE(eventTranslator.getWidgetEventTranslator(0),
-           nullWidget);
-  QCOMPARE(eventTranslator.getWidgetEventTranslator("pqTreeViewEventTranslator"),
-           nullWidget);
-  QCOMPARE(eventTranslator.getWidgetEventTranslator("pqSpinBoxEventTranslator"),
-           spinBox);
+  QCOMPARE(eventTranslator.getWidgetEventTranslator(0), nullWidget);
+  QCOMPARE(eventTranslator.getWidgetEventTranslator("pqTreeViewEventTranslator"), nullWidget);
+  QCOMPARE(eventTranslator.getWidgetEventTranslator("pqSpinBoxEventTranslator"), spinBox);
 }
 
 // ----------------------------------------------------------------------------
@@ -190,8 +178,7 @@ void pqEventTranslatorTester::testAddDefaultWidgetEventTranslators()
   QFETCH(int, index);
   QFETCH(QString, widgetEventTranslatorName);
 
-  QCOMPARE(QString(translators.at(index)->metaObject()->className()),
-           widgetEventTranslatorName);
+  QCOMPARE(QString(translators.at(index)->metaObject()->className()), widgetEventTranslatorName);
 }
 
 // ----------------------------------------------------------------------------

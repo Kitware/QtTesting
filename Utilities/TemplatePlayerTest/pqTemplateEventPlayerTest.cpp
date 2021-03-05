@@ -41,7 +41,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqTest.h"
 
 // ----------------------------------------------------------------------------
-class pqTemplateEventPlayerTester: public QObject
+class pqTemplateEventPlayerTester : public QObject
 {
   Q_OBJECT
 
@@ -53,9 +53,9 @@ private Q_SLOTS:
   void cleanupTestCase();
 
 private:
-  QTemplate*         Template;
+  QTemplate* Template;
 
-  pqTestUtility*    TestUtility;
+  pqTestUtility* TestUtility;
 };
 
 // ----------------------------------------------------------------------------
@@ -90,5 +90,5 @@ void pqTemplateEventPlayerTester::cleanupTestCase()
 }
 
 // ----------------------------------------------------------------------------
-CTK_TEST_MAIN( pqTemplateEventPlayerTest )
+CTK_TEST_MAIN(pqTemplateEventPlayerTest)
 #include "moc_pqTemplateEventPlayerTest.cpp"

@@ -32,12 +32,12 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqAbstractItemViewEventPlayerBase.h"
 #include "pqEventTypes.h"
 
-//#include <QCoreApplication>
-//#include <QEvent>
-//#include <QKeyEvent>
 #include <QAbstractItemView>
+#include <QContextMenuEvent>
+#include <QCoreApplication>
 #include <QDebug>
 #include <QMenu>
+
 //-----------------------------------------------------------------------------
 pqAbstractItemViewEventPlayerBase::pqAbstractItemViewEventPlayerBase(QObject* parentObject)
   : Superclass(parentObject)
@@ -256,6 +256,28 @@ bool pqAbstractItemViewEventPlayerBase::playEvent(
           selection.merge(itemSel, QItemSelectionModel::Select);
         }
         selModel->select(selection, selFlag);
+      }
+      return true;
+    }
+    else if (command == "openContextMenu")
+    {
+      const QModelIndex index =
+        pqAbstractItemViewEventPlayerBase::GetIndex(arguments, abstractItemView, error);
+      if (error)
+      {
+        return true;
+      }
+      const QRect itemRect = abstractItemView->visualRect(index);
+      const QPoint centerOfItem = itemRect.topLeft();
+      const QPoint globalCenterOfItem = abstractItemView->viewport()->mapToGlobal(centerOfItem);
+
+      QContextMenuEvent contextMenuEvent(
+        QContextMenuEvent::Other, centerOfItem, globalCenterOfItem);
+      if (!qApp->notify(abstractItemView->viewport(), &contextMenuEvent))
+      {
+        qCritical() << "The " << abstractItemView->objectName()
+                    << " rejected the context menu event";
+        error = true;
       }
       return true;
     }

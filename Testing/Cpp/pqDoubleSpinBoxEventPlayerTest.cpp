@@ -36,13 +36,13 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QtTest/QtTest>
 
 // QtTesting includes
-#include "pqTestUtility.h"
 #include "pqEventTypes.h"
+#include "pqTestUtility.h"
 
 #include "pqTest.h"
 
 // ----------------------------------------------------------------------------
-class pqDoubleSpinBoxEventPlayerTester: public QObject
+class pqDoubleSpinBoxEventPlayerTester : public QObject
 {
   Q_OBJECT
 
@@ -57,9 +57,9 @@ private Q_SLOTS:
   void testPlayBackCommandSetDouble_data();
 
 private:
-  QDoubleSpinBox*     DoubleSpinBox;
+  QDoubleSpinBox* DoubleSpinBox;
 
-  pqTestUtility*      TestUtility;
+  pqTestUtility* TestUtility;
 };
 
 // ----------------------------------------------------------------------------
@@ -105,15 +105,13 @@ void pqDoubleSpinBoxEventPlayerTester::testPlayBackCommandSetDouble()
 
   bool error;
   this->TestUtility->eventPlayer()->playEvent(
-      QString("doubleSpinBoxTest"), QString("set_double"),
-      QString::number(value), error);
+    QString("doubleSpinBoxTest"), QString("set_double"), QString::number(value), error);
 
   QCOMPARE(error, false);
   QCOMPARE(this->DoubleSpinBox->value(), result);
 
-  this->TestUtility->eventPlayer()->playEvent(
-      QString("doubleSpinBoxTest"), QString("value"),
-      QString::number(result), pqEventTypes::CHECK_EVENT, error);
+  this->TestUtility->eventPlayer()->playEvent(QString("doubleSpinBoxTest"), QString("value"),
+    QString::number(result), pqEventTypes::CHECK_EVENT, error);
 
   QCOMPARE(error, false);
   QCOMPARE(spy.count(), count);
@@ -135,5 +133,5 @@ void pqDoubleSpinBoxEventPlayerTester::testPlayBackCommandSetDouble_data()
 }
 
 // ----------------------------------------------------------------------------
-CTK_TEST_MAIN( pqDoubleSpinBoxEventPlayerTest )
+CTK_TEST_MAIN(pqDoubleSpinBoxEventPlayerTest)
 #include "moc_pqDoubleSpinBoxEventPlayerTest.cpp"

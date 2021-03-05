@@ -15,9 +15,8 @@ protected slots:
   void play();
   void popup();
 
-
 private:
   Q_DISABLE_COPY(TestingDemo)
 
-  pqTestUtility *TestUtility;
+  pqTestUtility* TestUtility;
 };

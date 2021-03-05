@@ -42,7 +42,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqTest.h"
 
 // ----------------------------------------------------------------------------
-class pqEventPlayerTester: public QObject
+class pqEventPlayerTester : public QObject
 {
   Q_OBJECT
 
@@ -98,18 +98,14 @@ void pqEventPlayerTester::testAddWidgetEventPlayer_data()
   QTest::addColumn<int>("newCount2");
 
   pqWidgetEventPlayer* nullWidget = NULL;
-  QTest::newRow("empty_empty")
-      << qobject_cast<QObject*>(nullWidget) << 0
-      << qobject_cast<QObject*>(nullWidget) << 0;
-  QTest::newRow("empty_pqComment")
-      << qobject_cast<QObject*>(nullWidget) << 0
-      << qobject_cast<QObject*>(new pqCommentEventPlayer(0)) << 1;
-  QTest::newRow("pqComment_pqComment")
-      << qobject_cast<QObject*>(new pqCommentEventPlayer(0)) << 1
-      << qobject_cast<QObject*>(new pqCommentEventPlayer(0)) << 1;
-  QTest::newRow("pqComment_pqTreeView")
-      << qobject_cast<QObject*>(new pqCommentEventPlayer(0)) << 1
-      << qobject_cast<QObject*>(new pqTreeViewEventPlayer()) << 2;
+  QTest::newRow("empty_empty") << qobject_cast<QObject*>(nullWidget) << 0
+                               << qobject_cast<QObject*>(nullWidget) << 0;
+  QTest::newRow("empty_pqComment") << qobject_cast<QObject*>(nullWidget) << 0
+                                   << qobject_cast<QObject*>(new pqCommentEventPlayer(0)) << 1;
+  QTest::newRow("pqComment_pqComment") << qobject_cast<QObject*>(new pqCommentEventPlayer(0)) << 1
+                                       << qobject_cast<QObject*>(new pqCommentEventPlayer(0)) << 1;
+  QTest::newRow("pqComment_pqTreeView") << qobject_cast<QObject*>(new pqCommentEventPlayer(0)) << 1
+                                        << qobject_cast<QObject*>(new pqTreeViewEventPlayer()) << 2;
 }
 
 // ----------------------------------------------------------------------------
@@ -123,8 +119,7 @@ void pqEventPlayerTester::testRemoveWidgetEventPlayer()
   QFETCH(int, newCount);
   QFETCH(bool, thirdResult);
 
-  QCOMPARE(eventPlayer.removeWidgetEventPlayer(nameToRemove),
-           firstResult);
+  QCOMPARE(eventPlayer.removeWidgetEventPlayer(nameToRemove), firstResult);
 
   // When we add the widgetEventPlayer into the eventPlayer, it is automaticaly
   // reparented to the eventPlayer. So its deletion would be automatic.
@@ -132,11 +127,9 @@ void pqEventPlayerTester::testRemoveWidgetEventPlayer()
   eventPlayer.addWidgetEventPlayer(commentPlayer);
 
   QCOMPARE(eventPlayer.players().count(), 1);
-  QCOMPARE(eventPlayer.removeWidgetEventPlayer(nameToRemove),
-           secondResult);
+  QCOMPARE(eventPlayer.removeWidgetEventPlayer(nameToRemove), secondResult);
   QCOMPARE(eventPlayer.players().count(), newCount);
-  QCOMPARE(eventPlayer.removeWidgetEventPlayer(nameToRemove),
-           thirdResult);
+  QCOMPARE(eventPlayer.removeWidgetEventPlayer(nameToRemove), thirdResult);
 }
 
 // ----------------------------------------------------------------------------
@@ -159,23 +152,17 @@ void pqEventPlayerTester::testGetWidgetEventPlayer()
   pqEventPlayer eventPlayer;
 
   pqWidgetEventPlayer* nullWidget = NULL;
-  QCOMPARE(eventPlayer.getWidgetEventPlayer(0),
-           nullWidget);
-  QCOMPARE(eventPlayer.getWidgetEventPlayer("pqCommentEventPlayer"),
-           nullWidget);
+  QCOMPARE(eventPlayer.getWidgetEventPlayer(0), nullWidget);
+  QCOMPARE(eventPlayer.getWidgetEventPlayer("pqCommentEventPlayer"), nullWidget);
 
   // When we add the widgetEventPlayer into the eventPlayer, it is automaticaly
   // reparented to the eventPlayer. So its deletion would be automatic.
   pqCommentEventPlayer* comment = new pqCommentEventPlayer(0);
   eventPlayer.addWidgetEventPlayer(comment);
 
-  QCOMPARE(eventPlayer.getWidgetEventPlayer(0),
-           nullWidget);
-  QCOMPARE(eventPlayer.getWidgetEventPlayer("pqTreeViewEventPlayer"),
-           nullWidget);
-  QCOMPARE(eventPlayer.getWidgetEventPlayer("pqCommentEventPlayer"),
-           comment);
-
+  QCOMPARE(eventPlayer.getWidgetEventPlayer(0), nullWidget);
+  QCOMPARE(eventPlayer.getWidgetEventPlayer("pqTreeViewEventPlayer"), nullWidget);
+  QCOMPARE(eventPlayer.getWidgetEventPlayer("pqCommentEventPlayer"), comment);
 }
 
 // ----------------------------------------------------------------------------
@@ -190,8 +177,7 @@ void pqEventPlayerTester::testAddDefaultWidgetEventPlayers()
   QFETCH(QString, widgetEventPlayerName);
   QFETCH(int, index);
 
-  QCOMPARE(QString(players.at(index)->metaObject()->className()),
-           widgetEventPlayerName);
+  QCOMPARE(QString(players.at(index)->metaObject()->className()), widgetEventPlayerName);
 }
 
 // ----------------------------------------------------------------------------
@@ -221,4 +207,3 @@ void pqEventPlayerTester::testAddDefaultWidgetEventPlayers_data()
 // ----------------------------------------------------------------------------
 CTK_TEST_MAIN(pqEventPlayerTest)
 #include "moc_pqEventPlayerTest.cpp"
-

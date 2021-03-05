@@ -42,7 +42,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqTest.h"
 
 // ----------------------------------------------------------------------------
-class pqAbstractButtonEventTranslatorTester: public QObject
+class pqAbstractButtonEventTranslatorTester : public QObject
 {
   Q_OBJECT
 
@@ -57,9 +57,9 @@ private Q_SLOTS:
   void testToolButton_data();
 
 private:
-  QToolButton*     ToolButton;
+  QToolButton* ToolButton;
 
-  pqTestUtility*      TestUtility;
+  pqTestUtility* TestUtility;
   pqDummyEventObserver* EventObserver;
 };
 
@@ -82,7 +82,7 @@ void pqAbstractButtonEventTranslatorTester::init()
   this->ToolButton = new QToolButton();
   this->ToolButton->setText("toolButton");
   this->ToolButton->setObjectName("toolButton");
-  this->ToolButton->resize(200,200);
+  this->ToolButton->resize(200, 200);
 
   this->ToolButton->show();
 #if QT_VERSION < QT_VERSION_CHECK(5, 3, 0)
@@ -161,7 +161,8 @@ void pqAbstractButtonEventTranslatorTester::testToolButton()
 
   QTest::mousePress(this->ToolButton, Qt::LeftButton, Qt::NoModifier);
   QFETCH(bool, longClick);
-  QTest::mouseRelease(this->ToolButton, Qt::LeftButton, Qt::NoModifier, QPoint(), longClick ? 800 : -1);
+  QTest::mouseRelease(
+    this->ToolButton, Qt::LeftButton, Qt::NoModifier, QPoint(), longClick ? 800 : -1);
 
   QFETCH(QString, recordEmitted);
   bool res = this->EventObserver->Text == recordEmitted;
@@ -178,11 +179,10 @@ void pqAbstractButtonEventTranslatorTester::testToolButton_data()
   QTest::addColumn<bool>("longClick");
   QTest::addColumn<QString>("recordEmitted");
 
-  //QTest::newRow("fail") << 2 << false << false << true << false<< "toolButton, activate, #";
+  // QTest::newRow("fail") << 2 << false << false << true << false<< "toolButton, activate, #";
   for (int i = 0; i < 0x20; ++i)
   {
-    int popup = i & 0x01 ? QToolButton::DelayedPopup :
-      QToolButton::InstantPopup;
+    int popup = i & 0x01 ? QToolButton::DelayedPopup : QToolButton::InstantPopup;
     const bool withDefaultAction = i & 0x02;
     const bool checkable = i & 0x04;
     const bool withMenu = i & 0x08;
@@ -196,21 +196,18 @@ void pqAbstractButtonEventTranslatorTester::testToolButton_data()
         .arg(withMenu)
         .arg(longClick);
 
-    bool longActivate = withMenu
-      && popup == QToolButton::DelayedPopup
-      && longClick;
-    QString recordEmitted = QString("toolButton%1, %2, %3#")
-      .arg(withDefaultAction && !longActivate ? "/action" : "")
-      .arg(longActivate ? "longActivate" : (checkable ? "set_boolean" : "activate"))
-      .arg(checkable && !longActivate? "true" : "");
+    bool longActivate = withMenu && popup == QToolButton::DelayedPopup && longClick;
+    QString recordEmitted =
+      QString("toolButton%1, %2, %3#")
+        .arg(withDefaultAction && !longActivate ? "/action" : "")
+        .arg(longActivate ? "longActivate" : (checkable ? "set_boolean" : "activate"))
+        .arg(checkable && !longActivate ? "true" : "");
 
-    QTest::newRow(testName.toLatin1())
-      << popup << withDefaultAction
-      << checkable << withMenu
-      << longClick << recordEmitted;
+    QTest::newRow(testName.toLatin1()) << popup << withDefaultAction << checkable << withMenu
+                                       << longClick << recordEmitted;
   }
 }
 
 // ----------------------------------------------------------------------------
-CTK_TEST_MAIN( pqAbstractButtonEventTranslatorTest )
+CTK_TEST_MAIN(pqAbstractButtonEventTranslatorTest)
 #include "moc_pqAbstractButtonEventTranslatorTest.cpp"

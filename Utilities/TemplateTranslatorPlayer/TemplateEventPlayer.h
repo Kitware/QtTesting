@@ -7,8 +7,7 @@
 /// Concrete implementation of pqWidgetEventPlayer that translates
 /// high-level events into low-level Qt events.
 
-class TemplateEventPlayer :
-  public pqWidgetEventPlayer
+class TemplateEventPlayer : public pqWidgetEventPlayer
 {
   Q_OBJECT
   typedef pqWidgetEventPlayer Superclass;
@@ -17,10 +16,10 @@ public:
   TemplateEventPlayer(QObject* parent = 0);
 
   using Superclass::playEvent;
-  bool playEvent(QObject *Object, const QString &Command, const QString &Arguments, bool &Error);
+  bool playEvent(QObject* Object, const QString& Command, const QString& Arguments, bool& Error);
 
 private:
-  TemplateEventPlayer(const TemplateEventPlayer&); // NOT implemented
+  TemplateEventPlayer(const TemplateEventPlayer&);            // NOT implemented
   TemplateEventPlayer& operator=(const TemplateEventPlayer&); // NOT implemented
 };
 

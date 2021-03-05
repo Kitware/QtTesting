@@ -42,7 +42,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqTest.h"
 
 // ----------------------------------------------------------------------------
-class pqTemplateEventTranslatorTester: public QObject
+class pqTemplateEventTranslatorTester : public QObject
 {
   Q_OBJECT
 
@@ -54,9 +54,9 @@ private Q_SLOTS:
   void cleanupTestCase();
 
 private:
-  QTemplate*            Template;
+  QTemplate* Template;
 
-  pqTestUtility*        TestUtility;
+  pqTestUtility* TestUtility;
   pqDummyEventObserver* EventObserver;
 };
 
@@ -102,5 +102,5 @@ void pqTemplateEventTranslatorTester::cleanupTestCase()
 }
 
 // ----------------------------------------------------------------------------
-CTK_TEST_MAIN( pqTemplateEventTranslatorTest )
+CTK_TEST_MAIN(pqTemplateEventTranslatorTest)
 #include "moc_pqTemplateEventTranslatorTest.cpp"
