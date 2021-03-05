@@ -40,7 +40,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqTest.h"
 
 // ----------------------------------------------------------------------------
-class pqEventRecorderTester: public QObject
+class pqEventRecorderTester : public QObject
 {
   Q_OBJECT
 
@@ -156,9 +156,8 @@ void pqEventRecorderTester::testRecordEvents()
   QFETCH(bool, flushing);
 
   recorder.recordEvents(qobject_cast<pqEventTranslator*>(activeTranslator),
-                        qobject_cast<pqEventObserver*>(activeObserver),
-                        qobject_cast<QFile*>(ioDevice),
-                        continuousFlush);
+    qobject_cast<pqEventObserver*>(activeObserver), qobject_cast<QFile*>(ioDevice),
+    continuousFlush);
 
   QCOMPARE(recorder.isRecording(), started);
   QCOMPARE(recorder.continuousFlush(), flushing);
@@ -183,26 +182,16 @@ void pqEventRecorderTester::testRecordEvents_data()
   pqEventTranslator* nullTranslator = 0;
   pqEventTranslator* translator = new pqEventTranslator;
 
-  QTest::newRow("1") << qobject_cast<QObject*>(nullFile)
-                     << qobject_cast<QObject*>(nullObserver )
-                     << qobject_cast<QObject*>(nullTranslator)
-                     << false << false << false;
-  QTest::newRow("2") << qobject_cast<QObject*>(nullFile)
-                     << qobject_cast<QObject*>(nullObserver )
-                     << qobject_cast<QObject*>(translator)
-                     << false << false << false;
-  QTest::newRow("3") << qobject_cast<QObject*>(nullFile)
-                     << qobject_cast<QObject*>(observer )
-                     << qobject_cast<QObject*>(translator)
-                     << false << false << false;
-  QTest::newRow("4") << qobject_cast<QObject*>(file)
-                     << qobject_cast<QObject*>(observer)
-                     << qobject_cast<QObject*>(translator)
-                     << false << true << false;
-  QTest::newRow("4") << qobject_cast<QObject*>(file)
-                     << qobject_cast<QObject*>(observer)
-                     << qobject_cast<QObject*>(translator)
-                     << true << true << true;
+  QTest::newRow("1") << qobject_cast<QObject*>(nullFile) << qobject_cast<QObject*>(nullObserver)
+                     << qobject_cast<QObject*>(nullTranslator) << false << false << false;
+  QTest::newRow("2") << qobject_cast<QObject*>(nullFile) << qobject_cast<QObject*>(nullObserver)
+                     << qobject_cast<QObject*>(translator) << false << false << false;
+  QTest::newRow("3") << qobject_cast<QObject*>(nullFile) << qobject_cast<QObject*>(observer)
+                     << qobject_cast<QObject*>(translator) << false << false << false;
+  QTest::newRow("4") << qobject_cast<QObject*>(file) << qobject_cast<QObject*>(observer)
+                     << qobject_cast<QObject*>(translator) << false << true << false;
+  QTest::newRow("4") << qobject_cast<QObject*>(file) << qobject_cast<QObject*>(observer)
+                     << qobject_cast<QObject*>(translator) << true << true << true;
 }
 
 // ----------------------------------------------------------------------------
