@@ -41,7 +41,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqTest.h"
 
 // ----------------------------------------------------------------------------
-class pqDoubleSpinBoxEventTranslatorTester: public QObject
+class pqDoubleSpinBoxEventTranslatorTester : public QObject
 {
   Q_OBJECT
 
@@ -70,9 +70,9 @@ private Q_SLOTS:
   void testRecordCheckMouseClick_data();
 
 private:
-  QDoubleSpinBox*     DoubleSpinBox;
+  QDoubleSpinBox* DoubleSpinBox;
 
-  pqTestUtility*      TestUtility;
+  pqTestUtility* TestUtility;
   pqDummyEventObserver* EventObserver;
 };
 
@@ -126,7 +126,7 @@ void pqDoubleSpinBoxEventTranslatorTester::testRecordLeftMouseClick()
   QFETCH(int, Y);
   QFETCH(QString, recordEmitted);
 
-  QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier, QPoint(X,Y));
+  QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier, QPoint(X, Y));
   QCOMPARE(this->EventObserver->Text, recordEmitted);
 
   this->EventObserver->Text = QString();
@@ -142,17 +142,14 @@ void pqDoubleSpinBoxEventTranslatorTester::testRecordLeftMouseClick_data()
   QTest::addColumn<QString>("recordEmitted");
 
   QSize size = doubleSpinBox.size();
-  int frameWidth =
-      doubleSpinBox.style()->pixelMetric(QStyle::PM_SpinBoxFrameWidth) + 1;
+  int frameWidth = doubleSpinBox.style()->pixelMetric(QStyle::PM_SpinBoxFrameWidth) + 1;
 
   QTest::newRow("0,0") << 0 << 0 << QString();
-  QTest::newRow("invalid") << - size.rwidth()<<  0 << QString();
-  QTest::newRow("middle") << size.rwidth()/2 << size.rheight()/2 << QString();
-  QTest::newRow("arrow up") << size.rwidth()- frameWidth
-                            << frameWidth
+  QTest::newRow("invalid") << -size.rwidth() << 0 << QString();
+  QTest::newRow("middle") << size.rwidth() / 2 << size.rheight() / 2 << QString();
+  QTest::newRow("arrow up") << size.rwidth() - frameWidth << frameWidth
                             << QString("doubleSpinBoxTest, set_double, 0.25#");
-  QTest::newRow("arrow down") << size.rwidth()- frameWidth
-                              << size.rheight() - frameWidth
+  QTest::newRow("arrow down") << size.rwidth() - frameWidth << size.rheight() - frameWidth
                               << QString("doubleSpinBoxTest, set_double, -0.25#");
 }
 
@@ -163,7 +160,7 @@ void pqDoubleSpinBoxEventTranslatorTester::testRecordRightMouseClick()
   QFETCH(int, Y);
   QFETCH(QString, recordEmitted);
 
-  QTest::mouseClick(this->DoubleSpinBox, Qt::RightButton, Qt::NoModifier, QPoint(X,Y));
+  QTest::mouseClick(this->DoubleSpinBox, Qt::RightButton, Qt::NoModifier, QPoint(X, Y));
   QCOMPARE(this->EventObserver->Text, recordEmitted);
 
   this->EventObserver->Text = QString();
@@ -179,17 +176,13 @@ void pqDoubleSpinBoxEventTranslatorTester::testRecordRightMouseClick_data()
   QTest::addColumn<QString>("recordEmitted");
 
   QSize size = doubleSpinBox.size();
-  int frameWidth =
-      doubleSpinBox.style()->pixelMetric(QStyle::PM_SpinBoxFrameWidth) + 1;
+  int frameWidth = doubleSpinBox.style()->pixelMetric(QStyle::PM_SpinBoxFrameWidth) + 1;
 
   QTest::newRow("0,0") << 0 << 0 << QString();
-  QTest::newRow("invalid") << - size.rwidth()<<  0 << QString();
-  QTest::newRow("middle") << size.rwidth()/2 << size.rheight()/2 << QString();
-  QTest::newRow("arrow up") << size.rwidth()- frameWidth
-                            << frameWidth
-                            << QString();
-  QTest::newRow("arrow down") << size.rwidth()- frameWidth
-                              << size.rheight() - frameWidth
+  QTest::newRow("invalid") << -size.rwidth() << 0 << QString();
+  QTest::newRow("middle") << size.rwidth() / 2 << size.rheight() / 2 << QString();
+  QTest::newRow("arrow up") << size.rwidth() - frameWidth << frameWidth << QString();
+  QTest::newRow("arrow down") << size.rwidth() - frameWidth << size.rheight() - frameWidth
                               << QString();
 }
 
@@ -200,8 +193,7 @@ void pqDoubleSpinBoxEventTranslatorTester::testRecordMiddleMouseClick()
   QFETCH(int, Y);
   QFETCH(QString, recordEmitted);
 
-  QTest::mouseClick(this->DoubleSpinBox, Qt::MiddleButton,
-                    Qt::NoModifier, QPoint(X,Y));
+  QTest::mouseClick(this->DoubleSpinBox, Qt::MiddleButton, Qt::NoModifier, QPoint(X, Y));
   QCOMPARE(this->EventObserver->Text, recordEmitted);
 
   this->EventObserver->Text = QString();
@@ -234,31 +226,31 @@ void pqDoubleSpinBoxEventTranslatorTester::testRecordKeyBoardClick_data()
 
   QTest::newRow("33.5") << QString::number(33.5)
                         << QString("%1#%2#%3#%4#%5#%6#%7#")
-                           .arg(QString("doubleSpinBoxTest, set_double, 3"),
-                                QString("doubleSpinBoxTest, set_double, 3"),
-                                QString("doubleSpinBoxTest, set_double, 33"),
-                                QString("doubleSpinBoxTest, set_double, 33"),
-                                QString("doubleSpinBoxTest, set_double, 33"), // corresponds to "."
-                                QString("doubleSpinBoxTest, set_double, 33.5"),
-                                QString("doubleSpinBoxTest, set_double, 33.5"));
+                             .arg(QString("doubleSpinBoxTest, set_double, 3"),
+                               QString("doubleSpinBoxTest, set_double, 3"),
+                               QString("doubleSpinBoxTest, set_double, 33"),
+                               QString("doubleSpinBoxTest, set_double, 33"),
+                               QString("doubleSpinBoxTest, set_double, 33"), // corresponds to "."
+                               QString("doubleSpinBoxTest, set_double, 33.5"),
+                               QString("doubleSpinBoxTest, set_double, 33.5"));
   QTest::newRow("-5.23") << QString::number(-5.23)
-                     << QString("%1#%2#%3#%4#%5#%6#%7#%8#")
-                        .arg(QString("doubleSpinBoxTest, set_double, 0"), // corresponds to "-"
-                             QString("doubleSpinBoxTest, set_double, -5"),
-                             QString("doubleSpinBoxTest, set_double, -5"),
-                             QString("doubleSpinBoxTest, set_double, -5"), // corresponds to "."
-                             QString("doubleSpinBoxTest, set_double, -5.2"),
-                             QString("doubleSpinBoxTest, set_double, -5.2"),
-                             QString("doubleSpinBoxTest, set_double, -5.23"),
-                             QString("doubleSpinBoxTest, set_double, -5.23"));
+                         << QString("%1#%2#%3#%4#%5#%6#%7#%8#")
+                              .arg(
+                                QString("doubleSpinBoxTest, set_double, 0"), // corresponds to "-"
+                                QString("doubleSpinBoxTest, set_double, -5"),
+                                QString("doubleSpinBoxTest, set_double, -5"),
+                                QString("doubleSpinBoxTest, set_double, -5"), // corresponds to "."
+                                QString("doubleSpinBoxTest, set_double, -5.2"),
+                                QString("doubleSpinBoxTest, set_double, -5.2"),
+                                QString("doubleSpinBoxTest, set_double, -5.23"),
+                                QString("doubleSpinBoxTest, set_double, -5.23"));
 }
 
 // ----------------------------------------------------------------------------
 void pqDoubleSpinBoxEventTranslatorTester::testRecordComplexClick()
 {
   QSize size = this->DoubleSpinBox->size();
-  int frameWidth =
-      this->DoubleSpinBox->style()->pixelMetric(QStyle::PM_SpinBoxFrameWidth) + 1;
+  int frameWidth = this->DoubleSpinBox->style()->pixelMetric(QStyle::PM_SpinBoxFrameWidth) + 1;
 
   QString recordExpected;
 
@@ -274,31 +266,31 @@ void pqDoubleSpinBoxEventTranslatorTester::testRecordComplexClick()
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.25#"));
 
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
-                    QPoint(size.rwidth()- frameWidth , size.rheight() - frameWidth));
+    QPoint(size.rwidth() - frameWidth, size.rheight() - frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.5#"));
 
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
-                    QPoint(size.rwidth()- frameWidth , size.rheight() - frameWidth));
+    QPoint(size.rwidth() - frameWidth, size.rheight() - frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.75#"));
 
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
-                    QPoint(size.rwidth()- frameWidth , frameWidth));
+    QPoint(size.rwidth() - frameWidth, frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.5#"));
 
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
-                    QPoint(size.rwidth()- frameWidth , frameWidth));
+    QPoint(size.rwidth() - frameWidth, frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5.25#"));
 
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
-                    QPoint(size.rwidth()- frameWidth , frameWidth));
+    QPoint(size.rwidth() - frameWidth, frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -5#"));
 
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
-                    QPoint(size.rwidth()- frameWidth , frameWidth));
+    QPoint(size.rwidth() - frameWidth, frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -4.75#"));
 
   QTest::mouseClick(this->DoubleSpinBox, Qt::LeftButton, Qt::NoModifier,
-                    QPoint(size.rwidth()- frameWidth , frameWidth));
+    QPoint(size.rwidth() - frameWidth, frameWidth));
   recordExpected.append(QString("doubleSpinBoxTest, set_double, -4.5#"));
 
   QTest::keyClicks(this->DoubleSpinBox, QString::number(0));
@@ -328,11 +320,10 @@ void pqDoubleSpinBoxEventTranslatorTester::testRecordCheckMouseClick_data()
 {
   QTest::addColumn<QString>("recordEmitted");
 
-  QTest::newRow("Click") << QString("%1#%2#")
-                           .arg(QString("doubleSpinBoxTest, set_double, 17.17"),
-                                QString("Check, doubleSpinBoxTest, value, 17.17"));
+  QTest::newRow("Click") << QString("%1#%2#").arg(QString("doubleSpinBoxTest, set_double, 17.17"),
+    QString("Check, doubleSpinBoxTest, value, 17.17"));
 }
 
 // ----------------------------------------------------------------------------
-CTK_TEST_MAIN( pqDoubleSpinBoxEventTranslatorTest )
+CTK_TEST_MAIN(pqDoubleSpinBoxEventTranslatorTest)
 #include "moc_pqDoubleSpinBoxEventTranslatorTest.cpp"

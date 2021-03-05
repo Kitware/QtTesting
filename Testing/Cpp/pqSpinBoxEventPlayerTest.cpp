@@ -41,7 +41,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqTest.h"
 
 // ----------------------------------------------------------------------------
-class pqSpinBoxEventPlayerTester: public QObject
+class pqSpinBoxEventPlayerTester : public QObject
 {
   Q_OBJECT
 
@@ -56,9 +56,9 @@ private Q_SLOTS:
   void testPlayBackCommandSetInt_data();
 
 private:
-  QSpinBox*         SpinBox;
+  QSpinBox* SpinBox;
 
-  pqTestUtility*    TestUtility;
+  pqTestUtility* TestUtility;
 };
 
 // ----------------------------------------------------------------------------
@@ -103,13 +103,13 @@ void pqSpinBoxEventPlayerTester::testPlayBackCommandSetInt()
 
   bool error;
   this->TestUtility->eventPlayer()->playEvent(
-      QString("spinBoxTest"), QString("set_int"), QString::number(value), error);
+    QString("spinBoxTest"), QString("set_int"), QString::number(value), error);
 
   QCOMPARE(this->SpinBox->value(), result);
   QCOMPARE(error, false);
 
-  this->TestUtility->eventPlayer()->playEvent(
-      QString("spinBoxTest"), QString("value"), QString::number(result), pqEventTypes::CHECK_EVENT, error);
+  this->TestUtility->eventPlayer()->playEvent(QString("spinBoxTest"), QString("value"),
+    QString::number(result), pqEventTypes::CHECK_EVENT, error);
   QCOMPARE(error, false);
   QCOMPARE(spy.count(), count);
 }
@@ -130,5 +130,5 @@ void pqSpinBoxEventPlayerTester::testPlayBackCommandSetInt_data()
 }
 
 // ----------------------------------------------------------------------------
-CTK_TEST_MAIN( pqSpinBoxEventPlayerTest )
+CTK_TEST_MAIN(pqSpinBoxEventPlayerTest)
 #include "moc_pqSpinBoxEventPlayerTest.cpp"

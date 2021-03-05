@@ -4,8 +4,7 @@
 // QtTesting inlcudes
 #include <pqWidgetEventTranslator.h>
 
-class TemplateEventTranslator :
-  public pqWidgetEventTranslator
+class TemplateEventTranslator : public pqWidgetEventTranslator
 {
   Q_OBJECT
 
@@ -13,13 +12,13 @@ public:
   TemplateEventTranslator(QObject* parent = 0);
 
   using Superclass::translateEvent;
-  virtual bool translateEvent(QObject *Object, QEvent *Event, bool &Error);
+  virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
 
 private slots:
   void onDestroyed();
 
 private:
-  TemplateEventTranslator(const TemplateEventTranslator&); // NOT implemented
+  TemplateEventTranslator(const TemplateEventTranslator&);            // NOT implemented
   TemplateEventTranslator& operator=(const TemplateEventTranslator&); // NOT implemented
 
   QObject* CurrentObject;
