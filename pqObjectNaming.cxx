@@ -256,7 +256,7 @@ QObject* pqObjectNaming::GetObject(const QString& Name)
   }
 
   // controls how many matches to dump in error message.
-  QString matchLimitEnv = QString::fromLocal8Bit(qgetenv("PQOBJECTNAMING_MATCH_LIMIT"));
+  QString matchLimitEnv = QString::fromUtf8(qgetenv("PQOBJECTNAMING_MATCH_LIMIT"));
   const int matchLimit = matchLimitEnv.isEmpty() ? 20 : matchLimitEnv.toInt();
 
   bool foundMatch = false;

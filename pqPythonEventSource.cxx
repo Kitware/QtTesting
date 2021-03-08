@@ -170,7 +170,7 @@ static PyObject* QtTesting_getProperty(PyObject* /*self*/, PyObject* args)
     return NULL;
   }
 
-  return Py_BuildValue(const_cast<char*>("s"), PropertyValue.toLatin1().data());
+  return Py_BuildValue(const_cast<char*>("s"), PropertyValue.toUtf8().data());
 }
 
 static PyObject* QtTesting_setProperty(PyObject* /*self*/, PyObject* args)
@@ -276,7 +276,7 @@ static PyObject* QtTesting_getChildren(PyObject* /*self*/, PyObject* args)
   QString objs = ObjectList.join(", ");
   QString ret = QString("[%1]").arg(objs);
 
-  return Py_BuildValue(const_cast<char*>("s"), ret.toLatin1().data());
+  return Py_BuildValue(const_cast<char*>("s"), ret.toUtf8().data());
 }
 
 static PyObject* QtTesting_invokeMethod(PyObject* /*self*/, PyObject* args)
@@ -326,7 +326,7 @@ static PyObject* QtTesting_invokeMethod(PyObject* /*self*/, PyObject* args)
     return NULL;
   }
 
-  return Py_BuildValue(const_cast<char*>("s"), PropertyResult.toLatin1().data());
+  return Py_BuildValue(const_cast<char*>("s"), PropertyResult.toUtf8().data());
 }
 
 static PyMethodDef QtTestingMethods[] = {
@@ -404,7 +404,7 @@ QString pqPythonEventSource::getProperty(QString& object, QString& prop)
     object = QString::null;
     return QString();
   }
-  int idx = qobject->metaObject()->indexOfProperty(prop.toLatin1().data());
+  int idx = qobject->metaObject()->indexOfProperty(prop.toUtf8().data());
   if (idx == -1)
   {
     prop = QString::null;
@@ -442,7 +442,7 @@ void pqPythonEventSource::setProperty(QString& object, QString& prop, const QStr
     return;
   }
 
-  int idx = qobject->metaObject()->indexOfProperty(prop.toLatin1().data());
+  int idx = qobject->metaObject()->indexOfProperty(prop.toUtf8().data());
   if (idx == -1)
   {
     prop = QString::null;
@@ -456,7 +456,7 @@ void pqPythonEventSource::setProperty(QString& object, QString& prop, const QStr
     {
       val = value.split(";");
     }
-    qobject->setProperty(prop.toLatin1().data(), val);
+    qobject->setProperty(prop.toUtf8().data(), val);
   }
 }
 
@@ -545,7 +545,7 @@ QString pqPythonEventSource::invokeMethod(QString& object, QString& method)
   }
   else
   {
-    if (!QMetaObject::invokeMethod(qobject, method.toLatin1().data(), Q_RETURN_ARG(QVariant, ret)))
+    if (!QMetaObject::invokeMethod(qobject, method.toUtf8().data(), Q_RETURN_ARG(QVariant, ret)))
     {
       method = QString::null;
     }

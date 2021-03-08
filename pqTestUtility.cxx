@@ -371,7 +371,7 @@ void pqTestUtility::addObjectStateProperty(QObject* object, const QString& prope
   {
     return;
   }
-  if (property.isEmpty() || !object->property(property.toLatin1()).isValid())
+  if (property.isEmpty() || !object->property(property.toUtf8()).isValid())
   {
     return;
   }
