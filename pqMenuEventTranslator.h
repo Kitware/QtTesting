@@ -35,6 +35,9 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "pqWidgetEventTranslator.h"
 
+#include <queue>
+
+class QMenu;
 class QAction;
 
 /**
@@ -58,6 +61,9 @@ public:
 private:
   pqMenuEventTranslator(const pqMenuEventTranslator&);
   pqMenuEventTranslator& operator=(const pqMenuEventTranslator&);
+
+  // A sub-menu action -> parent map
+  std::map<QAction*, QMenu*> SubMenuParent;
 };
 
 #endif // !_pqMenuEventTranslator_h
