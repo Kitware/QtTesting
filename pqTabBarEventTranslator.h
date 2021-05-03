@@ -38,7 +38,20 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 class QTabBar;
 
 /**
-Translates low-level Qt events into high-level ParaView events that can be recorded as test cases.
+\brief Records selection of a tab in a QTabBar
+
+\note A QMainMainWindow has hidden QTabBar's that it uses to manage
+QDockWidgets and other widgets that can be tabified.  These hidden QTabBars
+are not named, can be numerous, and are instantiated in an unspecified order.
+This makes finding the correct QTabBar difficult and sometimes impossible.
+Therefore when recording selection of one of these hidden QTabBar's, the
+QMainWindow is recorded as the object instead of the QTabBar itself. During
+playback, if a QMainWindow was recorded then all hidden QTabBar direct
+children will be searched for the tab with the recorded name. The risk with
+this approach is that when multiple DockWidgets have the same windowTitle()
+(which determines the tab name) then it is possible to select the wrong one.
+This can be mediated in client code by ensuring that each DockWidget has a
+unique windowTitle()
 
 \sa pqEventTranslator
 */
