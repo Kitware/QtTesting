@@ -75,15 +75,6 @@ bool pqTabBarEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
 
 void pqTabBarEventTranslator::indexChanged(int which)
 {
-
-  // The QMainWindow preemptively creates unnamed QTabBar's for each dock area and other uses that I
-  // couldn't determine.  The objects are instantiated in an unspecified order, so the default
-  // unnamed object finding logic just doesn't work reliably.  So instead we will ask the
-  // QMainWindow itself to find a tab with the given name from the pqTabBarEventPlayer.  The risk
-  // with this approach is that when multiple DockWidgets have the same windowTitle() (which
-  // determines the tabname) then we will sometimes pick the wrong one.  This can be mediated in
-  // client code by ensuring that each DockWidget has a unique windowTitle() (which they probably
-  // should anyway)
   QObject* recordedObject = this->CurrentObject;
   if (QObject* parent = this->CurrentObject->parent();
       parent && this->CurrentObject->objectName().isEmpty())
