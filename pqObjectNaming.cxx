@@ -249,10 +249,11 @@ QObject* pqObjectNaming::GetObject(const QString& Name)
 
   ErrorMessage.clear();
   QTextStream stream(&ErrorMessage);
-  stream << "Couldn't find object `" << Name << "`\n";
+  stream << "\n"; // a newline to keep horizontal alignment
+  stream << "Couldn't find object  `" << Name << "`\n";
   if (lastObject)
   {
-    stream << "Found up to          `" << pqObjectNaming::GetName(*lastObject) << "`\n";
+    stream << "Found up to           `" << pqObjectNaming::GetName(*lastObject) << "`\n";
   }
 
   // controls how many matches to dump in error message.
@@ -265,12 +266,12 @@ QObject* pqObjectNaming::GetObject(const QString& Name)
     const QObjectList matches = lastObject->findChildren<QObject*>(names[names.size() - 1]);
     for (int cc = 0; (matchLimit <= 0 || cc < matchLimit) && cc < matches.size(); ++cc)
     {
-      stream << "\tPossible match: `" << pqObjectNaming::GetName(*matches[cc]) << "`\n";
+      stream << "    Possible match:   `" << pqObjectNaming::GetName(*matches[cc]) << "`\n";
     }
     if (matchLimit > 0 && matches.size() > matchLimit)
     {
-      stream << "\tPossible match: .... (and " << (matches.size() - matchLimit) << " more!)\n"
-             << "\tSet PQOBJECTNAMING_MATCH_LIMIT environment var to a +'ve number to limit "
+      stream << "    Possible match: .... (and " << (matches.size() - matchLimit) << " more!)\n"
+             << "    Set PQOBJECTNAMING_MATCH_LIMIT environment var to a +'ve number to limit "
                 "entries (or 0 for unlimited).\n";
     }
   }
@@ -279,12 +280,12 @@ QObject* pqObjectNaming::GetObject(const QString& Name)
     const QObjectList matches = lastObject->findChildren<QObject*>();
     for (int cc = 0; (matchLimit <= 0 || cc < matchLimit) && cc < matches.size(); ++cc)
     {
-      stream << "\tAvailable widget: `" << pqObjectNaming::GetName(*matches[cc]) << "`\n";
+      stream << "    Available widget: `" << pqObjectNaming::GetName(*matches[cc]) << "`\n";
     }
     if (matchLimit > 0 && matches.size() > matchLimit)
     {
-      stream << "\tAvailable widget: .... (and " << (matches.size() - matchLimit) << " more!)\n"
-             << "\tSet PQOBJECTNAMING_MATCH_LIMIT environment var to a +'ve number to limit "
+      stream << "    Available widget: .... (and " << (matches.size() - matchLimit) << " more!)\n"
+             << "    Set PQOBJECTNAMING_MATCH_LIMIT environment var to a +'ve number to limit "
                 "entries (or 0 for unlimited).\n";
     }
   }
