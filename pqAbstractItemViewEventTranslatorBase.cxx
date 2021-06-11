@@ -116,7 +116,6 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
         if (this->Checking)
         {
           // If we entered before in check mode, then we need to reset cached view pointer.
-          // TODO Would it make more sense to have a separate view pointer for checking?
           this->Checking = false;
           this->AbstractItemView = nullptr;
         }
@@ -297,7 +296,7 @@ QString pqAbstractItemViewEventTranslatorBase::getIndicesAsString(
   const QModelIndexList& selectedIndices)
 {
   QString listString;
-  Q_FOREACH (QModelIndex idx, selectedIndices)
+  for (QModelIndex idx : selectedIndices)
   {
     listString.append(QString("%1,").arg(this->getIndexAsString(idx)));
   }
@@ -326,7 +325,7 @@ void pqAbstractItemViewEventTranslatorBase::onSelectionChanged(const QItemSelect
     QItemSelection selection = selModel->selection();
     // selections are a list of disjoint ranges, record the bounds of each.
     // this works better for playback than recording all the selected indexes.
-    Q_FOREACH (QItemSelectionRange selRange, selection)
+    for (QItemSelectionRange selRange : selection)
     {
       selectedIndices.push_back(selRange.topLeft());
       selectedIndices.push_back(selRange.bottomRight());
