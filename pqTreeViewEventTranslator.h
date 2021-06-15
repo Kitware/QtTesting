@@ -46,9 +46,6 @@ public:
   pqTreeViewEventTranslator(QObject* parent = 0);
   ~pqTreeViewEventTranslator() override;
 
-  /// Connect QTree signals to this class slots
-  void connectWidgetToSlots(QAbstractItemView* abstractItemView) override;
-
   /// find and set the corrected abstract item view
   QAbstractItemView* findCorrectedAbstractItemView(QObject* object) const override;
 
@@ -58,6 +55,10 @@ protected slots:
 
   /// Compute a visual rectangle for the item and signal it
   void onEnteredCheck(const QModelIndex&) override;
+
+protected:
+  /// Connect QTree signals to this class slots
+  void monitorSignalsInternal(QAbstractItemView* abstractItemView) override;
 
 private:
   pqTreeViewEventTranslator(const pqTreeViewEventTranslator&); // Not implemented.

@@ -114,18 +114,13 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
       }
       case QEvent::Enter:
       {
-        if (this->AbstractItemView != abstractItemView || this->Checking)
+        if (this->Checking)
         {
-          // Checking flag
+          // If we entered before in check mode, then we need to reset cached view pointer.
           this->Checking = false;
-          if (this->AbstractItemView)
-          {
-            QObject::disconnect(this->AbstractItemView, 0, this, 0);
-            QObject::disconnect(this->AbstractItemView->selectionModel(), 0, this, 0);
-          }
-          this->connectWidgetToSlots(abstractItemView);
-          this->AbstractItemView = abstractItemView;
+          this->AbstractItemView = nullptr;
         }
+        this->monitorSignals(abstractItemView);
         return true;
         break;
       }
@@ -205,21 +200,44 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
 }
 
 //-----------------------------------------------------------------------------
-void pqAbstractItemViewEventTranslatorBase::connectWidgetToSlots(
-  QAbstractItemView* abstractItemView)
+void pqAbstractItemViewEventTranslatorBase::monitorSignals(QAbstractItemView* abstractItemView)
 {
-  QObject::connect(abstractItemView, SIGNAL(clicked(const QModelIndex&)), this,
-    SLOT(onClicked(const QModelIndex&)));
-  QObject::connect(abstractItemView, SIGNAL(activated(const QModelIndex&)), this,
-    SLOT(onActivated(const QModelIndex&)));
-  QObject::connect(abstractItemView, SIGNAL(doubleClicked(const QModelIndex&)), this,
-    SLOT(onDoubleClicked(const QModelIndex&)));
-  QObject::connect(abstractItemView->selectionModel(),
-    SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)), this,
-    SLOT(onCurrentChanged(const QModelIndex&)));
-  QObject::connect(abstractItemView->selectionModel(),
-    SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this,
-    SLOT(onSelectionChanged(const QItemSelection&)));
+  if (abstractItemView != this->AbstractItemView)
+  {
+    if (this->AbstractItemView)
+    {
+      this->AbstractItemView->disconnect(this);
+    }
+    QObject::connect(abstractItemView, SIGNAL(clicked(const QModelIndex&)), this,
+      SLOT(onClicked(const QModelIndex&)));
+    QObject::connect(abstractItemView, SIGNAL(activated(const QModelIndex&)), this,
+      SLOT(onActivated(const QModelIndex&)));
+    QObject::connect(abstractItemView, SIGNAL(doubleClicked(const QModelIndex&)), this,
+      SLOT(onDoubleClicked(const QModelIndex&)));
+
+    monitorSignalsInternal(abstractItemView);
+    this->AbstractItemView = abstractItemView;
+  }
+
+  // If no model has been set yet, there will be no selectionModel
+  if (auto selectionModel = abstractItemView->selectionModel(); selectionModel)
+  {
+    if (selectionModel != this->ItemSelectionModel)
+    {
+      if (this->ItemSelectionModel)
+      {
+        this->ItemSelectionModel->disconnect(this);
+      }
+      this->ItemSelectionModel = selectionModel;
+
+      QObject::connect(selectionModel,
+        SIGNAL(currentChanged(const QModelIndex&, const QModelIndex&)), this,
+        SLOT(onCurrentChanged(const QModelIndex&)));
+      QObject::connect(selectionModel,
+        SIGNAL(selectionChanged(const QItemSelection&, const QItemSelection&)), this,
+        SLOT(onSelectionChanged(const QItemSelection&)));
+    }
+  }
 }
 
 //-----------------------------------------------------------------------------
@@ -286,7 +304,7 @@ QString pqAbstractItemViewEventTranslatorBase::getIndicesAsString(
   const QModelIndexList& selectedIndices)
 {
   QString listString;
-  foreach (QModelIndex idx, selectedIndices)
+  for (QModelIndex idx : selectedIndices)
   {
     listString.append(QString("%1,").arg(this->getIndexAsString(idx)));
   }
@@ -315,7 +333,7 @@ void pqAbstractItemViewEventTranslatorBase::onSelectionChanged(const QItemSelect
     QItemSelection selection = selModel->selection();
     // selections are a list of disjoint ranges, record the bounds of each.
     // this works better for playback than recording all the selected indexes.
-    foreach (QItemSelectionRange selRange, selection)
+    for (QItemSelectionRange selRange : selection)
     {
       selectedIndices.push_back(selRange.topLeft());
       selectedIndices.push_back(selRange.bottomRight());
