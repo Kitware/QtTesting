@@ -62,7 +62,7 @@ public:
   /// and then pause the macro during the playback.
   void recordCommentBlock(const QString& arguments);
 
-signals:
+Q_SIGNALS:
   /// All functions should emit this signal whenever they wish to record comment event
   void recordComment(QObject* widget, const QString& type, const QString& argument);
 

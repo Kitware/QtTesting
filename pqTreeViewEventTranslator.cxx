@@ -62,7 +62,7 @@ void pqTreeViewEventTranslator::onExpanded(const QModelIndex& index)
   QTreeView* treeView = qobject_cast<QTreeView*>(this->sender());
 
   // record the check state change if the item is user-checkable.
-  emit this->recordEvent(treeView, "expand", this->getIndexAsString(index));
+  Q_EMIT this->recordEvent(treeView, "expand", this->getIndexAsString(index));
 }
 
 //-----------------------------------------------------------------------------
@@ -71,7 +71,7 @@ void pqTreeViewEventTranslator::onCollapsed(const QModelIndex& index)
   QTreeView* treeView = qobject_cast<QTreeView*>(this->sender());
 
   // record the check state change if the item is user-checkable.
-  emit this->recordEvent(treeView, "collapse", this->getIndexAsString(index));
+  Q_EMIT this->recordEvent(treeView, "collapse", this->getIndexAsString(index));
 }
 
 //-----------------------------------------------------------------------------
@@ -91,7 +91,7 @@ void pqTreeViewEventTranslator::onEnteredCheck(const QModelIndex& item)
 
   // store item and signal that a specific overlay is ready to be drawn
   this->ModelItemCheck = &item;
-  emit this->specificOverlay(visualRect);
+  Q_EMIT this->specificOverlay(visualRect);
 }
 
 //-----------------------------------------------------------------------------

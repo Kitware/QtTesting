@@ -66,7 +66,7 @@ bool pqBasicWidgetEventTranslator::translateEvent(
         QKeyEvent* keyEvent = static_cast<QKeyEvent*>(event);
         if (qobject_cast<QDialog*>(object))
         {
-          emit recordEvent(widget, "key", QString::number(keyEvent->key()));
+          Q_EMIT recordEvent(widget, "key", QString::number(keyEvent->key()));
         }
         return true;
         break;
@@ -90,19 +90,19 @@ bool pqBasicWidgetEventTranslator::translateEvent(
 
         if (event->type() == QEvent::MouseButtonPress)
         {
-          emit recordEvent(widget, "mousePress", info);
+          Q_EMIT recordEvent(widget, "mousePress", info);
         }
         if (event->type() == QEvent::MouseButtonDblClick)
         {
-          emit recordEvent(widget, "mouseDblClick", info);
+          Q_EMIT recordEvent(widget, "mouseDblClick", info);
         }
         else if (event->type() == QEvent::MouseButtonRelease)
         {
           if (this->LastPos != mouseEvent->pos())
           {
-            emit recordEvent(widget, "mouseMove", info);
+            Q_EMIT recordEvent(widget, "mouseMove", info);
           }
-          emit recordEvent(widget, "mouseRelease", info);
+          Q_EMIT recordEvent(widget, "mouseRelease", info);
         }
         return true;
         break;
@@ -117,12 +117,12 @@ bool pqBasicWidgetEventTranslator::translateEvent(
             int buttons = wheelEvent->buttons();
             int modifiers = wheelEvent->modifiers();
             int numStep = wheelEvent->delta();
-            emit recordEvent(object, "mouseWheel", QString("%1,%2,%3,%4,%5")
-                                                     .arg(numStep)
-                                                     .arg(buttons)
-                                                     .arg(modifiers)
-                                                     .arg(wheelEvent->x())
-                                                     .arg(wheelEvent->y()));
+            Q_EMIT recordEvent(object, "mouseWheel", QString("%1,%2,%3,%4,%5")
+                                                       .arg(numStep)
+                                                       .arg(buttons)
+                                                       .arg(modifiers)
+                                                       .arg(wheelEvent->x())
+                                                       .arg(wheelEvent->y()));
           }
         }
         return true;
@@ -167,7 +167,7 @@ bool pqBasicWidgetEventTranslator::translateEvent(
         QString propName = metaProp.name();
 
         // Record check event
-        emit recordEvent(widget, propName,
+        Q_EMIT recordEvent(widget, propName,
           widget->property(propName.toUtf8().data()).toString().replace("\t", " "),
           pqEventTypes::CHECK_EVENT);
         return true;

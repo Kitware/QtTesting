@@ -90,7 +90,7 @@ bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Ev
         QToolButton* tButton = qobject_cast<QToolButton*>(object);
         if (tButton && tButton->popupMode() == QToolButton::DelayedPopup)
         {
-          emit recordEvent(object, "longActivate", "");
+          Q_EMIT recordEvent(object, "longActivate", "");
           // Tell comming mouse button release to not record activate.
           this->LastMouseEventType = QEvent::None;
         }
@@ -129,11 +129,11 @@ void pqAbstractButtonEventTranslator::onActivate(QAbstractButton* actualObject)
   if (actualObject->isCheckable())
   {
     const bool new_value = !actualObject->isChecked();
-    emit recordEvent(object, "set_boolean", new_value ? "true" : "false");
+    Q_EMIT recordEvent(object, "set_boolean", new_value ? "true" : "false");
   }
   else
   {
-    emit recordEvent(object, "activate", "");
+    Q_EMIT recordEvent(object, "activate", "");
   }
 }
 

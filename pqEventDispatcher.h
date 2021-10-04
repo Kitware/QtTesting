@@ -111,14 +111,14 @@ public:
   /// Return Dispatcher's status
   bool status() const;
 
-signals:
+Q_SIGNALS:
 
   /// signal when playback starts
   void restarted();
   /// signal when playback pauses
   void paused();
 
-protected slots:
+protected Q_SLOTS:
   void playEventOnBlocking();
 
   /// Called when the mainThread is about to block.
@@ -127,7 +127,7 @@ protected slots:
   /// Called when the mainThread wakes up.
   void awake();
 
-public slots:
+public Q_SLOTS:
   /// Change the TimeStep
   void setTimeStep(int value);
   /// Method to be able to stop/pause/play the current playback script

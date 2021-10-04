@@ -82,10 +82,10 @@ void pqComboBoxEventTranslator::onDestroyed(QObject* /*Object*/)
 
 void pqComboBoxEventTranslator::onActivated(const QString& text)
 {
-  emit recordEvent(this->CurrentObject, "activated", text);
+  Q_EMIT recordEvent(this->CurrentObject, "activated", text);
 }
 
 void pqComboBoxEventTranslator::onEditTextChanged(const QString& text)
 {
-  emit recordEvent(this->CurrentObject, "editTextChanged", text);
+  Q_EMIT recordEvent(this->CurrentObject, "editTextChanged", text);
 }

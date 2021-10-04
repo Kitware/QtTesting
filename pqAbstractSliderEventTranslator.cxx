@@ -68,5 +68,5 @@ bool pqAbstractSliderEventTranslator::translateEvent(QObject* Object, QEvent* Ev
 
 void pqAbstractSliderEventTranslator::onValueChanged(int Value)
 {
-  emit recordEvent(this->CurrentObject, "set_int", QString().setNum(Value));
+  Q_EMIT recordEvent(this->CurrentObject, "set_int", QString().setNum(Value));
 }

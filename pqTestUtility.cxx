@@ -248,10 +248,10 @@ bool pqTestUtility::playTests(const QStringList& filenames)
   }
 
   this->PlayingTest = true;
-  emit this->playbackStarted();
+  Q_EMIT this->playbackStarted();
 
   bool success = true;
-  foreach (QString filename, filenames)
+  Q_FOREACH (QString filename, filenames)
   {
     this->Filename = filename;
     if (!this->playingTest())
@@ -259,7 +259,7 @@ bool pqTestUtility::playTests(const QStringList& filenames)
       break;
     }
     QFileInfo info(filename);
-    emit this->playbackStarted(filename);
+    Q_EMIT this->playbackStarted(filename);
     QString suffix = info.suffix();
     QMap<QString, pqEventSource*>::iterator iter;
     iter = this->EventSources.find(suffix);
@@ -276,17 +276,17 @@ bool pqTestUtility::playTests(const QStringList& filenames)
         // dispatcher returned failure, don't continue with rest of the tests
         // and flag error.
         success = false;
-        emit this->playbackStopped(info.fileName(), success);
+        Q_EMIT this->playbackStopped(info.fileName(), success);
         break;
       }
-      emit this->playbackStopped(info.fileName(), success);
+      Q_EMIT this->playbackStopped(info.fileName(), success);
       qDebug() << "Test " << info.fileName() << "is finished. Success = " << success;
     }
   }
 
   this->Filename = "";
   this->PlayingTest = false;
-  emit this->playbackStopped();
+  Q_EMIT this->playbackStopped();
 
   return success;
 }

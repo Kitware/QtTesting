@@ -151,7 +151,7 @@ pqEventTranslator::~pqEventTranslator()
 void pqEventTranslator::start()
 {
   QCoreApplication::instance()->installEventFilter(this);
-  emit this->started();
+  Q_EMIT this->started();
 }
 
 // ----------------------------------------------------------------------------
@@ -159,7 +159,7 @@ void pqEventTranslator::stop()
 {
   QCoreApplication::instance()->removeEventFilter(this);
   this->check(false);
-  emit this->stopped();
+  Q_EMIT this->stopped();
 }
 
 // ----------------------------------------------------------------------------
@@ -346,7 +346,7 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
           QWidget* topWidget;
           // recover all top widgets
           QWidgetList topWidgets = QApplication::topLevelWidgets();
-          foreach (topWidget, topWidgets)
+          Q_FOREACH (topWidget, topWidgets)
           {
             // only the visible ones
             if (!topWidget->isHidden())
@@ -443,7 +443,7 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
 
             // Check if widget is parent to gl widget
             QList<QWidget*> children = widget->findChildren<QWidget*>();
-            foreach (QWidget* child, children)
+            Q_FOREACH (QWidget* child, children)
             {
               if (child->inherits("QVTKWidget"))
               {
@@ -616,7 +616,7 @@ void pqEventTranslator::onRecordEvent(
   {
     if (this->Implementation->InteractionsTimer.isValid())
     {
-      emit recordEvent(name, "pause",
+      Q_EMIT recordEvent(name, "pause",
         QString::number(this->Implementation->InteractionsTimer.restart()),
         pqEventTypes::ACTION_EVENT);
     }
@@ -627,7 +627,7 @@ void pqEventTranslator::onRecordEvent(
   }
 
   // Record the event
-  emit recordEvent(name, Command, Arguments, eventType);
+  Q_EMIT recordEvent(name, Command, Arguments, eventType);
 }
 
 // ----------------------------------------------------------------------------

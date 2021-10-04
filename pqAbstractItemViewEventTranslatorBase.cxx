@@ -90,7 +90,7 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
           {
             QVariant value = abstractItemView->model()->data(index);
             this->Editing = false;
-            emit this->recordEvent(abstractItemView, "editAccepted",
+            Q_EMIT this->recordEvent(abstractItemView, "editAccepted",
               QString("%1,%2").arg(indexString, value.toString()));
             return true;
             break;
@@ -98,7 +98,7 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
           if (ke->key() == Qt::Key_Escape)
           {
             this->Editing = false;
-            emit this->recordEvent(abstractItemView, "editCancel", indexString);
+            Q_EMIT this->recordEvent(abstractItemView, "editCancel", indexString);
             return true;
             break;
           }
@@ -106,7 +106,7 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
         else if (ke->key() == Qt::Key_F2)
         {
           this->Editing = true;
-          emit this->recordEvent(abstractItemView, "edit", indexString);
+          Q_EMIT this->recordEvent(abstractItemView, "edit", indexString);
           return true;
           break;
         }
@@ -132,7 +132,7 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
       case QEvent::ContextMenu:
       {
         auto contextMenuEvent = dynamic_cast<QContextMenuEvent*>(event);
-        emit this->recordEvent(abstractItemView, "openContextMenu",
+        Q_EMIT this->recordEvent(abstractItemView, "openContextMenu",
           this->getIndexAsString(abstractItemView->indexAt(contextMenuEvent->pos())));
         return true;
       }
@@ -184,7 +184,7 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
       if (this->ModelItemCheck != NULL)
       {
         QString indexString = this->getIndexAsString(*this->ModelItemCheck);
-        emit this->recordEvent(abstractItemView, "modelItemData",
+        Q_EMIT this->recordEvent(abstractItemView, "modelItemData",
           QString("%1,%2")
             .arg(indexString)
             .arg(
@@ -195,7 +195,7 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
       // Abstract Item View nb row check
       else
       {
-        emit this->recordEvent(abstractItemView, "modelRowCount",
+        Q_EMIT this->recordEvent(abstractItemView, "modelRowCount",
           QString::number(abstractItemView->model()->rowCount()), pqEventTypes::CHECK_EVENT);
       }
       return true;
@@ -231,7 +231,7 @@ void pqAbstractItemViewEventTranslatorBase::onClicked(const QModelIndex& index)
   if ((index.model()->flags(index) & Qt::ItemIsUserCheckable) != 0)
   {
     // record the check state change if the item is user-checkable.
-    emit this->recordEvent(abstractItemView, "setCheckState",
+    Q_EMIT this->recordEvent(abstractItemView, "setCheckState",
       QString("%1,%3")
         .arg(indexString)
         .arg(index.model()->data(index, Qt::CheckStateRole).toInt()));
@@ -241,7 +241,7 @@ void pqAbstractItemViewEventTranslatorBase::onClicked(const QModelIndex& index)
     index == oldIndex)
   {
     this->Editing = true;
-    emit this->recordEvent(abstractItemView, "edit", indexString);
+    Q_EMIT this->recordEvent(abstractItemView, "edit", indexString);
   }
   oldIndex = index;
 }
@@ -251,7 +251,7 @@ void pqAbstractItemViewEventTranslatorBase::onActivated(const QModelIndex& index
 {
   QAbstractItemView* abstractItemView = qobject_cast<QAbstractItemView*>(this->sender());
   QString indexString = this->getIndexAsString(index);
-  emit this->recordEvent(abstractItemView, "activate", indexString);
+  Q_EMIT this->recordEvent(abstractItemView, "activate", indexString);
 }
 
 //-----------------------------------------------------------------------------
@@ -263,8 +263,8 @@ void pqAbstractItemViewEventTranslatorBase::onDoubleClicked(const QModelIndex& i
     QAbstractItemView::DoubleClicked)
   {
     this->Editing = true;
-    emit this->recordEvent(abstractItemView, "doubleClick", indexString);
-    emit this->recordEvent(abstractItemView, "edit", indexString);
+    Q_EMIT this->recordEvent(abstractItemView, "doubleClick", indexString);
+    Q_EMIT this->recordEvent(abstractItemView, "edit", indexString);
   }
 }
 
@@ -286,7 +286,7 @@ QString pqAbstractItemViewEventTranslatorBase::getIndicesAsString(
   const QModelIndexList& selectedIndices)
 {
   QString listString;
-  foreach (QModelIndex idx, selectedIndices)
+  Q_FOREACH (QModelIndex idx, selectedIndices)
   {
     listString.append(QString("%1,").arg(this->getIndexAsString(idx)));
   }
@@ -298,7 +298,7 @@ QString pqAbstractItemViewEventTranslatorBase::getIndicesAsString(
 //-----------------------------------------------------------------------------
 void pqAbstractItemViewEventTranslatorBase::onCurrentChanged(const QModelIndex& index)
 {
-  emit this->recordEvent(this->AbstractItemView, "setCurrent", this->getIndexAsString(index));
+  Q_EMIT this->recordEvent(this->AbstractItemView, "setCurrent", this->getIndexAsString(index));
 }
 
 //-----------------------------------------------------------------------------
@@ -315,13 +315,13 @@ void pqAbstractItemViewEventTranslatorBase::onSelectionChanged(const QItemSelect
     QItemSelection selection = selModel->selection();
     // selections are a list of disjoint ranges, record the bounds of each.
     // this works better for playback than recording all the selected indexes.
-    foreach (QItemSelectionRange selRange, selection)
+    Q_FOREACH (QItemSelectionRange selRange, selection)
     {
       selectedIndices.push_back(selRange.topLeft());
       selectedIndices.push_back(selRange.bottomRight());
     }
 
-    emit this->recordEvent(
+    Q_EMIT this->recordEvent(
       this->AbstractItemView, "setSelection", this->getIndicesAsString(selectedIndices));
   }
 }
@@ -330,5 +330,5 @@ void pqAbstractItemViewEventTranslatorBase::onSelectionChanged(const QItemSelect
 void pqAbstractItemViewEventTranslatorBase::onViewportEnteredCheck()
 {
   this->ModelItemCheck = NULL;
-  emit this->specificOverlay(this->AbstractItemView->rect());
+  Q_EMIT this->specificOverlay(this->AbstractItemView->rect());
 }

@@ -178,12 +178,12 @@ void pqNativeFileDialogEventTranslator::record(const QString& command, const QSt
   QStringList files = args.split(";");
   QStringList normalized_files;
 
-  foreach (QString file, files)
+  Q_FOREACH (QString file, files)
   {
     normalized_files.append(mUtil->convertToDataDirectory(file));
   }
 
-  emit this->recordEvent(QApplication::instance(), command, normalized_files.join(";"));
+  Q_EMIT this->recordEvent(QApplication::instance(), command, normalized_files.join(";"));
 }
 
 #else

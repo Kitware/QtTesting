@@ -84,7 +84,7 @@ bool pqAbstractItemViewEventTranslator::translateEvent(QObject* Object, QEvent* 
                        .arg(ke->text())
                        .arg(ke->isAutoRepeat())
                        .arg(ke->count());
-      emit recordEvent(object, "keyEvent", data);
+      Q_EMIT recordEvent(object, "keyEvent", data);
       return true;
     }
     case QEvent::MouseButtonPress:
@@ -125,19 +125,19 @@ bool pqAbstractItemViewEventTranslator::translateEvent(QObject* Object, QEvent* 
                        .arg(idxStr);
       if (Event->type() == QEvent::MouseButtonPress)
       {
-        emit recordEvent(object, "mousePress", info);
+        Q_EMIT recordEvent(object, "mousePress", info);
       }
       else if (Event->type() == QEvent::MouseButtonDblClick)
       {
-        emit recordEvent(object, "mouseDblClick", info);
+        Q_EMIT recordEvent(object, "mouseDblClick", info);
       }
       else if (Event->type() == QEvent::MouseButtonRelease)
       {
         if (this->LastPos != mouseEvent->pos())
         {
-          emit recordEvent(object, "mouseMove", info);
+          Q_EMIT recordEvent(object, "mouseMove", info);
         }
-        emit recordEvent(object, "mouseRelease", info);
+        Q_EMIT recordEvent(object, "mouseRelease", info);
       }
       return true;
       break;
@@ -160,13 +160,13 @@ bool pqAbstractItemViewEventTranslator::translateEvent(QObject* Object, QEvent* 
         int numStep = wheelEvent->delta() > 0 ? 120 : -120;
         int buttons = wheelEvent->buttons();
         int modifiers = wheelEvent->modifiers();
-        emit emit recordEvent(Object, "mouseWheel", QString("%1,%2,%3,%4,%5")
-                                                      .arg(numStep)
-                                                      .arg(buttons)
-                                                      .arg(modifiers)
-                                                      .arg(relPt.x())
-                                                      .arg(relPt.y())
-                                                      .arg(idxStr));
+        Q_EMIT recordEvent(Object, "mouseWheel", QString("%1,%2,%3,%4,%5")
+                                                   .arg(numStep)
+                                                   .arg(buttons)
+                                                   .arg(modifiers)
+                                                   .arg(relPt.x())
+                                                   .arg(relPt.y())
+                                                   .arg(idxStr));
       }
       return true;
       break;

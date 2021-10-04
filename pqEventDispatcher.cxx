@@ -56,7 +56,7 @@ static QList<QPointer<QTimer> > RegisteredTimers;
 
 void processTimers()
 {
-  foreach (QTimer* timer, RegisteredTimers)
+  Q_FOREACH (QTimer* timer, RegisteredTimers)
   {
     if (timer && timer->isActive())
     {
@@ -163,11 +163,11 @@ void pqEventDispatcher::run(bool value)
   this->PlayBackPaused = !value;
   if (value)
   {
-    emit this->restarted();
+    Q_EMIT this->restarted();
   }
   else
   {
-    emit this->paused();
+    Q_EMIT this->paused();
   }
 }
 

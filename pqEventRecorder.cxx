@@ -202,7 +202,7 @@ void pqEventRecorder::start()
   this->ActiveTranslator->start();
 
   this->ActiveTranslator->record(true);
-  emit this->started();
+  Q_EMIT this->started();
 }
 
 // ----------------------------------------------------------------------------
@@ -222,7 +222,7 @@ void pqEventRecorder::stop(int value)
   }
 
   this->flush();
-  emit this->stopped();
+  Q_EMIT this->stopped();
 }
 
 // ----------------------------------------------------------------------------
@@ -235,5 +235,5 @@ void pqEventRecorder::unpause(bool value)
 void pqEventRecorder::pause(bool value)
 {
   this->ActiveTranslator->record(!value);
-  emit this->paused(value);
+  Q_EMIT this->paused(value);
 }

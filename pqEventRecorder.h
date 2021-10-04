@@ -80,12 +80,12 @@ public:
   void recordEvents(pqEventTranslator* translator, pqEventObserver* observer, QIODevice* file,
     bool continuousFlush);
 
-signals:
+Q_SIGNALS:
   void started();
   void stopped();
   void paused(bool);
 
-public slots:
+public Q_SLOTS:
   void flush();
 
   void start();
