@@ -69,7 +69,7 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool&
         {
           which = action->text();
         }
-        emit recordEvent(menubar, "activate", which);
+        Q_EMIT recordEvent(menubar, "activate", which);
       }
     }
     return true;
@@ -88,7 +88,7 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool&
         {
           which = action->text();
         }
-        emit recordEvent(menu, "activate", which);
+        Q_EMIT recordEvent(menu, "activate", which);
       }
     }
     return true;
@@ -107,7 +107,7 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool&
         {
           which = action->text();
         }
-        emit recordEvent(menu, "activate", which);
+        Q_EMIT recordEvent(menu, "activate", which);
       }
     }
     return true;

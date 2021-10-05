@@ -54,7 +54,7 @@ public:
   using Superclass::translateEvent;
   bool translateEvent(QObject* Object, QEvent* Event, bool& Error) override;
 
-protected slots:
+protected Q_SLOTS:
   void indexChanged(int);
 
 private:

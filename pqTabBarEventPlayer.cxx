@@ -102,7 +102,7 @@ bool pqTabBarEventPlayer::playEvent(
     if (tab_bar->parentWidget())
     {
       QObjectList siblings = tab_bar->parentWidget()->children();
-      foreach (QObject* sibling_object, siblings)
+      Q_FOREACH (QObject* sibling_object, siblings)
       {
         QTabBar* sibling_tab_bar = qobject_cast<QTabBar*>(sibling_object);
         for (int cc = 0; sibling_tab_bar != NULL && cc < sibling_tab_bar->count(); cc++)

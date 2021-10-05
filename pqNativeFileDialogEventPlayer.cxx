@@ -159,7 +159,7 @@ bool pqNativeFileDialogEventPlayer::playEvent(
   QStringList normalized_files = Arguments.split(";");
   QStringList files;
 
-  foreach (QString file, normalized_files)
+  Q_FOREACH (QString file, normalized_files)
   {
     files.append(mUtil->convertFromDataDirectory(file));
   }

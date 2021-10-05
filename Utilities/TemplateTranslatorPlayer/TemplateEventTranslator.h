@@ -14,7 +14,7 @@ public:
   using Superclass::translateEvent;
   virtual bool translateEvent(QObject* Object, QEvent* Event, bool& Error);
 
-private slots:
+private Q_SLOTS:
   void onDestroyed();
 
 private:

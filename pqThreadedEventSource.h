@@ -79,7 +79,7 @@ public:
   // helper method to sleep.
   static void msleep(int msecs);
 
-private slots:
+private Q_SLOTS:
 
   void relayEvent(QString object, QString command, QString arguments);
 

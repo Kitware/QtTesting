@@ -58,7 +58,7 @@ private:
 
   QObject* CurrentObject;
 
-private slots:
+private Q_SLOTS:
   void onDestroyed(QObject*);
   void onActivated(const QString&);
   void onEditTextChanged(const QString&);

@@ -110,7 +110,7 @@ public:
 
   /// Set the record interaction timings flag
   void recordInteractionTimings(bool value);
-signals:
+Q_SIGNALS:
   /// This signal will be emitted every time a translator generates a
   /// high-level ParaView event.  Observers should connect to this signal
   /// to serialize high-level events.
@@ -123,7 +123,7 @@ signals:
   /// this signals when recording stops
   void stopped();
 
-private slots:
+private Q_SLOTS:
   // Slot called when recording an event
   void onRecordEvent(
     QObject* Object, const QString& Command, const QString& Arguments, int eventType);

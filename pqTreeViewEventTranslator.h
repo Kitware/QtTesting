@@ -52,7 +52,7 @@ public:
   /// find and set the corrected abstract item view
   QAbstractItemView* findCorrectedAbstractItemView(QObject* object) const override;
 
-protected slots:
+protected Q_SLOTS:
   void onExpanded(const QModelIndex&);
   void onCollapsed(const QModelIndex&);
 

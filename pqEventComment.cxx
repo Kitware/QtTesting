@@ -71,5 +71,5 @@ void pqEventComment::recordComment(
     return;
   }
 
-  emit this->recordComment(object, command, arguments);
+  Q_EMIT this->recordComment(object, command, arguments);
 }

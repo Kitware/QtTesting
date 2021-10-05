@@ -62,7 +62,7 @@ public:
   /// find and set the corrected abstract item view
   virtual QAbstractItemView* findCorrectedAbstractItemView(QObject* object) const = 0;
 
-protected slots:
+protected Q_SLOTS:
   virtual void onClicked(const QModelIndex&);
   virtual void onActivated(const QModelIndex&);
   virtual void onDoubleClicked(const QModelIndex&);

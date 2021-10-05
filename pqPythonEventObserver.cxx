@@ -79,6 +79,6 @@ void pqPythonEventObserver::onRecordEvent(
     pycommand = pycommand.arg(eventType);
     *this->Stream << pycommand << "\n";
 
-    emit eventRecorded(widget, command, arguments, eventType);
+    Q_EMIT eventRecorded(widget, command, arguments, eventType);
   }
 }

@@ -57,7 +57,7 @@ bool pqWidgetEventTranslator::translateEvent(QObject* object, QEvent* event, boo
   {
     case QEvent::ContextMenu:
     {
-      emit recordEvent(widget, "contextMenu", "");
+      Q_EMIT recordEvent(widget, "contextMenu", "");
       break;
     }
     default:

@@ -229,6 +229,7 @@ target_include_directories(qttesting
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
     "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
     "$<INSTALL_INTERFACE:${_vtk_build_HEADERS_DESTINATION}/vtkqttesting>")
+target_compile_definitions(qttesting PRIVATE QT_NO_KEYWORDS)
 
 # Set library name to include custom prefixes/suffixes.
 set_property(TARGET qttesting

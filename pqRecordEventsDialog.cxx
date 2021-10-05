@@ -121,7 +121,7 @@ pqRecordEventsDialog::~pqRecordEventsDialog()
 void pqRecordEventsDialog::ignoreObject(QObject* object)
 {
   this->Implementation->TestUtility->eventTranslator()->ignoreObject(object);
-  foreach (QObject* child, object->children())
+  Q_FOREACH (QObject* child, object->children())
   {
     this->ignoreObject(child);
   }

@@ -48,7 +48,7 @@ class QTTESTING_EXPORT pqStdoutEventObserver : public QObject
 {
   Q_OBJECT
 
-public slots:
+public Q_SLOTS:
   void onRecordEvent(
     const QString& Widget, const QString& Command, const QString& Arguments, const int& eventType);
 };
