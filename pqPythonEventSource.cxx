@@ -158,13 +158,13 @@ static PyObject* QtTesting_getProperty(PyObject* /*self*/, PyObject* args)
     return NULL;
   }
 
-  if (PropertyObject.isNull())
+  if (PropertyObject.isEmpty())
   {
     PyErr_SetString(PyExc_ValueError, "object not found");
     return NULL;
   }
 
-  if (PropertyResult.isNull())
+  if (PropertyResult.isEmpty())
   {
     PyErr_SetString(PyExc_ValueError, "property not found");
     return NULL;
@@ -210,13 +210,13 @@ static PyObject* QtTesting_setProperty(PyObject* /*self*/, PyObject* args)
     return NULL;
   }
 
-  if (PropertyObject.isNull())
+  if (PropertyObject.isEmpty())
   {
     PyErr_SetString(PyExc_ValueError, "object not found");
     return NULL;
   }
 
-  if (PropertyResult.isNull())
+  if (PropertyResult.isEmpty())
   {
     PyErr_SetString(PyExc_ValueError, "property not found");
     return NULL;
@@ -267,7 +267,7 @@ static PyObject* QtTesting_getChildren(PyObject* /*self*/, PyObject* args)
     return NULL;
   }
 
-  if (PropertyObject.isNull())
+  if (PropertyObject.isEmpty())
   {
     PyErr_SetString(PyExc_ValueError, "object not found");
     return NULL;
@@ -315,12 +315,12 @@ static PyObject* QtTesting_invokeMethod(PyObject* /*self*/, PyObject* args)
     return NULL;
   }
 
-  if (PropertyObject.isNull())
+  if (PropertyObject.isEmpty())
   {
     PyErr_SetString(PyExc_ValueError, "object not found");
     return NULL;
   }
-  else if (PropertyValue.isNull())
+  else if (PropertyValue.isEmpty())
   {
     PyErr_SetString(PyExc_ValueError, "method not found");
     return NULL;
