@@ -100,7 +100,7 @@ int pqThreadedEventSource::getNextEvent(QString& object, QString& command, QStri
   this->Internal->GotEvent = 0;
   this->guiAcknowledge();
 
-  if (object == QString::null)
+  if (object.isEmpty())
   {
     if (arguments == "failure")
     {
