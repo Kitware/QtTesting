@@ -84,7 +84,7 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool&
       if (action)
       {
         QString which = action->objectName();
-        if (which == QString::null)
+        if (which.isEmpty())
         {
           which = action->text();
         }
@@ -103,7 +103,7 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool&
       if (action && !action->menu())
       {
         QString which = action->objectName();
-        if (which == QString::null)
+        if (which.isEmpty())
         {
           which = action->text();
         }
