@@ -172,8 +172,9 @@ void pqEventPlayer::playEvent(const QString& objectString, const QString& comman
 
   if (!object && !command.startsWith("comment"))
   {
-    QString errorMsg = pqObjectNaming::lastErrorMessage();
-    qCritical() << (errorMsg.toUtf8().data());
+    QString errorMsg = QString("In event 'object=%1' 'command=%2' 'arguments=%3':\n%4")
+                         .arg(objectString, command, arguments, pqObjectNaming::lastErrorMessage());
+    qCritical() << errorMsg;
     Q_EMIT this->errorMessage(errorMsg);
     error = true;
     return;
@@ -206,8 +207,10 @@ void pqEventPlayer::playEvent(const QString& objectString, const QString& comman
   // The event wasn't handled at all ...
   if (!accepted)
   {
-    QString errorMessage = QString("Unhandled event %1 object %2\n")
-                             .arg(command, object ? object->objectName() : objectString);
+    QString errorMessage =
+      QString("In event 'object=%1' 'command=%2' 'arguments=%3':\nUnhandled event.")
+        .arg(object ? object->objectName() : objectString, command, arguments,
+          pqObjectNaming::lastErrorMessage());
     qCritical() << errorMessage;
     Q_EMIT this->errorMessage(errorMessage);
     error = true;
@@ -217,8 +220,9 @@ void pqEventPlayer::playEvent(const QString& objectString, const QString& comman
   // The event was handled, but there was a problem ...
   if (accepted && tmpError)
   {
-    QString errorMessage = QString("Event error %1 object %2 with args:%3\n")
-                             .arg(command, object ? object->objectName() : objectString, arguments);
+    QString errorMessage =
+      QString("In event 'object=%1' 'command=%2' 'arguments=%3':\nUnhandled error.")
+        .arg(object ? object->objectName() : objectString, command, arguments);
     qCritical() << errorMessage;
     Q_EMIT this->errorMessage(errorMessage);
     error = true;
