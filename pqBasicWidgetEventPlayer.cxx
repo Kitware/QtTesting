@@ -63,12 +63,21 @@ bool pqBasicWidgetEventPlayer::playEvent(
         }
         else if (command == "keyEvent")
         {
-          QStringList data = arguments.split(':');
-          QKeyEvent ke(static_cast<QEvent::Type>(data[0].toInt()), data[1].toInt(),
-            static_cast<Qt::KeyboardModifiers>(data[2].toInt()), data[3], !!data[4].toInt(),
-            data[5].toInt());
-          qApp->notify(widget, &ke);
-          return true;
+          // The double split is for retrocompatibility
+          QStringList data = arguments.split(',');
+          if (data.size() != 6)
+          {
+            data = arguments.split(':');
+          }
+
+          if (data.size() == 6)
+          {
+            QKeyEvent ke(static_cast<QEvent::Type>(data[0].toInt()), data[1].toInt(),
+              static_cast<Qt::KeyboardModifiers>(data[2].toInt()), data[3], !!data[4].toInt(),
+              data[5].toInt());
+            qApp->notify(widget, &ke);
+            return true;
+          }
         }
         else if (command.startsWith("mouse"))
         {
