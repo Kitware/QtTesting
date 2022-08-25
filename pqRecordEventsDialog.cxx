@@ -81,7 +81,8 @@ pqRecordEventsDialog::pqRecordEventsDialog(
   , Implementation(new pqImplementation(recorder, testUtility))
 {
   this->Implementation->Ui.setupUi(this);
-  this->setWindowFlags(this->windowFlags() | Qt::WindowStaysOnTopHint);
+  this->setWindowFlags(this->windowFlags().setFlag(Qt::WindowContextHelpButtonHint, false));
+  this->setWindowFlags(this->windowFlags().setFlag(Qt::WindowStaysOnTopHint, true));
 
   this->ignoreObject(this);
 
@@ -136,7 +137,7 @@ void pqRecordEventsDialog::done(int value)
 
 // ----------------------------------------------------------------------------
 void pqRecordEventsDialog::onEventRecorded(
-  const QString& widget, const QString& command, const QString& argument, int eventType)
+  const QString& widget, const QString& command, const QString& argument, int /*eventType*/)
 {
   if (!this->Implementation->Recorder->isRecording())
   {
