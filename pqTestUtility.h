@@ -100,9 +100,9 @@ public:
   /// Returns if the utility is currently playing a test.
   bool playingTest() const { return this->PlayingTest; }
 
-  /// Plays back the test given by the filename(s). This is a blocking call i.e.
-  /// it does not return until the test has been played or aborted due to
-  /// failure. Returns true if the test played successfully.
+  /// Plays back the tests given by the filename(s). This is a blocking call i.e.
+  /// it does not return until all the tests have been played or any of the test aborted due to
+  /// failure. Returns true if the tests exist and played successfully.
   virtual bool playTests(const QStringList& filenames);
 
   /// start the recording of tests to a file
