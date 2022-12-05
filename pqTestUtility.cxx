@@ -259,8 +259,16 @@ bool pqTestUtility::playTests(const QStringList& filenames)
       break;
     }
     QFileInfo info(filename);
+
+    if (!info.exists())
+    {
+      qCritical() << filename << " does not exists, aborting";
+      return false;
+    }
+
     Q_EMIT this->playbackStarted(filename);
     QString suffix = info.suffix();
+
     QMap<QString, pqEventSource*>::iterator iter;
     iter = this->EventSources.find(suffix);
     if (info.isReadable() && iter != this->EventSources.end())
