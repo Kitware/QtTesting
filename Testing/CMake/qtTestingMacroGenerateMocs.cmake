@@ -20,7 +20,6 @@ macro(QT5_GENERATE_MOCS)
   endforeach()
 endmacro()
 
-
 macro(QT6_GENERATE_MOCS)
   foreach(file ${ARGN})
     set(moc_file moc_${file})

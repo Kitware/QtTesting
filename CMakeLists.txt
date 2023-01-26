@@ -155,13 +155,8 @@ IF(QtTesting_QT_VERSION VERSION_GREATER "5")
     ${MOC_SRCS}
     ${PYTHON_MOCS}
   )
-ELSEIF(QtTesting_QT_VERSION VERSION_GREATER "4")
-  QT5_WRAP_CPP(MOC_BUILT_SOURCES
-    ${MOC_SRCS}
-    ${PYTHON_MOCS}
-  )
 ELSE()
-  QT4_WRAP_CPP(MOC_BUILT_SOURCES
+  QT5_WRAP_CPP(MOC_BUILT_SOURCES
     ${MOC_SRCS}
     ${PYTHON_MOCS}
   )
@@ -174,13 +169,8 @@ IF(QtTesting_QT_VERSION VERSION_GREATER "5")
     pqPlayBackEventsDialog.ui
     pqRecordEventsDialog.ui
   )
-ELSEIF(QtTesting_QT_VERSION VERSION_GREATER "4")
-  QT5_WRAP_UI(UI_BUILT_SOURCES
-    pqPlayBackEventsDialog.ui
-    pqRecordEventsDialog.ui
-  )
 ELSE()
-  QT4_WRAP_UI(UI_BUILT_SOURCES
+  QT5_WRAP_UI(UI_BUILT_SOURCES
     pqPlayBackEventsDialog.ui
     pqRecordEventsDialog.ui
   )
@@ -190,12 +180,8 @@ IF(QtTesting_QT_VERSION VERSION_GREATER "5")
   QT6_ADD_RESOURCES(QRC_BUILT_SOURCES
     Resources/QtTesting.qrc
   )
-ELSEIF(QtTesting_QT_VERSION VERSION_GREATER "4")
-  QT5_ADD_RESOURCES(QRC_BUILT_SOURCES
-    Resources/QtTesting.qrc
-  )
 ELSE()
-  QT4_ADD_RESOURCES(QRC_BUILT_SOURCES
+  QT5_ADD_RESOURCES(QRC_BUILT_SOURCES
     Resources/QtTesting.qrc
   )
 ENDIF()

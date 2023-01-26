@@ -282,12 +282,10 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
 {
   if (this->Implementation->Recording)
   {
-#if QT_VERSION >= 0x050000
     if (object->isWindowType())
     {
       return false;
     }
-#endif
 
     // Only widgets
     QWidget* widget = qobject_cast<QWidget*>(object);
