@@ -35,7 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QApplication>
 #include <QKeyEvent>
 #include <QMouseEvent>
-#include <QRegExp>
+#include <QRegularExpression>
 #include <QWidget>
 #include <QtDebug>
 
@@ -53,18 +53,19 @@ bool pq3DViewEventPlayer::playEvent(
   {
     if (Command == "mousePress" || Command == "mouseRelease" || Command == "mouseMove")
     {
-      QRegExp mouseRegExp("\\(([^,]*),([^,]*),([^,]),([^,]),([^,]*)\\)");
-      if (mouseRegExp.indexIn(Arguments) != -1)
+      QRegularExpression mouseRegExp("\\(([^,]*),([^,]*),([^,]),([^,]),([^,]*)\\)");
+      QRegularExpressionMatch match = mouseRegExp.match(Arguments);
+      if (match.hasMatch())
       {
-        QVariant v = mouseRegExp.cap(1);
+        QVariant v = match.captured(1);
         int x = static_cast<int>(v.toDouble() * widget->size().width());
-        v = mouseRegExp.cap(2);
+        v = match.captured(2);
         int y = static_cast<int>(v.toDouble() * widget->size().height());
-        v = mouseRegExp.cap(3);
+        v = match.captured(3);
         Qt::MouseButton button = static_cast<Qt::MouseButton>(v.toInt());
-        v = mouseRegExp.cap(4);
+        v = match.captured(4);
         Qt::MouseButtons buttons = static_cast<Qt::MouseButton>(v.toInt());
-        v = mouseRegExp.cap(5);
+        v = match.captured(5);
         Qt::KeyboardModifiers keym = static_cast<Qt::KeyboardModifier>(v.toInt());
         QEvent::Type type = (Command == "mousePress")
           ? QEvent::MouseButtonPress

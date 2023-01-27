@@ -153,11 +153,19 @@ bool pqAbstractItemViewEventTranslator::translateEvent(QObject* Object, QEvent* 
       if (wheelEvent)
       {
         QString idxStr;
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+        QModelIndex idx = object->indexAt(wheelEvent->position().toPoint());
+#else
         QModelIndex idx = object->indexAt(wheelEvent->pos());
+#endif
         idxStr = toIndexStr(idx);
         QRect r = object->visualRect(idx);
+#if QT_VERSION >= QT_VERSION_CHECK(5, 14, 0)
+        relPt = wheelEvent->position().toPoint() - r.topLeft();
+#else
         relPt = wheelEvent->pos() - r.topLeft();
-        int numStep = wheelEvent->delta() > 0 ? 120 : -120;
+#endif
+        int numStep = wheelEvent->angleDelta().y() > 0 ? 120 : -120;
         int buttons = wheelEvent->buttons();
         int modifiers = wheelEvent->modifiers();
         emit emit recordEvent(Object, "mouseWheel", QString("%1,%2,%3,%4,%5")

@@ -192,8 +192,10 @@ void pqEventRecorder::start()
   // Set the device
   this->Stream.setDevice(this->File);
 
+#if QT_VERSION < 0x060000
   // Set UTF8 Codec
   this->Stream.setCodec("UTF-8");
+#endif
 
   // Set the Stream to the Observer
   this->ActiveObserver->setStream(&this->Stream);

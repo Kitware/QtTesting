@@ -19,3 +19,12 @@ macro(QT5_GENERATE_MOCS)
       OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${moc_file})
   endforeach()
 endmacro()
+
+macro(QT6_GENERATE_MOCS)
+  foreach(file ${ARGN})
+    set(moc_file moc_${file})
+    QT_GENERATE_MOC(${file} ${moc_file})
+    set_property(SOURCE ${file} APPEND PROPERTY
+      OBJECT_DEPENDS ${CMAKE_CURRENT_BINARY_DIR}/${moc_file})
+  endforeach()
+endmacro()

@@ -151,7 +151,12 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool&
         const QKeySequence mnemonic = QKeySequence::mnemonic(action->text());
         if (!mnemonic.isEmpty())
         { // Then the action has a keyboard accelerator
+#if QT_VERSION >= 0x060000
+          if (mnemonic ==
+            QKeySequence(QKeyCombination(e->modifiers(), static_cast<Qt::Key>(e->key()))))
+#else
           if (mnemonic == QKeySequence(e->modifiers() + e->key()))
+#endif
           {
             emit recordEvent(menu, "activate", actionArgument(action));
           }

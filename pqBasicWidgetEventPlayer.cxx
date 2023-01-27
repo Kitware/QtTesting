@@ -92,7 +92,8 @@ bool pqBasicWidgetEventPlayer::playEvent(
             if (command == "mouseWheel")
             {
               int delta = args[0].toInt();
-              QWheelEvent we(QPoint(x, y), delta, buttons, keym);
+              QWheelEvent we(QPoint(x, y), QPoint(x, y), QPoint(0, 0), QPoint(0, delta), buttons,
+                keym, Qt::NoScrollPhase, false);
               QCoreApplication::sendEvent(object, &we);
               return true;
             }

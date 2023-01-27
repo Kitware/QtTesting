@@ -36,6 +36,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QAction>
 #include <QDebug>
 #include <QKeyEvent>
+#include <QMenu>
 #include <QMouseEvent>
 #include <QPushButton>
 #include <QToolButton>
