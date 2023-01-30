@@ -1,11 +1,11 @@
 include(../CMake/qtTestingMacroGenerateMocs.cmake)
 
 IF(QtTesting_QT_VERSION VERSION_GREATER "5")
-  FIND_PACKAGE(Qt6 REQUIRED QUIET COMPONENTS Test)
-  SET(TEST_LIBRARIES Qt6::Test)
+  FIND_PACKAGE(Qt6 REQUIRED QUIET COMPONENTS Core Test Widgets Gui)
+  SET(TEST_LIBRARIES Qt6::Test Qt6::Core Qt6::Widgets Qt6::Gui)
 ELSE()
-  FIND_PACKAGE(Qt5 REQUIRED QUIET COMPONENTS Test)
-  SET(TEST_LIBRARIES Qt5::Test)
+  FIND_PACKAGE(Qt5 REQUIRED QUIET COMPONENTS Core Test Widgets Gui)
+  SET(TEST_LIBRARIES Qt5::Test Qt5::Core Qt5::Widgets Qt5::Gui)
 ENDIF()
 
 set(KIT ${PROJECT_NAME})
@@ -47,7 +47,7 @@ else()
 endif()
 
 add_executable(${KIT}CppTests ${Tests} ${TEST_MOC_SRCS})
-target_link_libraries(${KIT}CppTests ${PROJECT_NAME} ${TEST_LIBRARIES})
+target_link_libraries(${KIT}CppTests ${PROJECT_NAME} ${TEST_LIBRARIES} qttesting)
 set_target_properties(${KIT}CppTests PROPERTIES
   COMPILE_FLAGS "${Qt5Test_EXECUTABLE_COMPILE_FLAGS}")
 
