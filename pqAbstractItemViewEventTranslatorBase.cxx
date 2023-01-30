@@ -220,7 +220,8 @@ void pqAbstractItemViewEventTranslatorBase::monitorSignals(QAbstractItemView* ab
   }
 
   // If no model has been set yet, there will be no selectionModel
-  if (auto selectionModel = abstractItemView->selectionModel(); selectionModel)
+  auto selectionModel = abstractItemView->selectionModel();
+  if (selectionModel)
   {
     if (selectionModel != this->ItemSelectionModel)
     {

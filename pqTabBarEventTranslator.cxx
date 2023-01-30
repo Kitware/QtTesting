@@ -76,8 +76,8 @@ bool pqTabBarEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
 void pqTabBarEventTranslator::indexChanged(int which)
 {
   QObject* recordedObject = this->CurrentObject;
-  if (QObject* parent = this->CurrentObject->parent();
-      parent && this->CurrentObject->objectName().isEmpty())
+  QObject* parent = this->CurrentObject->parent();
+  if (parent && this->CurrentObject->objectName().isEmpty())
   {
     QMainWindow* mainWindow = qobject_cast<QMainWindow*>(this->CurrentObject->parent());
     if (mainWindow)

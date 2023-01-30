@@ -588,8 +588,8 @@ void pqEventTranslator::onRecordEvent(
     }
   }
 
-  if (QVariant blockRecordCommands = Object->property("BlockRecordCommands");
-      blockRecordCommands.isValid() && Command.contains(blockRecordCommands.toRegularExpression()))
+  QVariant blockRecordCommands = Object->property("BlockRecordCommands");
+  if (blockRecordCommands.isValid() && Command.contains(blockRecordCommands.toRegularExpression()))
   {
     return;
   }
