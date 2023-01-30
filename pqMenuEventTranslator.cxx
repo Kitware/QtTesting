@@ -133,7 +133,7 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool&
       QAction* action = menu->activeAction();
       if (action)
       {
-        emit recordEvent(menu, "activate", actionArgument(action));
+        Q_EMIT recordEvent(menu, "activate", actionArgument(action));
       }
     }
     else if (e->key() == Qt::Key_Right)
@@ -141,7 +141,7 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool&
       QAction* action = menu->activeAction();
       if (action && action->menu())
       {
-        emit recordEvent(menu, "activate", actionArgument(action));
+        Q_EMIT recordEvent(menu, "activate", actionArgument(action));
       }
     }
     else
@@ -158,7 +158,7 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool&
           if (mnemonic == QKeySequence(e->modifiers() + e->key()))
 #endif
           {
-            emit recordEvent(menu, "activate", actionArgument(action));
+            Q_EMIT recordEvent(menu, "activate", actionArgument(action));
           }
         }
       }
