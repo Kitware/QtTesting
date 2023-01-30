@@ -480,7 +480,7 @@ QStringList pqPythonEventSource::getChildren(QString& object)
   else
   {
     const QObjectList& children = qobject->children();
-    foreach (QObject* child, children)
+    Q_FOREACH (QObject* child, children)
     {
       ret.append(pqObjectNaming::GetName(*child));
     }

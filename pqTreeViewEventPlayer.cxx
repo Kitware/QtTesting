@@ -45,7 +45,7 @@ pqTreeViewEventPlayer::~pqTreeViewEventPlayer()
 {
 }
 
-//-----------------------------------------------------------------------------0000000
+//-----------------------------------------------------------------------------
 bool pqTreeViewEventPlayer::playEvent(
   QObject* object, const QString& command, const QString& arguments, int eventType, bool& error)
 {
@@ -82,7 +82,7 @@ bool pqTreeViewEventPlayer::playEvent(
     QStringList indices = str_index.split(".", QString::SkipEmptyParts);
 #endif
     QTreeWidgetItem* cur_item = NULL;
-    foreach (QString cur_index, indices)
+    Q_FOREACH (QString cur_index, indices)
     {
       int index = cur_index.toInt();
       if (!cur_item)

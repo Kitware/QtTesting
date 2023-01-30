@@ -54,7 +54,7 @@ public:
   bool playEvent(
     QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
 
-signals:
+Q_SIGNALS:
   void comment(const QString&);
 
 private:

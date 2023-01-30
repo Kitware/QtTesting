@@ -70,7 +70,7 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool&
         {
           which = action->text();
         }
-        emit recordEvent(menubar, "activate", which);
+        Q_EMIT recordEvent(menubar, "activate", which);
       }
     }
     return true;
@@ -104,7 +104,7 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool&
     // can be activated without first getting focus.
     if (this->SubMenuParent.find(menu->menuAction()) != this->SubMenuParent.end())
     { // Then a previous menu has recorded this action as a sub-menu
-      emit recordEvent(
+      Q_EMIT recordEvent(
         this->SubMenuParent[menu->menuAction()], "activate", actionArgument(menu->menuAction()));
     }
   }
@@ -173,7 +173,7 @@ bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool&
       QAction* action = menu->actionAt(e->pos());
       if (action && !action->menu())
       {
-        emit recordEvent(menu, "activate", actionArgument(action));
+        Q_EMIT recordEvent(menu, "activate", actionArgument(action));
       }
     }
     return true;

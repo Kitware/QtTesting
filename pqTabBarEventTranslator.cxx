@@ -86,5 +86,5 @@ void pqTabBarEventTranslator::indexChanged(int which)
     }
   }
 
-  emit recordEvent(recordedObject, "set_tab_with_text", this->CurrentObject->tabText(which));
+  Q_EMIT recordEvent(recordedObject, "set_tab_with_text", this->CurrentObject->tabText(which));
 }

@@ -59,7 +59,7 @@ private:
   int Value;
   QObject* CurrentObject;
 
-private slots:
+private Q_SLOTS:
   void onDestroyed(QObject*);
   void onValueChanged(double number);
 };

@@ -82,11 +82,11 @@ bool pqDoubleSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Eve
     QString keyText = ke->text();
     if (keyText.length() && keyText.at(0).isPrint())
     {
-      emit recordEvent(object, "set_double", QString("%1").arg(object->value()));
+      Q_EMIT recordEvent(object, "set_double", QString("%1").arg(object->value()));
     }
     else
     {
-      emit recordEvent(object, "key", QString("%1").arg(ke->key()));
+      Q_EMIT recordEvent(object, "key", QString("%1").arg(ke->key()));
     }
     return true;
   }
@@ -102,5 +102,5 @@ void pqDoubleSpinBoxEventTranslator::onDestroyed(QObject* /*Object*/)
 // ----------------------------------------------------------------------------
 void pqDoubleSpinBoxEventTranslator::onValueChanged(double number)
 {
-  emit recordEvent(this->CurrentObject, "set_double", QString("%1").arg(number));
+  Q_EMIT recordEvent(this->CurrentObject, "set_double", QString("%1").arg(number));
 }

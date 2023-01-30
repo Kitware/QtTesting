@@ -67,7 +67,7 @@ bool pqComboBoxEventPlayer::playEvent(
         comboBox->setCurrentIndex(index);
         if (command == "activated")
         {
-          emit comboBox->activated(index);
+          Q_EMIT comboBox->activated(index);
         }
       }
       else if (comboBox->isEditable() && command == "editTextChanged")

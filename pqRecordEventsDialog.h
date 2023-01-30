@@ -51,13 +51,13 @@ public:
   */
   pqRecordEventsDialog(pqEventRecorder* recorder, pqTestUtility* testUtility, QWidget* Parent);
 
-private slots:
+private Q_SLOTS:
   void done(int) override;
   void onEventRecorded(const QString&, const QString&, const QString&, int eventType);
 
   void addComment();
 
-public slots:
+public Q_SLOTS:
   void updateUi();
 
 private:

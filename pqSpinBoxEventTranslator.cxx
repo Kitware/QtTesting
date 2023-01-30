@@ -88,11 +88,11 @@ bool pqSpinBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, bo
     QString keyText = ke->text();
     if (keyText.length() && keyText.at(0).isPrint())
     {
-      emit recordEvent(object, "set_int", QString("%1").arg(object->value()));
+      Q_EMIT recordEvent(object, "set_int", QString("%1").arg(object->value()));
     }
     else
     {
-      emit recordEvent(object, "key", QString("%1").arg(ke->key()));
+      Q_EMIT recordEvent(object, "key", QString("%1").arg(ke->key()));
     }
     return true;
   }
@@ -108,5 +108,5 @@ void pqSpinBoxEventTranslator::onDestroyed(QObject* /*Object*/)
 // ----------------------------------------------------------------------------
 void pqSpinBoxEventTranslator::onValueChanged(int number)
 {
-  emit recordEvent(this->CurrentObject, "set_int", QString("%1").arg(number));
+  Q_EMIT recordEvent(this->CurrentObject, "set_int", QString("%1").arg(number));
 }

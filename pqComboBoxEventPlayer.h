@@ -50,7 +50,7 @@ public:
   bool playEvent(QObject* object, const QString& command, const QString& arguments, int eventType,
     bool& error) override;
 
-signals:
+Q_SIGNALS:
   // Transition signal to call combo box activated signal
   void activated(int index);
 

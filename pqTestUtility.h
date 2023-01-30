@@ -134,7 +134,7 @@ public:
   bool recordWithDialog() const;
   /// Set whether a dialog is opened when recording.
   void setRecordWithDialog(bool withDialog);
-public slots:
+public Q_SLOTS:
   bool playTests(const QString& filename);
 
   /// @note Dialog is deleted on close.
@@ -146,7 +146,7 @@ public slots:
 
   void onRecordStopped();
 
-signals:
+Q_SIGNALS:
   void playbackStarted();
   void playbackStopped();
   void playbackStarted(const QString& filename);
