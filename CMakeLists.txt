@@ -202,7 +202,9 @@ SET(QtTesting_DEVEL_HEADERS
   ${QtTesting_BINARY_DIR}/QtTestingConfigure.h
 )
 
-option(QTTESTING_BUILD_AS_VTK_MODULE OFF)
+if(NOT DEFINED QTTESTING_BUILD_AS_VTK_MODULE)
+  option(QTTESTING_BUILD_AS_VTK_MODULE "Build QtTesting as a VTK module" OFF)
+ENDIF()
 
 if (QTTESTING_BUILD_AS_VTK_MODULE)
   vtk_module_add_module(ParaView::qttesting
