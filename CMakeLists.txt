@@ -207,6 +207,10 @@ if(NOT DEFINED QTTESTING_BUILD_AS_VTK_MODULE)
 ENDIF()
 
 if (QTTESTING_BUILD_AS_VTK_MODULE)
+  # When building as a ThirdParty in ParaView
+  # or in any vtk module based software
+  # it can be useful to build qttesting as a VTK Module.
+  # This macro is defined in VTK cmake macros
   vtk_module_add_module(ParaView::qttesting
     SOURCES
       ${QtTesting_SOURCES}
