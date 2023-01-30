@@ -359,7 +359,7 @@ void pqTestUtility::recordTests(const QString& filename)
   this->Filename = filename;
   this->File = new QFile(filename);
   QFileInfo info(filename);
-  this->FileSuffix = info.completeSuffix();
+  this->FileSuffix = info.suffix();
   this->recordTests();
 }
 
