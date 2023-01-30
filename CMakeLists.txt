@@ -76,10 +76,6 @@ IF(QT_TESTING_WITH_PYTHON)
   INCLUDE_DIRECTORIES(
     ${PYTHON_INCLUDE_PATH}
   )
-  SET(PYTHON_MOCS
-    pqPythonEventObserver.h
-    pqPythonEventSource.h
-  )
   SET(PYTHON_SRCS
     pqPythonEventObserver.cxx
     pqPythonEventObserver.h
@@ -88,103 +84,15 @@ IF(QT_TESTING_WITH_PYTHON)
   )
 ENDIF(QT_TESTING_WITH_PYTHON)
 
-INCLUDE_DIRECTORIES(
-  ${QtTesting_BINARY_DIR}
-  ${QtTesting_SOURCE_DIR}
-)
+set(ui_files
+  pqPlayBackEventsDialog.ui
+  pqRecordEventsDialog.ui)
+set(rc_files
+  Resources/QtTesting.qrc)
 
-# Reduce the number of dirs that get included on moc command line
-# since it causes issues on Windows 2000.
-GET_DIRECTORY_PROPERTY(include_dirs_tmp INCLUDE_DIRECTORIES)
-SET_DIRECTORY_PROPERTIES(PROPERTIES INCLUDE_DIRECTORIES "${MOC_INCLUDE_DIRS}")
-
-SET(MOC_SRCS
-  pq3DViewEventPlayer.h
-  pq3DViewEventTranslator.h
-  pqAbstractActivateEventPlayer.h
-  pqAbstractBooleanEventPlayer.h
-  pqAbstractButtonEventTranslator.h
-  pqAbstractDoubleEventPlayer.h
-  pqAbstractIntEventPlayer.h
-  pqAbstractItemViewEventPlayer.h
-  pqAbstractItemViewEventPlayerBase.h
-  pqAbstractItemViewEventTranslator.h
-  pqAbstractItemViewEventTranslatorBase.h
-  pqAbstractMiscellaneousEventPlayer.h
-  pqAbstractSliderEventTranslator.h
-  pqAbstractStringEventPlayer.h
-  pqBasicWidgetEventPlayer.h
-  pqBasicWidgetEventTranslator.h
-  pqCheckEventOverlay.h
-  pqComboBoxEventTranslator.h
-  pqComboBoxEventPlayer.h
-  pqCommentEventPlayer.h
-  pqDoubleSpinBoxEventTranslator.h
-  pqEventComment.h
-  pqEventDispatcher.h
-  pqEventObserver.h
-  pqEventPlayer.h
-  pqEventRecorder.h
-  pqEventSource.h
-  pqEventTranslator.h
-  pqLineEditEventTranslator.h
-  pqListViewEventPlayer.h
-  pqListViewEventTranslator.h
-  pqMenuEventTranslator.h
-  pqNativeFileDialogEventPlayer.h
-  pqNativeFileDialogEventTranslator.h
-  pqPlayBackEventsDialog.h
-  pqRecordEventsDialog.h
-  pqSpinBoxEventTranslator.h
-  pqStdoutEventObserver.h
-  pqTabBarEventPlayer.h
-  pqTabBarEventTranslator.h
-  pqTableViewEventPlayer.h
-  pqTableViewEventTranslator.h
-  pqTestUtility.h
-  pqThreadedEventSource.h
-  pqTimer.h
-  pqTreeViewEventPlayer.h
-  pqTreeViewEventTranslator.h
-  pqWidgetEventPlayer.h
-  pqWidgetEventTranslator.h
-)
-
-IF(QtTesting_QT_VERSION VERSION_GREATER "5")
-  QT6_WRAP_CPP(MOC_BUILT_SOURCES
-    ${MOC_SRCS}
-    ${PYTHON_MOCS}
-  )
-ELSE()
-  QT5_WRAP_CPP(MOC_BUILT_SOURCES
-    ${MOC_SRCS}
-    ${PYTHON_MOCS}
-  )
-ENDIF()
-
-SET_DIRECTORY_PROPERTIES(PROPERTIES INCLUDE_DIRECTORIES "${include_dirs_tmp}")
-
-IF(QtTesting_QT_VERSION VERSION_GREATER "5")
-  QT6_WRAP_UI(UI_BUILT_SOURCES
-    pqPlayBackEventsDialog.ui
-    pqRecordEventsDialog.ui
-  )
-ELSE()
-  QT5_WRAP_UI(UI_BUILT_SOURCES
-    pqPlayBackEventsDialog.ui
-    pqRecordEventsDialog.ui
-  )
-ENDIF()
-
-IF(QtTesting_QT_VERSION VERSION_GREATER "5")
-  QT6_ADD_RESOURCES(QRC_BUILT_SOURCES
-    Resources/QtTesting.qrc
-  )
-ELSE()
-  QT5_ADD_RESOURCES(QRC_BUILT_SOURCES
-    Resources/QtTesting.qrc
-  )
-ENDIF()
+set(CMAKE_AUTOMOC 1)
+set(CMAKE_AUTOUIC 1)
+set(CMAKE_AUTORCC 1)
 
 SET(QtTesting_SOURCES
   pq3DViewEventPlayer.cxx
@@ -296,20 +204,15 @@ SET(QtTesting_DEVEL_HEADERS
 
 ADD_LIBRARY(QtTesting
   ${QtTesting_SOURCES}
-  ${MOC_BUILT_SOURCES}
-  ${UI_BUILT_SOURCES}
-  ${QRC_BUILT_SOURCES}
+  ${QtTesting_DEVEL_HEADERS}
+  ${ui_files}
+  ${rc_files}
   ${PYTHON_SRCS}
 )
 
 # Set library name to include custom prefixes/suffixes.
 set_property(TARGET QtTesting
   PROPERTY OUTPUT_NAME ${QT_TESTING_CUSTOM_LIBRARY_PREFIX}QtTesting${QT_TESTING_CUSTOM_LIBRARY_SUFFIX})
-
-SOURCE_GROUP("Generated" FILES
-  ${MOC_BUILT_SOURCES}
-  ${UI_BUILT_SOURCES}
-)
 
 TARGET_LINK_LIBRARIES(QtTesting
   ${qt_imported_targets}
