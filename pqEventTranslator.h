@@ -99,7 +99,7 @@ public:
   /// a command when a programatically change will fire a signal that generates
   /// a command.
   void ignoreObject(QObject* object, QRegularExpression commandFilter = QRegularExpression(
-                                       "*", QRegularExpression::CaseInsensitiveOption));
+                                       ".*", QRegularExpression::CaseInsensitiveOption));
 
   /// start listening to the GUI and translating events
   void start();
