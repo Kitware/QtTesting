@@ -683,3 +683,17 @@ void pqEventTranslator::setOverlayGeometry(const QRect& geometry, bool specific)
   }
   this->Implementation->CheckOverlay->Specific = specific;
 }
+
+// ----------------------------------------------------------------------------
+void pqEventTranslator::recordDashboardModeToggle(QObject* object, bool toggle)
+{
+  QString name = pqObjectNaming::GetName(*object);
+  if (name.isEmpty())
+  {
+    qWarning() << "Error recording a dashboard mode event";
+    return;
+  }
+
+  Q_EMIT recordEvent(
+    name, "dashboard_mode", QVariant(toggle).toString(), pqEventTypes::ACTION_EVENT);
+}

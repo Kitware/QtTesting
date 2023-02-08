@@ -263,6 +263,19 @@
       </widget>
      </item>
      <item>
+      <widget class="QCheckBox" name="dashboardMode">
+        <property name="text">
+          <string>Dashboard mode</string>
+        </property>
+        <property name="toolTip">
+          <string>When checked/unchecked, will trigger dashboard mode accordingly and record corresponding event</string>
+        </property>
+        <property name="checked">
+         <bool>true</bool>
+        </property>
+      </widget>
+     </item>
+     <item>
       <widget class="QCheckBox" name="recordInteractionTimings">
         <property name="text">
           <string>Record Interaction Timings</string>
