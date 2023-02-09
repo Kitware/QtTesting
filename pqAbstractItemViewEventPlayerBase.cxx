@@ -38,6 +38,30 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QDebug>
 #include <QMenu>
 
+namespace
+{
+int findSection(QAbstractItemModel* model, const QString& label, Qt::Orientation orientation,
+  int role = Qt::DisplayRole)
+{
+  QStringList currentHeaders;
+  const int max = orientation == Qt::Horizontal ? model->columnCount() : model->rowCount();
+  for (int section = 0; section < max; ++section)
+  {
+    auto data = model->headerData(section, orientation, role).toString();
+    currentHeaders.push_back(data);
+    if (data == label)
+    {
+      return section;
+    }
+  }
+
+  qCritical() << "No header labeled '" << label << "' was found. "
+              << "Available values are " << currentHeaders;
+  return -1;
+}
+
+} // end of namespace
+
 //-----------------------------------------------------------------------------
 pqAbstractItemViewEventPlayerBase::pqAbstractItemViewEventPlayerBase(QObject* parentObject)
   : Superclass(parentObject)
@@ -58,22 +82,44 @@ QModelIndex pqAbstractItemViewEventPlayerBase::GetIndex(
   QString strIndex = itemStr.left(sep);
 
 // Recover model index
-#if QT_VERSION >= QT_VERSION_CHECK(5, 15, 0)
-  QStringList indices = strIndex.split(".", Qt::SkipEmptyParts);
+#if (QT_VERSION >= QT_VERSION_CHECK(5, 14, 0))
+  const QStringList indices = strIndex.split(".", Qt::SkipEmptyParts);
 #else
-  QStringList indices = strIndex.split(".", QString::SkipEmptyParts);
+  const QStringList indices = strIndex.split(".", QString::SkipEmptyParts);
 #endif
-  QModelIndex index;
-  if (indices.size() < 2)
+  if (indices.isEmpty() || (indices.size() % 2 != 0)) // indices are in pairs (row, column).
   {
     error = true;
-    return index;
+    qCritical() << "ERROR: Incorrect number of values in index! Cannot playback.";
+    return QModelIndex();
   }
 
-  index = abstractItemView->model()->index(indices[0].toInt(), indices[1].toInt(), index);
-  for (int cc = 2; (cc + 1) < indices.size(); cc += 2)
+  QList<int> iIndices;
+  auto model = abstractItemView->model();
+
+  // indices may be simply ints or strings. If not ints, then assume strings that
+  // represent row or column name.
+  for (int cc = 0; cc < indices.size(); ++cc)
   {
-    index = abstractItemView->model()->index(indices[cc].toInt(), indices[cc + 1].toInt(), index);
+    bool ok;
+    int index = indices[cc].toInt(&ok);
+    if (!ok)
+    {
+      // must be a string that represents the row/column name. determine the index.
+      index = ::findSection(model, indices[cc], (cc % 2 == 0) ? Qt::Vertical : Qt::Horizontal);
+      if (index == -1)
+      {
+        error = true;
+        return QModelIndex();
+      }
+    }
+    iIndices.push_back(index);
+  }
+
+  QModelIndex index;
+  for (int cc = 0; (cc + 1) < iIndices.size(); cc += 2)
+  {
+    index = abstractItemView->model()->index(iIndices[cc], iIndices[cc + 1], /*parent=*/index);
     if (!index.isValid())
     {
       error = true;

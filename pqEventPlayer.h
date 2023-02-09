@@ -104,7 +104,7 @@ public:
   void playEvent(
     const QString& object, const QString& command, const QString& arguments, bool& Error);
 
-signals:
+Q_SIGNALS:
   void eventAboutToBePlayed(
     const QString& Object, const QString& Command, const QString& Arguments);
   void eventPlayed(const QString& Object, const QString& Command, const QString& Arguments);

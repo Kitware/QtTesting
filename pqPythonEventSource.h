@@ -56,7 +56,7 @@ protected:
   virtual void run();
   virtual void start();
 
-protected slots:
+protected Q_SLOTS:
   void threadGetProperty();
   void threadSetProperty();
   void threadGetChildren();

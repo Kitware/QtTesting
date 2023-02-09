@@ -49,7 +49,7 @@ public:
   /// find and set the corrected abstract item view
   QAbstractItemView* findCorrectedAbstractItemView(QObject* object) const override;
 
-protected slots:
+protected Q_SLOTS:
   /// Compute a visual rectangle for the item and signal it
   void onEnteredCheck(const QModelIndex&) override;
 

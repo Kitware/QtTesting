@@ -268,7 +268,7 @@ void pqPlayBackEventsDialog::removeFiles()
                                    "remove all checked files ?\n"),
                            QMessageBox::Ok, QMessageBox::Cancel))
   {
-    foreach (QString file, this->selectedFileNames())
+    Q_FOREACH (QString file, this->selectedFileNames())
     {
       int index = this->Implementation->Filenames.indexOf(file);
       this->Implementation->Ui.tableWidget->removeRow(index);

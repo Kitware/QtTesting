@@ -56,7 +56,7 @@ bool pqCommentEventPlayer::playEvent(
 
   if (!Arguments.isEmpty())
   {
-    emit this->comment(Arguments);
+    Q_EMIT this->comment(Arguments);
   }
 
   if (Command.split("-").contains("block"))

@@ -73,7 +73,7 @@ public:
 
   QString Text;
 
-public slots:
+public Q_SLOTS:
   virtual void onRecordEvent(
     const QString& widget, const QString& command, const QString& arguments, const int& eventType)
   {

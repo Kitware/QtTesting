@@ -56,7 +56,7 @@ public:
     pqEventPlayer& Player, pqEventDispatcher& Source, pqTestUtility* TestUtility, QWidget* Parent);
   ~pqPlayBackEventsDialog() override;
 
-private slots:
+private Q_SLOTS:
   void onEventAboutToBePlayed(const QString&, const QString&, const QString&);
   void loadFiles();
   void insertFiles();
@@ -68,7 +68,7 @@ private slots:
   void onStopped();
   void onModal(bool value);
 
-public slots:
+public Q_SLOTS:
   void done(int) override;
   void updateUi();
 

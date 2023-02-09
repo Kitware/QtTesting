@@ -87,22 +87,22 @@ bool pqLineEditEventTranslator::translateEvent(
         {
           if (leObject)
           {
-            emit recordEvent(tmpObject, "set_string", leObject->text());
+            Q_EMIT recordEvent(tmpObject, "set_string", leObject->text());
           }
           else if (teObject)
           {
-            emit recordEvent(tmpObject, "set_string", teObject->document()->toPlainText());
+            Q_EMIT recordEvent(tmpObject, "set_string", teObject->document()->toPlainText());
           }
           else if (pteObject)
           {
-            emit recordEvent(tmpObject, "set_string", pteObject->document()->toPlainText());
+            Q_EMIT recordEvent(tmpObject, "set_string", pteObject->document()->toPlainText());
           }
         }
         // if we record F2 event, will cause some issue with the TreeView
         // Need test to know if we need to record those events
         else if (ke->key() != Qt::Key_F2)
         {
-          emit recordEvent(tmpObject, "key", QString("%1").arg(ke->key()));
+          Q_EMIT recordEvent(tmpObject, "key", QString("%1").arg(ke->key()));
         }
         return true;
         break;
@@ -125,12 +125,12 @@ bool pqLineEditEventTranslator::translateEvent(
       {
         if (teObject != NULL)
         {
-          emit this->recordEvent(teObject, "plainText", teObject->toPlainText().replace("\t", " "),
-            pqEventTypes::CHECK_EVENT);
+          Q_EMIT this->recordEvent(teObject, "plainText",
+            teObject->toPlainText().replace("\t", " "), pqEventTypes::CHECK_EVENT);
         }
         else /* if (pteObject != NULL)*/
         {
-          emit this->recordEvent(pteObject, "plainText",
+          Q_EMIT this->recordEvent(pteObject, "plainText",
             pteObject->toPlainText().replace("\t", " "), pqEventTypes::CHECK_EVENT);
         }
         return true;

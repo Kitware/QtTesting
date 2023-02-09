@@ -158,14 +158,14 @@ void pqEventPlayer::playEvent(
 void pqEventPlayer::playEvent(const QString& objectString, const QString& command,
   const QString& arguments, int eventType, bool& error)
 {
-  emit this->eventAboutToBePlayed(objectString, command, arguments);
+  Q_EMIT this->eventAboutToBePlayed(objectString, command, arguments);
   // If we can't find an object with the right name, we're done ...
   QObject* const object = pqObjectNaming::GetObject(objectString);
 
   // Scroll bar depends on monitor's resolution
   if (!object && objectString.contains(QString("QScrollBar")))
   {
-    emit this->eventPlayed(objectString, command, arguments);
+    Q_EMIT this->eventPlayed(objectString, command, arguments);
     error = false;
     return;
   }
@@ -230,6 +230,6 @@ void pqEventPlayer::playEvent(const QString& objectString, const QString& comman
   }
 
   // The event was handled successfully ...
-  emit this->eventPlayed(objectString, command, arguments);
+  Q_EMIT this->eventPlayed(objectString, command, arguments);
   error = false;
 }

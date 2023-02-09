@@ -60,7 +60,7 @@ void pqTableViewEventTranslator::onEnteredCheck(const QModelIndex& item)
 
   // Stor item and signal that a specific overlay is ready to be drawn
   this->ModelItemCheck = &item;
-  emit this->specificOverlay(visualRect);
+  Q_EMIT this->specificOverlay(visualRect);
 }
 
 //-----------------------------------------------------------------------------

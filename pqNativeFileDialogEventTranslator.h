@@ -58,7 +58,7 @@ public:
 
   void record(const QString& command, const QString& args);
 
-protected slots:
+protected Q_SLOTS:
   void start();
   void stop();
 

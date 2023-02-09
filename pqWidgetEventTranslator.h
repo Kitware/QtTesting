@@ -61,7 +61,7 @@ public:
   virtual bool translateEvent(QObject* object, QEvent* event, bool& error);
   virtual bool translateEvent(QObject* object, QEvent* event, int eventType, bool& error);
 
-signals:
+Q_SIGNALS:
   /// Derivatives should emit this signal whenever they wish to record a high-level event
   void recordEvent(
     QObject* Object, const QString& Command, const QString& Arguments, int eventType);

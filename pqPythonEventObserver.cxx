@@ -62,7 +62,7 @@ void pqPythonEventObserver::onRecordEvent(
   if (this->Stream)
   {
     QString varname = this->Names[Widget];
-    if (varname.isNull())
+    if (varname.isEmpty())
     {
       varname = QString("object%1").arg(this->Names.count());
       this->Names.insert(Widget, varname);
@@ -79,6 +79,6 @@ void pqPythonEventObserver::onRecordEvent(
     pycommand = pycommand.arg(eventType);
     *this->Stream << pycommand << "\n";
 
-    emit eventRecorded(widget, command, arguments, eventType);
+    Q_EMIT eventRecorded(widget, command, arguments, eventType);
   }
 }

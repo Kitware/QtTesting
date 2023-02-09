@@ -163,7 +163,7 @@ QAction* pqAbstractActivateEventPlayer::findAction(QMenuBar* p, const QString& n
 {
   QList<QAction*> actions = p->actions();
   QAction* action = NULL;
-  foreach (QAction* a, actions)
+  Q_FOREACH (QAction* a, actions)
   {
     if (a->menu()->objectName() == name)
     {
@@ -174,7 +174,7 @@ QAction* pqAbstractActivateEventPlayer::findAction(QMenuBar* p, const QString& n
 
   if (!action)
   {
-    foreach (QAction* a, actions)
+    Q_FOREACH (QAction* a, actions)
     {
       if (a->text() == name)
       {
@@ -192,7 +192,7 @@ QAction* pqAbstractActivateEventPlayer::findAction(QMenu* p, const QString& name
   QStringList checked;
   QList<QAction*> actions = p->actions();
   QAction* action = NULL;
-  foreach (QAction* a, actions)
+  Q_FOREACH (QAction* a, actions)
   {
     checked.append(a->objectName());
     if (checked.back() == name)
@@ -204,7 +204,7 @@ QAction* pqAbstractActivateEventPlayer::findAction(QMenu* p, const QString& name
 
   if (!action)
   {
-    foreach (QAction* a, actions)
+    Q_FOREACH (QAction* a, actions)
     {
       checked.append(a->text());
       if (checked.back() == name)

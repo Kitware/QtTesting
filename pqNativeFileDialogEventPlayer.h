@@ -57,7 +57,7 @@ public:
   bool playEvent(
     QObject* Object, const QString& Command, const QString& Arguments, bool& Error) override;
 
-protected slots:
+protected Q_SLOTS:
   void start();
   void stop();
 
