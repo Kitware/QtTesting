@@ -34,6 +34,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QDebug>
 #include <QFile>
 #include <QFileDialog>
+#include <QMainWindow>
 #include <QPushButton>
 #include <QTextStream>
 #include <QTimer>
@@ -105,6 +106,16 @@ pqRecordEventsDialog::pqRecordEventsDialog(
   QObject::connect(this->Implementation->Ui.continuousFlush, SIGNAL(toggled(bool)),
     this->Implementation->Recorder, SLOT(setContinuousFlush(bool)));
 
+  if (this->Implementation->TestUtility->supportsDashboardMode())
+  {
+    QObject::connect(this->Implementation->Ui.dashboardMode, SIGNAL(toggled(bool)), this,
+      SLOT(onDashboardModeToggled(bool)));
+  }
+  else
+  {
+    this->Implementation->Ui.dashboardMode->setVisible(false);
+  }
+
   QObject::connect(this->Implementation->Ui.recordInteractionTimings, SIGNAL(toggled(bool)),
     this->Implementation->Recorder, SLOT(setRecordInteractionTimings(bool)));
 
@@ -170,6 +181,25 @@ void pqRecordEventsDialog::addComment()
 // ----------------------------------------------------------------------------
 void pqRecordEventsDialog::updateUi()
 {
-  this->Implementation->Ui.recordPauseButton->setChecked(
-    this->Implementation->Recorder->isRecording());
+  bool recording = this->Implementation->Recorder->isRecording();
+  this->Implementation->Ui.recordPauseButton->setChecked(recording);
+  this->Implementation->Ui.dashboardMode->setEnabled(recording);
+}
+
+// ----------------------------------------------------------------------------
+void pqRecordEventsDialog::onDashboardModeToggled(bool toggle)
+{
+  this->Implementation->TestUtility->setDashboardMode(toggle);
+
+  const QWidgetList& list = QApplication::topLevelWidgets();
+  QMainWindow* mainWindow = nullptr;
+  for (QWidget* widg : list)
+  {
+    mainWindow = qobject_cast<QMainWindow*>(widg);
+    if (mainWindow)
+    {
+      break;
+    }
+  }
+  this->Implementation->Recorder->translator()->recordDashboardModeToggle(mainWindow, toggle);
 }

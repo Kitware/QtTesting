@@ -228,6 +228,9 @@ void pqTestUtility::onRecordStopped()
     delete dialog;
   }
   this->File->close();
+
+  this->setDashboardMode(false);
+  this->updateTranslators();
 }
 
 //-----------------------------------------------------------------------------
@@ -246,6 +249,8 @@ bool pqTestUtility::playTests(const QStringList& filenames)
     qCritical("playTests() cannot be called recursively.");
     return false;
   }
+
+  this->updatePlayers();
 
   this->PlayingTest = true;
   Q_EMIT this->playbackStarted();
@@ -313,6 +318,9 @@ void pqTestUtility::recordTests()
              " correctly record menus");
   }
 #endif
+
+  this->setDashboardMode(true);
+  this->updateTranslators();
 
   pqEventObserver* observer = this->EventObservers.value(this->FileSuffix);
   if (!observer)

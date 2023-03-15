@@ -57,6 +57,13 @@ private Q_SLOTS:
 
   void addComment();
 
+  /**
+   * Called when dashboard mode is toggled.
+   * Call setDashboardMode on the test utility
+   * and record a dashboard mode toggle event on the main window
+   */
+  void onDashboardModeToggled(bool toggle);
+
 public Q_SLOTS:
   void updateUi();
 

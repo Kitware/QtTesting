@@ -116,6 +116,10 @@ public:
 
   /// Set the record interaction timings flag
   void recordInteractionTimings(bool value);
+
+  /// Record a dashboard mode toggle event
+  void recordDashboardModeToggle(QObject* object, bool toggle);
+
 Q_SIGNALS:
   /// This signal will be emitted every time a translator generates a
   /// high-level ParaView event.  Observers should connect to this signal

@@ -38,6 +38,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QtDebug>
 
 #include "pqEventDispatcher.h"
+#include "pqTestUtility.h"
 
 // Class that encapsulates the protected function QThread::msleep
 class SleeperThread : public QThread
@@ -51,8 +52,10 @@ public:
   }
 };
 
-pqAbstractMiscellaneousEventPlayer::pqAbstractMiscellaneousEventPlayer(QObject* p)
+pqAbstractMiscellaneousEventPlayer::pqAbstractMiscellaneousEventPlayer(
+  pqTestUtility* util, QObject* p)
   : pqWidgetEventPlayer(p)
+  , TestUtility(util)
 {
 }
 
@@ -82,6 +85,12 @@ bool pqAbstractMiscellaneousEventPlayer::playEvent(
     {
       pqEventDispatcher::processEvents();
     }
+    return true;
+  }
+  if (Command == "dashboard_mode")
+  {
+    bool toggle = QVariant(Arguments).toBool();
+    this->TestUtility->setDashboardMode(toggle);
     return true;
   }
   return false;

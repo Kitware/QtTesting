@@ -35,6 +35,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "pqWidgetEventPlayer.h"
 
+class pqTestUtility;
+
 /// Event playback handler for a collection of miscellaneous commands.
 /// For these events, the "object" on which the event is triggered is generally
 /// immaterial.
@@ -49,13 +51,16 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 ///                the test playback. Unlike "pause" however, this will continue
 ///                to process all events arising in the application e.g.
 ///                responding to timer events.
+/// \li \c dashboard_mode: trigger a call to pqTestUtility::setDashboardMode with the
+///                provided argument.
+
 class QTTESTING_EXPORT pqAbstractMiscellaneousEventPlayer : public pqWidgetEventPlayer
 {
   Q_OBJECT
   typedef pqWidgetEventPlayer Superclass;
 
 public:
-  pqAbstractMiscellaneousEventPlayer(QObject* p = 0);
+  pqAbstractMiscellaneousEventPlayer(pqTestUtility* util, QObject* p = 0);
 
   using Superclass::playEvent;
   bool playEvent(
@@ -64,6 +69,8 @@ public:
 private:
   pqAbstractMiscellaneousEventPlayer(const pqAbstractMiscellaneousEventPlayer&);
   pqAbstractMiscellaneousEventPlayer& operator=(const pqAbstractMiscellaneousEventPlayer&);
+
+  pqTestUtility* TestUtility = nullptr;
 };
 
 #endif // !_pqAbstractMiscellaneousEventPlayer_h
