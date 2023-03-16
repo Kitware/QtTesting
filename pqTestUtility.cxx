@@ -250,6 +250,7 @@ bool pqTestUtility::playTests(const QStringList& filenames)
     return false;
   }
 
+  this->setDashboardMode(true);
   this->updatePlayers();
 
   this->PlayingTest = true;
@@ -299,6 +300,8 @@ bool pqTestUtility::playTests(const QStringList& filenames)
 
   this->Filename = "";
   this->PlayingTest = false;
+  this->setDashboardMode(false);
+  this->updatePlayers();
   Q_EMIT this->playbackStopped();
 
   return success;
