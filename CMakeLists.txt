@@ -254,7 +254,7 @@ target_compile_definitions(qttesting PRIVATE QT_NO_KEYWORDS)
 set_property(TARGET qttesting
   PROPERTY OUTPUT_NAME ${QT_TESTING_CUSTOM_LIBRARY_PREFIX}qttesting${QT_TESTING_CUSTOM_LIBRARY_SUFFIX})
 
-TARGET_LINK_LIBRARIES(qttesting
+TARGET_LINK_LIBRARIES(qttesting PRIVATE
   ${qt_imported_targets}
 )
 
