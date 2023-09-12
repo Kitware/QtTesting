@@ -272,42 +272,38 @@ bool pqAbstractItemViewEventPlayerBase::playEvent(
       }
       // shouldn't have to check selectionMode - single or multi enforced when recorded.
       auto selMode = abstractItemView->selectionMode();
-      if (QAbstractItemView::SingleSelection == selMode ||
-        QAbstractItemView::NoSelection == selMode)
+      if (QAbstractItemView::NoSelection == selMode)
       {
-        qCritical() << "ERROR: Multi-select on ItemView with no- or single-select mode :"
-                    << selMode;
+        qCritical() << "ERROR: Multi-select on ItemView with no-select mode :" << selMode;
         return true;
       }
 
       if (strIndexList.isEmpty())
       {
         abstractItemView->clearSelection();
+        return true;
       }
-      else
+
+      QModelIndex topLeft, bottomRight;
+      QItemSelection selection;
+      // don't reset the selection - setCurrent does that, and is always recorded first.
+      for (int i = 0; i < indexList.size(); i += 2)
       {
-        bool first = true;
-        QModelIndex topLeft, bottomRight;
-        QItemSelection selection;
-        // don't reset the selection - setCurrent does that, and is always recorded first.
-        for (int i = 0; i < indexList.size(); i += 2)
+        // ranges are recorded in pairs, topLeft -> bottomRight, but to a flat list for
+        // simplicity.
+        topLeft =
+          pqAbstractItemViewEventPlayerBase::GetIndex(indexList.at(i), abstractItemView, error);
+        bottomRight =
+          pqAbstractItemViewEventPlayerBase::GetIndex(indexList.at(i + 1), abstractItemView, error);
+        if (error)
         {
-          // ranges are recorded in pairs, topLeft -> bottomRight, but to a flat list for
-          // simplicity.
-          topLeft =
-            pqAbstractItemViewEventPlayerBase::GetIndex(indexList.at(i), abstractItemView, error);
-          bottomRight = pqAbstractItemViewEventPlayerBase::GetIndex(
-            indexList.at(i + 1), abstractItemView, error);
-          if (error)
-          {
-            return true;
-          }
-          QItemSelection itemSel(topLeft, bottomRight);
-          // merge allows a single selection to contain multiple ranges.
-          selection.merge(itemSel, QItemSelectionModel::Select);
+          return true;
         }
-        selModel->select(selection, selFlag);
+        QItemSelection itemSel(topLeft, bottomRight);
+        // merge allows a single selection to contain multiple ranges.
+        selection.merge(itemSel, QItemSelectionModel::Select);
       }
+      selModel->select(selection, selFlag);
       return true;
     }
     else if (command == "openContextMenu")
