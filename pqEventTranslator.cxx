@@ -588,30 +588,34 @@ void pqEventTranslator::onRecordEvent(
     }
   }
 
-  QVariant blockRecordCommands = Object->property("BlockRecordCommands");
-  if (blockRecordCommands.isValid() && Command.contains(blockRecordCommands.toRegularExpression()))
-  {
-    return;
-  }
-
   QString name;
-  if (eventType == pqEventTypes::ACTION_EVENT)
+  if (Object)
   {
-    // When sender is pqEventObject, the Object name can be NULL.
-    if (!qobject_cast<pqEventComment*>(this->sender()) || Object)
-    {
-      name = pqObjectNaming::GetName(*Object);
-      if (name.isEmpty())
-        return;
-    }
-  }
-  else
-  {
-    // Check the QObject does have a name
-    name = pqObjectNaming::GetName(*Object);
-    if (name.isEmpty())
+    QVariant blockRecordCommands = Object->property("BlockRecordCommands");
+    if (blockRecordCommands.isValid() &&
+      Command.contains(blockRecordCommands.toRegularExpression()))
     {
       return;
+    }
+
+    if (eventType == pqEventTypes::ACTION_EVENT)
+    {
+      // When sender is pqEventObject, the Object name can be NULL.
+      if (!qobject_cast<pqEventComment*>(this->sender()) || Object)
+      {
+        name = pqObjectNaming::GetName(*Object);
+        if (name.isEmpty())
+          return;
+      }
+    }
+    else
+    {
+      // Check the QObject does have a name
+      name = pqObjectNaming::GetName(*Object);
+      if (name.isEmpty())
+      {
+        return;
+      }
     }
   }
 
