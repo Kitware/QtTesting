@@ -1,0 +1,51 @@
+workflow:
+   rules:
+     - if: $CI_PIPELINE_SOURCE == "push" && $CI_COMMIT_REF_NAME == "master"
+       when: always
+     - if: $CI_MERGE_REQUEST_ID
+       when: always
+     - when: never
+
+stages:
+  - build
+  - test
+
+.latest:
+  image: "kitware/paraview-for-ci:latest"
+
+build_linux:
+  extends:
+    - .latest
+  stage: build
+  script:
+    - mkdir -p build
+    - cd build
+    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON ..
+    - cmake --build . --parallel 2
+  tags:
+    - docker
+    - linux-x86_64
+    - paraview
+  artifacts:
+    expire_in: 1h
+    when: always
+    paths:
+      - build/
+  interruptible: true
+
+test_linux:
+  extends:
+    - .latest
+  stage: test
+  script:
+    - cd build
+    - xvfb-run ctest -j 2 --output-on-failure --no-tests=error || xvfb-run ctest -j 1 --no-tests=error --rerun-failed -VV
+  tags:
+    - docker
+    - linux-x86_64
+    - paraview
+  interruptible: true
+  dependencies:
+    - build_linux
+  needs:
+    - build_linux
