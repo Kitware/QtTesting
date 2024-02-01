@@ -186,15 +186,9 @@ pqNativeFileDialogEventPlayer::pqNativeFileDialogEventPlayer(pqTestUtility* util
   , mUtil(util)
 {
 }
-pqNativeFileDialogEventPlayer::~pqNativeFileDialogEventPlayer()
-{
-}
-void pqNativeFileDialogEventPlayer::start()
-{
-}
-void pqNativeFileDialogEventPlayer::stop()
-{
-}
+pqNativeFileDialogEventPlayer::~pqNativeFileDialogEventPlayer() {}
+void pqNativeFileDialogEventPlayer::start() {}
+void pqNativeFileDialogEventPlayer::stop() {}
 
 bool pqNativeFileDialogEventPlayer::playEvent(
   QObject* Object, const QString& Command, const QString& Arguments, bool& Error)

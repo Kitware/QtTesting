@@ -52,7 +52,7 @@ using namespace std;
 //-----------------------------------------------------------------------------
 namespace
 {
-static QList<QPointer<QTimer> > RegisteredTimers;
+static QList<QPointer<QTimer>> RegisteredTimers;
 
 void processTimers()
 {
@@ -96,9 +96,7 @@ pqEventDispatcher::pqEventDispatcher(QObject* parentObject)
 }
 
 //-----------------------------------------------------------------------------
-pqEventDispatcher::~pqEventDispatcher()
-{
-}
+pqEventDispatcher::~pqEventDispatcher() {}
 
 //-----------------------------------------------------------------------------
 void pqEventDispatcher::setEventPlaybackDelay(int milliseconds)

@@ -41,9 +41,7 @@ pqTreeViewEventPlayer::pqTreeViewEventPlayer(QObject* parentObject)
 }
 
 //-----------------------------------------------------------------------------
-pqTreeViewEventPlayer::~pqTreeViewEventPlayer()
-{
-}
+pqTreeViewEventPlayer::~pqTreeViewEventPlayer() {}
 
 //-----------------------------------------------------------------------------
 bool pqTreeViewEventPlayer::playEvent(

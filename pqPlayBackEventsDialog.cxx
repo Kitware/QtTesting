@@ -95,9 +95,7 @@ pqPlayBackEventsDialog::pqImplementation::pqImplementation(
 }
 
 // ----------------------------------------------------------------------------
-pqPlayBackEventsDialog::pqImplementation::~pqImplementation()
-{
-}
+pqPlayBackEventsDialog::pqImplementation::~pqImplementation() {}
 
 // ----------------------------------------------------------------------------
 void pqPlayBackEventsDialog::pqImplementation::init(pqPlayBackEventsDialog* dialog)
@@ -263,10 +261,11 @@ void pqPlayBackEventsDialog::insertFiles()
 // ----------------------------------------------------------------------------
 void pqPlayBackEventsDialog::removeFiles()
 {
-  if (QMessageBox::Ok == QMessageBox::warning(this, QString("Remove files"),
-                           QString("Are you sure you want to \n"
-                                   "remove all checked files ?\n"),
-                           QMessageBox::Ok, QMessageBox::Cancel))
+  if (QMessageBox::Ok ==
+    QMessageBox::warning(this, QString("Remove files"),
+      QString("Are you sure you want to \n"
+              "remove all checked files ?\n"),
+      QMessageBox::Ok, QMessageBox::Cancel))
   {
     Q_FOREACH (QString file, this->selectedFileNames())
     {
@@ -384,7 +383,7 @@ void pqPlayBackEventsDialog::updateUi()
   // Update Moda/Modeless
   this->onModal(this->Implementation->TestUtility->playingTest() &&
     !(this->Implementation->TestUtility->playingTest() &&
-                  this->Implementation->Dispatcher.isPaused()));
+      this->Implementation->Dispatcher.isPaused()));
 
   // Update player buttons
   this->Implementation->Ui.playPauseButton->setChecked(
@@ -429,7 +428,7 @@ void pqPlayBackEventsDialog::updateUi()
     this->Implementation->setProgressBarValue(this->Implementation->CurrentFile,
       static_cast<int>((static_cast<double>(this->Implementation->CurrentLine) /
                          static_cast<double>(this->Implementation->MaxLines - 1)) *
-                                                100));
+        100));
   }
   else
   {

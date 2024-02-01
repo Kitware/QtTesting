@@ -69,9 +69,7 @@ pqAbstractItemViewEventPlayerBase::pqAbstractItemViewEventPlayerBase(QObject* pa
 }
 
 //-----------------------------------------------------------------------------
-pqAbstractItemViewEventPlayerBase::~pqAbstractItemViewEventPlayerBase()
-{
-}
+pqAbstractItemViewEventPlayerBase::~pqAbstractItemViewEventPlayerBase() {}
 
 //-----------------------------------------------------------------------------
 QModelIndex pqAbstractItemViewEventPlayerBase::GetIndex(

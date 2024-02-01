@@ -98,8 +98,9 @@ public:
   /// match the commands to block.  This is useful for temporarily blocking
   /// a command when a programatically change will fire a signal that generates
   /// a command.
-  void ignoreObject(QObject* object, QRegularExpression commandFilter = QRegularExpression(
-                                       ".*", QRegularExpression::CaseInsensitiveOption));
+  void ignoreObject(QObject* object,
+    QRegularExpression commandFilter = QRegularExpression(
+      ".*", QRegularExpression::CaseInsensitiveOption));
 
   /// start listening to the GUI and translating events
   void start();

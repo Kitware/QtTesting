@@ -43,9 +43,7 @@ pqEventObserver::pqEventObserver(QObject* p)
 {
 }
 
-pqEventObserver::~pqEventObserver()
-{
-}
+pqEventObserver::~pqEventObserver() {}
 
 void pqEventObserver::setStream(QTextStream* stream)
 {

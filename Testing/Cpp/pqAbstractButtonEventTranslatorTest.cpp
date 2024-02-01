@@ -203,8 +203,8 @@ void pqAbstractButtonEventTranslatorTester::testToolButton_data()
         .arg(longActivate ? "longActivate" : (checkable ? "set_boolean" : "activate"))
         .arg(checkable && !longActivate ? "true" : "");
 
-    QTest::newRow(testName.toUtf8()) << popup << withDefaultAction << checkable << withMenu
-                                     << longClick << recordEmitted;
+    QTest::newRow(testName.toUtf8())
+      << popup << withDefaultAction << checkable << withMenu << longClick << recordEmitted;
   }
 }
 

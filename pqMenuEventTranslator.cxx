@@ -44,9 +44,7 @@ pqMenuEventTranslator::pqMenuEventTranslator(QObject* p)
 {
 }
 
-pqMenuEventTranslator::~pqMenuEventTranslator()
-{
-}
+pqMenuEventTranslator::~pqMenuEventTranslator() {}
 
 bool pqMenuEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& Error)
 {

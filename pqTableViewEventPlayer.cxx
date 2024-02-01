@@ -39,9 +39,7 @@ pqTableViewEventPlayer::pqTableViewEventPlayer(QObject* parentObject)
 }
 
 //-----------------------------------------------------------------------------
-pqTableViewEventPlayer::~pqTableViewEventPlayer()
-{
-}
+pqTableViewEventPlayer::~pqTableViewEventPlayer() {}
 
 //-----------------------------------------------------------------------------0000000
 bool pqTableViewEventPlayer::playEvent(

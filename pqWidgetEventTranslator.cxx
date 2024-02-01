@@ -41,9 +41,7 @@ pqWidgetEventTranslator::pqWidgetEventTranslator(QObject* parentObject)
 }
 
 //-----------------------------------------------------------------------------
-pqWidgetEventTranslator::~pqWidgetEventTranslator()
-{
-}
+pqWidgetEventTranslator::~pqWidgetEventTranslator() {}
 
 bool pqWidgetEventTranslator::translateEvent(QObject* object, QEvent* event, bool& error)
 {
