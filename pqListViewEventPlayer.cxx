@@ -39,9 +39,7 @@ pqListViewEventPlayer::pqListViewEventPlayer(QObject* parentObject)
 }
 
 //-----------------------------------------------------------------------------
-pqListViewEventPlayer::~pqListViewEventPlayer()
-{
-}
+pqListViewEventPlayer::~pqListViewEventPlayer() {}
 
 //-----------------------------------------------------------------------------0000000
 bool pqListViewEventPlayer::playEvent(

@@ -40,9 +40,7 @@ pqTableViewEventTranslator::pqTableViewEventTranslator(QObject* parentObject)
 }
 
 //-----------------------------------------------------------------------------
-pqTableViewEventTranslator::~pqTableViewEventTranslator()
-{
-}
+pqTableViewEventTranslator::~pqTableViewEventTranslator() {}
 
 //-----------------------------------------------------------------------------
 void pqTableViewEventTranslator::onEnteredCheck(const QModelIndex& item)

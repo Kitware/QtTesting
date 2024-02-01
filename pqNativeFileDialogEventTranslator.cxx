@@ -125,9 +125,7 @@ pqNativeFileDialogEventTranslator::pqNativeFileDialogEventTranslator(
   QObject::connect(mUtil->eventTranslator(), SIGNAL(stopped()), this, SLOT(stop()));
 }
 
-pqNativeFileDialogEventTranslator::~pqNativeFileDialogEventTranslator()
-{
-}
+pqNativeFileDialogEventTranslator::~pqNativeFileDialogEventTranslator() {}
 
 void pqNativeFileDialogEventTranslator::start()
 {
@@ -193,17 +191,11 @@ pqNativeFileDialogEventTranslator::pqNativeFileDialogEventTranslator(
   , mUtil(util)
 {
 }
-pqNativeFileDialogEventTranslator::~pqNativeFileDialogEventTranslator()
-{
-}
+pqNativeFileDialogEventTranslator::~pqNativeFileDialogEventTranslator() {}
 
-void pqNativeFileDialogEventTranslator::start()
-{
-}
+void pqNativeFileDialogEventTranslator::start() {}
 
-void pqNativeFileDialogEventTranslator::stop()
-{
-}
+void pqNativeFileDialogEventTranslator::stop() {}
 
 bool pqNativeFileDialogEventTranslator::translateEvent(
   QObject* pqNotUsed(Object), QEvent* pqNotUsed(Event), bool& pqNotUsed(Error))

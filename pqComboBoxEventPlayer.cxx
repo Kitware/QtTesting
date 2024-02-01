@@ -43,9 +43,7 @@ pqComboBoxEventPlayer::pqComboBoxEventPlayer(QObject* parentObject)
 }
 
 //-----------------------------------------------------------------------------
-pqComboBoxEventPlayer::~pqComboBoxEventPlayer()
-{
-}
+pqComboBoxEventPlayer::~pqComboBoxEventPlayer() {}
 
 //-----------------------------------------------------------------------------
 bool pqComboBoxEventPlayer::playEvent(

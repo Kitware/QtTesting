@@ -46,9 +46,7 @@ pqWidgetEventPlayer::pqWidgetEventPlayer(QObject* p)
 {
 }
 
-pqWidgetEventPlayer::~pqWidgetEventPlayer()
-{
-}
+pqWidgetEventPlayer::~pqWidgetEventPlayer() {}
 
 bool pqWidgetEventPlayer::playEvent(
   QObject* object, const QString& command, const QString& arguments, bool& error)

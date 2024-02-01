@@ -45,9 +45,7 @@ pq3DViewEventTranslator::pq3DViewEventTranslator(const QByteArray& classname, QO
 {
 }
 
-pq3DViewEventTranslator::~pq3DViewEventTranslator()
-{
-}
+pq3DViewEventTranslator::~pq3DViewEventTranslator() {}
 
 bool pq3DViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, bool& Error)
 {
@@ -76,12 +74,13 @@ bool pq3DViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
         int button = mouseEvent->button();
         int buttons = mouseEvent->buttons();
         int modifiers = mouseEvent->modifiers();
-        Q_EMIT recordEvent(Object, "mousePress", QString("(%1,%2,%3,%4,%5)")
-                                                   .arg(normalized_x)
-                                                   .arg(normalized_y)
-                                                   .arg(button)
-                                                   .arg(buttons)
-                                                   .arg(modifiers));
+        Q_EMIT recordEvent(Object, "mousePress",
+          QString("(%1,%2,%3,%4,%5)")
+            .arg(normalized_x)
+            .arg(normalized_y)
+            .arg(button)
+            .arg(buttons)
+            .arg(modifiers));
       }
 
       // reset lastMoveEvent
@@ -129,12 +128,13 @@ bool pq3DViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
           int buttons = lastMoveEvent.buttons();
           int modifiers = lastMoveEvent.modifiers();
 
-          Q_EMIT recordEvent(Object, "mouseMove", QString("(%1,%2,%3,%4,%5)")
-                                                    .arg(normalized_x)
-                                                    .arg(normalized_y)
-                                                    .arg(button)
-                                                    .arg(buttons)
-                                                    .arg(modifiers));
+          Q_EMIT recordEvent(Object, "mouseMove",
+            QString("(%1,%2,%3,%4,%5)")
+              .arg(normalized_x)
+              .arg(normalized_y)
+              .arg(button)
+              .arg(buttons)
+              .arg(modifiers));
         }
 
         double normalized_x = mouseEvent->x() / static_cast<double>(size.width());
@@ -143,12 +143,13 @@ bool pq3DViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
         int buttons = mouseEvent->buttons();
         int modifiers = mouseEvent->modifiers();
 
-        Q_EMIT recordEvent(Object, "mouseRelease", QString("(%1,%2,%3,%4,%5)")
-                                                     .arg(normalized_x)
-                                                     .arg(normalized_y)
-                                                     .arg(button)
-                                                     .arg(buttons)
-                                                     .arg(modifiers));
+        Q_EMIT recordEvent(Object, "mouseRelease",
+          QString("(%1,%2,%3,%4,%5)")
+            .arg(normalized_x)
+            .arg(normalized_y)
+            .arg(button)
+            .arg(buttons)
+            .arg(modifiers));
       }
       return true;
       break;

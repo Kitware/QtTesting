@@ -42,9 +42,7 @@ pqPythonEventObserver::pqPythonEventObserver(QObject* p)
 {
 }
 
-pqPythonEventObserver::~pqPythonEventObserver()
-{
-}
+pqPythonEventObserver::~pqPythonEventObserver() {}
 
 void pqPythonEventObserver::setStream(QTextStream* stream)
 {

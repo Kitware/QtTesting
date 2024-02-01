@@ -360,7 +360,7 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
                 // If child exist, check it is not the overlayed widget and indeed a new widget
                 if (childWidget == NULL ||
                   (childWidget != NULL &&
-                      childWidget != this->Implementation->CheckOverlayWidgetOn))
+                    childWidget != this->Implementation->CheckOverlayWidgetOn))
                 {
                   // if a child exist, use it
                   if (childWidget != NULL)

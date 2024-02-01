@@ -40,9 +40,7 @@ pqListViewEventTranslator::pqListViewEventTranslator(QObject* parentObject)
 }
 
 //-----------------------------------------------------------------------------
-pqListViewEventTranslator::~pqListViewEventTranslator()
-{
-}
+pqListViewEventTranslator::~pqListViewEventTranslator() {}
 
 //-----------------------------------------------------------------------------
 void pqListViewEventTranslator::onEnteredCheck(const QModelIndex& item)

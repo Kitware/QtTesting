@@ -42,9 +42,7 @@ pqTreeViewEventTranslator::pqTreeViewEventTranslator(QObject* parentObject)
 }
 
 //-----------------------------------------------------------------------------
-pqTreeViewEventTranslator::~pqTreeViewEventTranslator()
-{
-}
+pqTreeViewEventTranslator::~pqTreeViewEventTranslator() {}
 
 //-----------------------------------------------------------------------------
 void pqTreeViewEventTranslator::monitorSignalsInternal(QAbstractItemView* abstractItemView)

@@ -41,9 +41,7 @@ pqTimer::pqTimer(QObject* parentObject)
 }
 
 //-----------------------------------------------------------------------------
-pqTimer::~pqTimer()
-{
-}
+pqTimer::~pqTimer() {}
 
 //-----------------------------------------------------------------------------
 void pqTimer::timerEvent(QTimerEvent* evt)

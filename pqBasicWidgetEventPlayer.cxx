@@ -132,8 +132,8 @@ bool pqBasicWidgetEventPlayer::playEvent(
       // Check property value
       if (propertyValue.toString().replace("\t", " ") != arguments)
       {
-        QString errorMessage = object->objectName() + " property value is: " +
-          propertyValue.toString() + ". Expecting: " + arguments + ".";
+        QString errorMessage = object->objectName() +
+          " property value is: " + propertyValue.toString() + ". Expecting: " + arguments + ".";
         qCritical() << errorMessage.toUtf8().data();
         error = true;
       }

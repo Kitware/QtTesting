@@ -56,14 +56,10 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QWidget>
 
 // ----------------------------------------------------------------------------
-pqEventPlayer::pqEventPlayer()
-{
-}
+pqEventPlayer::pqEventPlayer() {}
 
 // ----------------------------------------------------------------------------
-pqEventPlayer::~pqEventPlayer()
-{
-}
+pqEventPlayer::~pqEventPlayer() {}
 
 // ----------------------------------------------------------------------------
 void pqEventPlayer::addDefaultWidgetEventPlayers(pqTestUtility* util)

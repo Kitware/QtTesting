@@ -168,13 +168,14 @@ bool pqAbstractItemViewEventTranslator::translateEvent(QObject* Object, QEvent* 
         int numStep = wheelEvent->angleDelta().y() > 0 ? 120 : -120;
         int buttons = wheelEvent->buttons();
         int modifiers = wheelEvent->modifiers();
-        Q_EMIT recordEvent(Object, "mouseWheel", QString("%1,%2,%3,%4,%5")
-                                                   .arg(numStep)
-                                                   .arg(buttons)
-                                                   .arg(modifiers)
-                                                   .arg(relPt.x())
-                                                   .arg(relPt.y())
-                                                   .arg(idxStr));
+        Q_EMIT recordEvent(Object, "mouseWheel",
+          QString("%1,%2,%3,%4,%5")
+            .arg(numStep)
+            .arg(buttons)
+            .arg(modifiers)
+            .arg(relPt.x())
+            .arg(relPt.y())
+            .arg(idxStr));
       }
       return true;
       break;
