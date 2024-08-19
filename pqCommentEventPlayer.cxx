@@ -32,6 +32,8 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 
 #include "pqCommentEventPlayer.h"
 
+#include <QtGlobal>
+
 // ----------------------------------------------------------------------------
 pqCommentEventPlayer::pqCommentEventPlayer(pqTestUtility* testUtility, QObject* parent)
   : pqWidgetEventPlayer(parent)
@@ -49,6 +51,8 @@ pqCommentEventPlayer::~pqCommentEventPlayer()
 bool pqCommentEventPlayer::playEvent(
   QObject* Object, const QString& Command, const QString& Arguments, bool& Error)
 {
+  Q_UNUSED(Object);
+  Q_UNUSED(Error);
   if (!Command.startsWith("comment"))
   {
     return false;

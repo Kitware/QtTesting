@@ -33,6 +33,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqEventTypes.h"
 #include <QEvent>
 #include <QWidget>
+#include <QtGlobal>
 
 //-----------------------------------------------------------------------------
 pqWidgetEventTranslator::pqWidgetEventTranslator(QObject* parentObject)
@@ -45,6 +46,7 @@ pqWidgetEventTranslator::~pqWidgetEventTranslator() {}
 
 bool pqWidgetEventTranslator::translateEvent(QObject* object, QEvent* event, bool& error)
 {
+  Q_UNUSED(error);
   QWidget* widget = qobject_cast<QWidget*>(object);
   if (!widget)
   {

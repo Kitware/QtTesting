@@ -35,6 +35,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include "pqWidgetEventTranslator.h"
 #include <QAbstractItemModel> // for QModelIndexList
 #include <QPointer>
+#include <QtGlobal>
 
 class QModelIndex;
 class QAbstractItemView;
@@ -81,7 +82,10 @@ protected:
 
   /// Subclasses (pqTreeViewEventTranslator, possibly others) override this to monitor
   /// additional view specific signals
-  virtual void monitorSignalsInternal(QAbstractItemView* abstractItemView) {}
+  virtual void monitorSignalsInternal(QAbstractItemView* abstractItemView)
+  {
+    Q_UNUSED(abstractItemView);
+  }
 
   QPointer<QAbstractItemView> AbstractItemView;
   QPointer<QItemSelectionModel> ItemSelectionModel;

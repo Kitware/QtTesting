@@ -141,11 +141,11 @@ bool pqBasicWidgetEventTranslator::translateEvent(
     if (event->type() == QEvent::MouseMove)
     {
       // Check for available meta prop
-      const QMetaProperty metaProp = widget->metaObject()->userProperty();
+      QMetaProperty metaProp = widget->metaObject()->userProperty();
       if (!metaProp.isValid() && qobject_cast<QWidget*>(widget->parent()) != NULL)
       {
         // MouseEvent can be received by the viewport
-        const QMetaProperty metaProp = widget->parent()->metaObject()->userProperty();
+        metaProp = widget->parent()->metaObject()->userProperty();
       }
       if (metaProp.isValid())
       {
@@ -157,11 +157,11 @@ bool pqBasicWidgetEventTranslator::translateEvent(
     if (event->type() == QEvent::MouseButtonRelease)
     {
       // Generic Meta prop check
-      const QMetaProperty metaProp = widget->metaObject()->userProperty();
+      QMetaProperty metaProp = widget->metaObject()->userProperty();
       if (!metaProp.isValid() && widget->parent() != NULL)
       {
         // MouseEvent can be received by the viewport, so try the parent widget
-        const QMetaProperty metaProp = widget->parent()->metaObject()->userProperty();
+        metaProp = widget->parent()->metaObject()->userProperty();
         widget = qobject_cast<QWidget*>(widget->parent());
       }
 

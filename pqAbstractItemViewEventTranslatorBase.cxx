@@ -37,6 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QEvent>
 #include <QKeyEvent>
 #include <QVariant>
+#include <QtGlobal>
 
 //-----------------------------------------------------------------------------
 pqAbstractItemViewEventTranslatorBase::pqAbstractItemViewEventTranslatorBase(QObject* parentObject)
@@ -323,6 +324,8 @@ void pqAbstractItemViewEventTranslatorBase::onCurrentChanged(const QModelIndex& 
 //-----------------------------------------------------------------------------
 void pqAbstractItemViewEventTranslatorBase::onSelectionChanged(const QItemSelection& selected)
 {
+  Q_UNUSED(selected);
+
   // see if the view supports multi-select
   auto selMode = this->AbstractItemView->selectionMode();
   if (!(QAbstractItemView::SingleSelection == selMode || QAbstractItemView::NoSelection == selMode))

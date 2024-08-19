@@ -54,11 +54,6 @@ bool pqAbstractButtonEventTranslator::translateEvent(QObject* Object, QEvent* Ev
   {
     return false;
   }
-  QPushButton* pushButton = qobject_cast<QPushButton*>(object);
-  QToolButton* toolButton = qobject_cast<QToolButton*>(object);
-  bool withMenu = (pushButton && pushButton->menu()) ||
-    (toolButton &&
-      (toolButton->menu() || toolButton->defaultAction() && toolButton->defaultAction()->menu()));
   switch (Event->type())
   {
     case QEvent::KeyPress:
