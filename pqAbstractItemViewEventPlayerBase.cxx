@@ -37,6 +37,7 @@ SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #include <QCoreApplication>
 #include <QDebug>
 #include <QMenu>
+#include <QtGlobal>
 
 namespace
 {
@@ -132,6 +133,8 @@ QModelIndex pqAbstractItemViewEventPlayerBase::GetIndex(
 //-----------------------------------------------------------------------------
 QString pqAbstractItemViewEventPlayerBase::GetDataString(const QString& itemStr, bool& error)
 {
+  Q_UNUSED(error);
+
   // Get only the "data" part of the string
   int sep = itemStr.indexOf(",");
   return itemStr.mid(sep + 1);

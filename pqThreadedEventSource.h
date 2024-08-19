@@ -49,6 +49,7 @@ public:
   pqThreadedEventSource(QObject* p);
   ~pqThreadedEventSource() override;
 
+  using pqEventSource::getNextEvent;
   /** Called by the dispatcher on the GUI thread.
     Retrieves the next available event.  Returns true if an event was
     returned, false if there are no more events.
