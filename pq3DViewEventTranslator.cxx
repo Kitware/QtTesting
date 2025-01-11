@@ -40,8 +40,13 @@ bool pq3DViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
       if (mouseEvent)
       {
         QSize size = widget->size();
-        double normalized_x = mouseEvent->x() / static_cast<double>(size.width());
-        double normalized_y = mouseEvent->y() / static_cast<double>(size.height());
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        auto pos = mouseEvent->pos();
+#else
+        auto pos = mouseEvent->position().toPoint();
+#endif
+        double normalized_x = pos.x() / static_cast<double>(size.width());
+        double normalized_y = pos.y() / static_cast<double>(size.height());
         int button = mouseEvent->button();
         int buttons = mouseEvent->buttons();
         int modifiers = mouseEvent->modifiers();
@@ -71,7 +76,11 @@ bool pq3DViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
       QMouseEvent* mouseEvent = dynamic_cast<QMouseEvent*>(Event);
       if (mouseEvent)
       {
-        QPoint pos(mouseEvent->x(), mouseEvent->y());
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        auto pos = mouseEvent->pos();
+#else
+        auto pos = mouseEvent->position().toPoint();
+#endif
         QMouseEvent e(QEvent::MouseMove, pos, widget->mapToGlobal(pos), mouseEvent->button(),
           mouseEvent->buttons(), mouseEvent->modifiers());
 
@@ -94,8 +103,13 @@ bool pq3DViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
         // record last move event if it is valid
         if (lastMoveEvent.type() == QEvent::MouseMove)
         {
-          double normalized_x = lastMoveEvent.x() / static_cast<double>(size.width());
-          double normalized_y = lastMoveEvent.y() / static_cast<double>(size.height());
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+          auto pos = lastMoveEvent.pos();
+#else
+          auto pos = lastMoveEvent.position().toPoint();
+#endif
+          double normalized_x = pos.x() / static_cast<double>(size.width());
+          double normalized_y = pos.y() / static_cast<double>(size.height());
           int button = lastMoveEvent.button();
           int buttons = lastMoveEvent.buttons();
           int modifiers = lastMoveEvent.modifiers();
@@ -109,8 +123,13 @@ bool pq3DViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
               .arg(modifiers));
         }
 
-        double normalized_x = mouseEvent->x() / static_cast<double>(size.width());
-        double normalized_y = mouseEvent->y() / static_cast<double>(size.height());
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        auto pos = mouseEvent->pos();
+#else
+        auto pos = mouseEvent->position().toPoint();
+#endif
+        double normalized_x = pos.x() / static_cast<double>(size.width());
+        double normalized_y = pos.y() / static_cast<double>(size.height());
         int button = mouseEvent->button();
         int buttons = mouseEvent->buttons();
         int modifiers = mouseEvent->modifiers();
