@@ -64,10 +64,10 @@ struct pqEventTranslator::pqImplementation
     // Hide the overlay
     this->CheckOverlay->hide();
 
-    // Nullfied it's parent
+    // Nullified it's parent
     this->CheckOverlay->setParent(NULL);
 
-    // Set the overlayed widget to null
+    // Set the overlaid widget to null
     this->CheckOverlayWidgetOn = NULL;
   }
 
@@ -90,7 +90,7 @@ struct pqEventTranslator::pqImplementation
   // Pointer to the overlay
   QPointer<pqCheckEventOverlay> CheckOverlay;
 
-  // Pointer to the overlayed widget
+  // Pointer to the overlaid widget
   QPointer<QWidget> CheckOverlayWidgetOn;
 
   // Record interaction timings flag
@@ -137,7 +137,7 @@ void pqEventTranslator::stop()
 // ----------------------------------------------------------------------------
 void pqEventTranslator::addDefaultWidgetEventTranslators(pqTestUtility* util)
 {
-  // Add generalistic translator first, then specific, in order for this to work
+  // Add general translator first, then specific, in order for this to work
   addWidgetEventTranslator(new pqBasicWidgetEventTranslator());
   addWidgetEventTranslator(new pqAbstractButtonEventTranslator());
   addWidgetEventTranslator(new pqAbstractItemViewEventTranslator());
@@ -296,7 +296,7 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
       if (this->Implementation->Checking)
       {
         // In Gl Case, parentless widget is not transparent to mouse event
-        // The event is  applied to the overlayed widget or an another top widget
+        // The event is  applied to the overlaid widget or an another top widget
         // (before ignoredObjects)
         // TODO : use mask instead
 
@@ -330,10 +330,10 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
               if (topWidget != this->Implementation->CheckOverlay &&
                 topWidget->geometry().contains(pos, true))
               {
-                // Recover the child widget onder the cursor, if any
+                // Recover the child widget under the cursor, if any
                 QWidget* childWidget = topWidget->childAt(topWidget->mapFromGlobal(pos));
 
-                // If child exist, check it is not the overlayed widget and indeed a new widget
+                // If child exist, check it is not the overlaid widget and indeed a new widget
                 if (childWidget == NULL ||
                   (childWidget != NULL &&
                     childWidget != this->Implementation->CheckOverlayWidgetOn))
@@ -353,7 +353,7 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
           }
           if (foundTop)
           {
-            // If we found a top widget behin the cursor, use it
+            // If we found a top widget behind the cursor, use it
             widget = topWidget;
           }
           else
@@ -386,7 +386,7 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
           return false;
         }
 
-        // Mouse Move on a non-previously overlayed widget
+        // Mouse Move on a non-previously overlaid widget
         if (event->type() == QEvent::MouseMove &&
           this->Implementation->CheckOverlayWidgetOn != widget)
         {
@@ -439,12 +439,12 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
             // Set the validity of the overlay
             this->Implementation->CheckOverlay->Valid = validTranslator;
 
-            // Set parent of the overlay to be parent of the overlayed widget
+            // Set parent of the overlay to be parent of the overlaid widget
             this->Implementation->CheckOverlay->setParent(qobject_cast<QWidget*>(widget->parent()));
 
             if (this->Implementation->CheckOverlay->GlWidget)
             {
-              // Cannot draw QPainter directive in openGl context, bust use another context, aka
+              // Cannot draw QPainter directive in OpenGL context, bust use another context, aka
               // another window
               // this->Implementation->CheckOverlay->setWindowFlags(Qt::ToolTip |
               // Qt::FramelessWindowHint); // ToolTip is always on top
@@ -467,7 +467,7 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
               this->Implementation->CheckOverlay->setAttribute(Qt::WA_TranslucentBackground, false);
               this->Implementation->CheckOverlay->setAttribute(Qt::WA_PaintOnScreen, false);
 
-              // Set overlay geometry to be the same as overlayed widget
+              // Set overlay geometry to be the same as overlaid widget
               this->setOverlayGeometry(widget->geometry(), false);
             }
 
