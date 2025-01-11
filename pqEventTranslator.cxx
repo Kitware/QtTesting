@@ -321,13 +321,17 @@ bool pqEventTranslator::eventFilter(QObject* object, QEvent* event)
             // only the visible ones
             if (!topWidget->isHidden())
             {
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+              auto pos = static_cast<QMouseEvent*>(event)->globalPos();
+#else
+              auto pos = static_cast<QMouseEvent*>(event)->globalPosition().toPoint();
+#endif
               // Check it is not the overlay, and it contains the mouse cursor
               if (topWidget != this->Implementation->CheckOverlay &&
-                topWidget->geometry().contains(static_cast<QMouseEvent*>(event)->globalPos(), true))
+                topWidget->geometry().contains(pos, true))
               {
                 // Recover the child widget onder the cursor, if any
-                QWidget* childWidget = topWidget->childAt(
-                  topWidget->mapFromGlobal(static_cast<QMouseEvent*>(event)->globalPos()));
+                QWidget* childWidget = topWidget->childAt(topWidget->mapFromGlobal(pos));
 
                 // If child exist, check it is not the overlayed widget and indeed a new widget
                 if (childWidget == NULL ||
