@@ -80,7 +80,7 @@ bool pqBasicWidgetEventPlayer::playEvent(
               buttons = button;
               button = Qt::NoButton;
             }
-            QMouseEvent e(type, pt, button, buttons, keym);
+            QMouseEvent e(type, pt, widget->mapToGlobal(pt), button, buttons, keym);
             qApp->notify(widget, &e);
             return true;
           }
