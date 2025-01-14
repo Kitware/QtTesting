@@ -41,7 +41,8 @@ bool pq3DViewEventPlayer::playEvent(
         QEvent::Type type = (Command == "mousePress")
           ? QEvent::MouseButtonPress
           : ((Command == "mouseMove") ? QEvent::MouseMove : QEvent::MouseButtonRelease);
-        QMouseEvent e(type, QPoint(x, y), button, buttons, keym);
+        QPoint pos(x, y);
+        QMouseEvent e(type, pos, widget->mapToGlobal(pos), button, buttons, keym);
         qApp->notify(Object, &e);
       }
       return true;

@@ -11,8 +11,8 @@
 pq3DViewEventTranslator::pq3DViewEventTranslator(const QByteArray& classname, QObject* p)
   : pqWidgetEventTranslator(p)
   , mClassType(classname)
-  , lastMoveEvent(QEvent::MouseButtonPress, QPoint(), Qt::MouseButton(), Qt::MouseButtons(),
-      Qt::KeyboardModifiers())
+  , lastMoveEvent(QEvent::MouseButtonPress, QPoint(), QPoint(), Qt::MouseButton(),
+      Qt::MouseButtons(), Qt::KeyboardModifiers())
 {
 }
 
@@ -40,8 +40,13 @@ bool pq3DViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
       if (mouseEvent)
       {
         QSize size = widget->size();
-        double normalized_x = mouseEvent->x() / static_cast<double>(size.width());
-        double normalized_y = mouseEvent->y() / static_cast<double>(size.height());
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        auto pos = mouseEvent->pos();
+#else
+        auto pos = mouseEvent->position().toPoint();
+#endif
+        double normalized_x = pos.x() / static_cast<double>(size.width());
+        double normalized_y = pos.y() / static_cast<double>(size.height());
         int button = mouseEvent->button();
         int buttons = mouseEvent->buttons();
         int modifiers = mouseEvent->modifiers();
@@ -55,8 +60,8 @@ bool pq3DViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
       }
 
       // reset lastMoveEvent
-      QMouseEvent e(QEvent::MouseButtonPress, QPoint(), Qt::MouseButton(), Qt::MouseButtons(),
-        Qt::KeyboardModifiers());
+      QMouseEvent e(QEvent::MouseButtonPress, QPoint(), QPoint(), Qt::MouseButton(),
+        Qt::MouseButtons(), Qt::KeyboardModifiers());
 
 #if QT_VERSION < 0x060000
       // FIXME: QMouseEvent copy ctor is private in Qt6
@@ -71,8 +76,13 @@ bool pq3DViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
       QMouseEvent* mouseEvent = dynamic_cast<QMouseEvent*>(Event);
       if (mouseEvent)
       {
-        QMouseEvent e(QEvent::MouseMove, QPoint(mouseEvent->x(), mouseEvent->y()),
-          mouseEvent->button(), mouseEvent->buttons(), mouseEvent->modifiers());
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        auto pos = mouseEvent->pos();
+#else
+        auto pos = mouseEvent->position().toPoint();
+#endif
+        QMouseEvent e(QEvent::MouseMove, pos, widget->mapToGlobal(pos), mouseEvent->button(),
+          mouseEvent->buttons(), mouseEvent->modifiers());
 
 #if QT_VERSION < 0x060000
         // FIXME: QMouseEvent copy ctor is private in Qt6
@@ -93,8 +103,13 @@ bool pq3DViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
         // record last move event if it is valid
         if (lastMoveEvent.type() == QEvent::MouseMove)
         {
-          double normalized_x = lastMoveEvent.x() / static_cast<double>(size.width());
-          double normalized_y = lastMoveEvent.y() / static_cast<double>(size.height());
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+          auto pos = lastMoveEvent.pos();
+#else
+          auto pos = lastMoveEvent.position().toPoint();
+#endif
+          double normalized_x = pos.x() / static_cast<double>(size.width());
+          double normalized_y = pos.y() / static_cast<double>(size.height());
           int button = lastMoveEvent.button();
           int buttons = lastMoveEvent.buttons();
           int modifiers = lastMoveEvent.modifiers();
@@ -108,8 +123,13 @@ bool pq3DViewEventTranslator::translateEvent(QObject* Object, QEvent* Event, boo
               .arg(modifiers));
         }
 
-        double normalized_x = mouseEvent->x() / static_cast<double>(size.width());
-        double normalized_y = mouseEvent->y() / static_cast<double>(size.height());
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        auto pos = mouseEvent->pos();
+#else
+        auto pos = mouseEvent->position().toPoint();
+#endif
+        double normalized_x = pos.x() / static_cast<double>(size.width());
+        double normalized_y = pos.y() / static_cast<double>(size.height());
         int button = mouseEvent->button();
         int buttons = mouseEvent->buttons();
         int modifiers = mouseEvent->modifiers();

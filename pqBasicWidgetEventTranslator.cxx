@@ -46,12 +46,17 @@ bool pqBasicWidgetEventTranslator::translateEvent(
       case QEvent::MouseButtonRelease:
       {
         QMouseEvent* mouseEvent = static_cast<QMouseEvent*>(event);
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
+        auto pos = mouseEvent->pos();
+#else
+        auto pos = mouseEvent->position().toPoint();
+#endif
         QString info = QString("%1,%2,%3,%4,%5")
                          .arg(mouseEvent->button())
                          .arg(mouseEvent->buttons())
                          .arg(mouseEvent->modifiers())
-                         .arg(mouseEvent->x())
-                         .arg(mouseEvent->y());
+                         .arg(pos.x())
+                         .arg(pos.y());
 
         if (event->type() != QEvent::MouseButtonRelease)
         {
