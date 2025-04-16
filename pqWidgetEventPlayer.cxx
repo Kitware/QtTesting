@@ -11,15 +11,13 @@
 #include <QtDebug>
 #include <cmath> // for std::abs
 
-#include "pqEventTypes.h"
-
-pqWidgetEventPlayer::pqWidgetEventPlayer(QObject* p)
-  : QObject(p)
+// ----------------------------------------------------------------------------
+pqWidgetEventPlayer::pqWidgetEventPlayer(QObject* parent)
+  : Superclass(parent)
 {
 }
 
-pqWidgetEventPlayer::~pqWidgetEventPlayer() {}
-
+// ----------------------------------------------------------------------------
 bool pqWidgetEventPlayer::playEvent(
   QObject* object, const QString& command, const QString& arguments, bool& error)
 {
@@ -74,16 +72,6 @@ bool pqWidgetEventPlayer::playEvent(
       }
       return true;
     }
-  }
-  return false;
-}
-
-bool pqWidgetEventPlayer::playEvent(
-  QObject* object, const QString& command, const QString& arguments, int eventType, bool& error)
-{
-  if (eventType == pqEventTypes::ACTION_EVENT)
-  {
-    return this->playEvent(object, command, arguments, error);
   }
   return false;
 }
