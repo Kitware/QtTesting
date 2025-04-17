@@ -6,33 +6,33 @@
 #define _pqWidgetEventPlayer_h
 
 #include "QtTestingExport.h"
-#include <QObject>
+
+#include "pqObjectPlayer.h"
 
 class QString;
 
 /**
-Abstract interface for an object that can playback high-level
-ParaView events by translating them into low-level Qt events,
-for test-cases, demos, tutorials, etc.
+ * Implements pqObjectPlayer for QWidgets.
+ *
+ * \sa pqEventPlayer
+ */
 
-\sa pqEventPlayer
-*/
-
-class QTTESTING_EXPORT pqWidgetEventPlayer : public QObject
+class QTTESTING_EXPORT pqWidgetEventPlayer : public pqObjectPlayer
 {
   Q_OBJECT
+  typedef pqObjectPlayer Superclass;
 
 public:
-  pqWidgetEventPlayer(QObject* p);
-  ~pqWidgetEventPlayer() override;
+  pqWidgetEventPlayer(QObject* parent);
+  ~pqWidgetEventPlayer() override = default;
 
-  /** Derivatives should implement this and play-back the given command,
-  returning "true" if they handled the command, and setting Error
-  to "true" if there were any problems. */
-  virtual bool playEvent(
-    QObject* object, const QString& command, const QString& arguments, bool& error);
-  virtual bool playEvent(
-    QObject* object, const QString& command, const QString& arguments, int eventType, bool& error);
+  using Superclass::playEvent;
+
+  /**
+   * Handle generics command action, like resize and context menu trigger.
+   */
+  bool playEvent(
+    QObject* object, const QString& command, const QString& arguments, bool& error) override;
 };
 
 #endif // !_pqWidgetEventPlayer_h

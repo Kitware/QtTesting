@@ -8,22 +8,20 @@
 #include "pqWidgetEventPlayer.h"
 
 /**
-Concrete implementation of pqWidgetEventPlayer that handles playback of "activate" events for
-buttons and menus.
-
-\sa pqEventPlayer
-*/
+ * EventPlayer for QWidget to handles mouse and keyboard inputs.
+ */
 class pqBasicWidgetEventPlayer : public pqWidgetEventPlayer
 {
   Q_OBJECT
   typedef pqWidgetEventPlayer Superclass;
 
 public:
-  pqBasicWidgetEventPlayer(QObject* p = 0);
+  pqBasicWidgetEventPlayer(QObject* parent = nullptr);
 
   using Superclass::playEvent;
-  bool playEvent(QObject* object, const QString& command, const QString& arguments, int eventType,
-    bool& error) override;
+
+  bool playEvent(
+    QObject* object, const QString& command, const QString& arguments, bool& error) override;
 
 private:
   pqBasicWidgetEventPlayer(const pqBasicWidgetEventPlayer&);

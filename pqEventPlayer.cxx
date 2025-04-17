@@ -176,7 +176,7 @@ void pqEventPlayer::playEvent(const QString& objectString, const QString& comman
   if (!accepted)
   {
     QString errorMessage =
-      QString("In event 'object=%1' 'command=%2' 'arguments=%3':\nUnhandled event.")
+      QString("In event 'object=%1' 'command=%2' 'arguments=%3':\nUnhandled event.\n%4")
         .arg(object ? object->objectName() : objectString, command, arguments,
           pqObjectNaming::lastErrorMessage());
     qCritical() << qUtf8Printable(errorMessage);
