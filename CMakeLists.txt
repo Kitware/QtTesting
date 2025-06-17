@@ -185,6 +185,7 @@ SET(QtTesting_DEVEL_HEADERS
   pqNativeFileDialogEventPlayer.h
   pqNativeFileDialogEventTranslator.h
   pqObjectNaming.h
+  pqObjectPlayer.h
   pqPlayBackEventsDialog.h
   pqRecordEventsDialog.h
   pqSpinBoxEventTranslator.h
