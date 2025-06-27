@@ -235,10 +235,11 @@ QObject* pqObjectNaming::GetObject(const QString& Name)
   bool foundMatch = false;
   if (lastObject)
   {
-    const QObjectList matches = lastObject->findChildren<QObject*>(names[names.size() - 1]);
+    QObjectList matches = lastObject->findChildren<QObject*>(names[names.size() - 1]);
     for (int cc = 0; (matchLimit <= 0 || cc < matchLimit) && cc < matches.size(); ++cc)
     {
       stream << "    Possible match:   `" << pqObjectNaming::GetName(*matches[cc]) << "`\n";
+      foundMatch = true;
     }
     if (matchLimit > 0 && matches.size() > matchLimit)
     {
@@ -246,19 +247,19 @@ QObject* pqObjectNaming::GetObject(const QString& Name)
              << "    Set PQOBJECTNAMING_MATCH_LIMIT environment var to a +'ve number to limit "
                 "entries (or 0 for unlimited).\n";
     }
-  }
-  if (!foundMatch)
-  {
-    const QObjectList matches = lastObject->findChildren<QObject*>();
-    for (int cc = 0; (matchLimit <= 0 || cc < matchLimit) && cc < matches.size(); ++cc)
+    if (!foundMatch)
     {
-      stream << "    Available widget: `" << pqObjectNaming::GetName(*matches[cc]) << "`\n";
-    }
-    if (matchLimit > 0 && matches.size() > matchLimit)
-    {
-      stream << "    Available widget: .... (and " << (matches.size() - matchLimit) << " more!)\n"
-             << "    Set PQOBJECTNAMING_MATCH_LIMIT environment var to a +'ve number to limit "
-                "entries (or 0 for unlimited).\n";
+      matches = lastObject->findChildren<QObject*>();
+      for (int cc = 0; (matchLimit <= 0 || cc < matchLimit) && cc < matches.size(); ++cc)
+      {
+        stream << "    Available widget: `" << pqObjectNaming::GetName(*matches[cc]) << "`\n";
+      }
+      if (matchLimit > 0 && matches.size() > matchLimit)
+      {
+        stream << "    Available widget: .... (and " << (matches.size() - matchLimit) << " more!)\n"
+               << "    Set PQOBJECTNAMING_MATCH_LIMIT environment var to a +'ve number to limit "
+                  "entries (or 0 for unlimited).\n";
+      }
     }
   }
   return 0;
