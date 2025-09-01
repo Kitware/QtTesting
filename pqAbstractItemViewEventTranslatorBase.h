@@ -61,7 +61,7 @@ protected:
 
   QPointer<QAbstractItemView> AbstractItemView;
   QPointer<QItemSelectionModel> ItemSelectionModel;
-  const QModelIndex* ModelItemCheck;
+  QPersistentModelIndex ModelItemCheck;
   bool Editing;
   bool AbstractItemViewMouseTracking;
   bool Checking;

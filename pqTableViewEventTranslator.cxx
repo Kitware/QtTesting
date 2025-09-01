@@ -29,7 +29,7 @@ void pqTableViewEventTranslator::onEnteredCheck(const QModelIndex& item)
     tableView->verticalHeader()->width(), tableView->horizontalHeader()->height());
 
   // Stor item and signal that a specific overlay is ready to be drawn
-  this->ModelItemCheck = &item;
+  this->ModelItemCheck = QPersistentModelIndex(item);
   Q_EMIT this->specificOverlay(visualRect);
 }
 

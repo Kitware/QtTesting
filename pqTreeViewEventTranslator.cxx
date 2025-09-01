@@ -59,7 +59,7 @@ void pqTreeViewEventTranslator::onEnteredCheck(const QModelIndex& item)
   visualRect.translate(0, treeView->header()->height());
 
   // store item and signal that a specific overlay is ready to be drawn
-  this->ModelItemCheck = &item;
+  this->ModelItemCheck = QPersistentModelIndex(item);
   Q_EMIT this->specificOverlay(visualRect);
 }
 
