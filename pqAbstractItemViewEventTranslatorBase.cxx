@@ -17,7 +17,6 @@ pqAbstractItemViewEventTranslatorBase::pqAbstractItemViewEventTranslatorBase(QOb
 {
   this->Editing = false;
   this->AbstractItemView = NULL;
-  this->ModelItemCheck = NULL;
   this->AbstractItemViewMouseTracking = false;
   this->Checking = false;
 }
@@ -149,15 +148,15 @@ bool pqAbstractItemViewEventTranslatorBase::translateEvent(
     if (event->type() == QEvent::MouseButtonRelease)
     {
       // Item Check
-      if (this->ModelItemCheck != NULL)
+      if (this->ModelItemCheck.isValid())
       {
-        QString indexString = this->getIndexAsString(*this->ModelItemCheck);
+        QString indexString = this->getIndexAsString(this->ModelItemCheck);
         Q_EMIT this->recordEvent(abstractItemView, "modelItemData",
           QString("%1,%2")
             .arg(indexString)
             .arg(
               // Replacing tab by space, as they are not valid in xml
-              this->ModelItemCheck->data().toString().replace("\t", " ")),
+              this->ModelItemCheck.data().toString().replace("\t", " ")),
           pqEventTypes::CHECK_EVENT);
       }
       // Abstract Item View nb row check
@@ -323,6 +322,6 @@ void pqAbstractItemViewEventTranslatorBase::onSelectionChanged(const QItemSelect
 //-----------------------------------------------------------------------------
 void pqAbstractItemViewEventTranslatorBase::onViewportEnteredCheck()
 {
-  this->ModelItemCheck = NULL;
+  this->ModelItemCheck = QPersistentModelIndex();
   Q_EMIT this->specificOverlay(this->AbstractItemView->rect());
 }
