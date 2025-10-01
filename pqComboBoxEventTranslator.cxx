@@ -37,10 +37,10 @@ bool pqComboBoxEventTranslator::translateEvent(QObject* Object, QEvent* Event, b
       }
 
       this->CurrentObject = Object;
-      connect(combo, SIGNAL(destroyed(QObject*)), this, SLOT(onDestroyed(QObject*)));
-      connect(combo, SIGNAL(activated(const QString&)), this, SLOT(onActivated(const QString&)));
-      connect(combo, SIGNAL(editTextChanged(const QString&)), this,
-        SLOT(onEditTextChanged(const QString&)));
+      connect(combo, &QObject::destroyed, this, &pqComboBoxEventTranslator::onDestroyed);
+      connect(combo, &QComboBox::currentTextChanged, this, &pqComboBoxEventTranslator::onActivated);
+      connect(
+        combo, &QComboBox::editTextChanged, this, &pqComboBoxEventTranslator::onEditTextChanged);
     }
     return true;
   }
