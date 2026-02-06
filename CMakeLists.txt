@@ -291,54 +291,54 @@ IF(BUILD_TESTING)
   add_subdirectory(Testing)
 ENDIF()
 
-export(TARGETS qttesting FILE ${QtTesting_BINARY_DIR}/QtTestingExports.cmake)
-
-# Set up the build export configuration
-set(QtTesting_EXPORT_FILE "${QtTesting_BINARY_DIR}/QtTestingConfig.cmake")
-configure_file(
-  "${QtTesting_SOURCE_DIR}/QtTestingConfig.cmake.in"
-  "${QtTesting_EXPORT_FILE}"
-  @ONLY
-)
-
-# Set up the install export
-IF(IS_ABSOLUTE QtTesting_INSTALL_INCLUDE_DIR)
-  set(QtTesting_INSTALL_INCLUDE_FULL_DIR "${QtTesting_INSTALL_INCLUDE_DIR}")
-ELSE()
-  set(QtTesting_INSTALL_INCLUDE_FULL_DIR "${CMAKE_INSTALL_PREFIX}/${QtTesting_INSTALL_INCLUDE_DIR}")
-  get_filename_component(QtTesting_INSTALL_INCLUDE_FULL_DIR "${QtTesting_INSTALL_INCLUDE_FULL_DIR}" ABSOLUTE)
-ENDIF()
-
-IF(IS_ABSOLUTE QtTesting_INSTALL_LIB_DIR)
-  set(QtTesting_INSTALL_LIB_FULL_DIR "${QtTesting_INSTALL_LIB_DIR}")
-ELSE()
-  set(QtTesting_INSTALL_LIB_FULL_DIR "${CMAKE_INSTALL_PREFIX}/${QtTesting_INSTALL_LIB_DIR}")
-  get_filename_component(QtTesting_INSTALL_LIB_FULL_DIR "${QtTesting_INSTALL_LIB_FULL_DIR}" ABSOLUTE)
-ENDIF()
-
-set(QtTesting_EXPORT_INSTALL_FILE "${QtTesting_BINARY_DIR}/CMakeFiles/QtTestingConfig.cmake")
-configure_file(
-  "${QtTesting_SOURCE_DIR}/QtTestingConfig-install.cmake.in"
-  "${QtTesting_EXPORT_INSTALL_FILE}"
-  @ONLY
-)
-
-include(CMakePackageConfigHelpers)
-
-# Configure '<PROJECT-NAME>Config.cmake'
-# Use variables:
-#   * targets_export_name
-#   * PROJECT_NAME
-configure_package_config_file(
-  "${PROJECT_NAME}Config-install.cmake.in"
-  "${QtTesting_EXPORT_INSTALL_FILE}"
-  INSTALL_DESTINATION "${QtTesting_INSTALL_CMAKE_DIR}"
-  NO_CHECK_REQUIRED_COMPONENTS_MACRO
-)
-
-
-
 IF(NOT QtTesting_INSTALL_NO_DEVELOPMENT)
+  export(TARGETS qttesting FILE ${QtTesting_BINARY_DIR}/QtTestingExports.cmake)
+
+  # Set up the build export configuration
+  set(QtTesting_EXPORT_FILE "${QtTesting_BINARY_DIR}/QtTestingConfig.cmake")
+  configure_file(
+    "${QtTesting_SOURCE_DIR}/QtTestingConfig.cmake.in"
+    "${QtTesting_EXPORT_FILE}"
+    @ONLY
+  )
+
+  # Set up the install export
+  IF(IS_ABSOLUTE QtTesting_INSTALL_INCLUDE_DIR)
+    set(QtTesting_INSTALL_INCLUDE_FULL_DIR "${QtTesting_INSTALL_INCLUDE_DIR}")
+  ELSE()
+    set(QtTesting_INSTALL_INCLUDE_FULL_DIR "${CMAKE_INSTALL_PREFIX}/${QtTesting_INSTALL_INCLUDE_DIR}")
+    get_filename_component(QtTesting_INSTALL_INCLUDE_FULL_DIR "${QtTesting_INSTALL_INCLUDE_FULL_DIR}" ABSOLUTE)
+  ENDIF()
+
+  IF(IS_ABSOLUTE QtTesting_INSTALL_LIB_DIR)
+    set(QtTesting_INSTALL_LIB_FULL_DIR "${QtTesting_INSTALL_LIB_DIR}")
+  ELSE()
+    set(QtTesting_INSTALL_LIB_FULL_DIR "${CMAKE_INSTALL_PREFIX}/${QtTesting_INSTALL_LIB_DIR}")
+    get_filename_component(QtTesting_INSTALL_LIB_FULL_DIR "${QtTesting_INSTALL_LIB_FULL_DIR}" ABSOLUTE)
+  ENDIF()
+
+  set(QtTesting_EXPORT_INSTALL_FILE "${QtTesting_BINARY_DIR}/CMakeFiles/QtTestingConfig.cmake")
+  configure_file(
+    "${QtTesting_SOURCE_DIR}/QtTestingConfig-install.cmake.in"
+    "${QtTesting_EXPORT_INSTALL_FILE}"
+    @ONLY
+  )
+
+  include(CMakePackageConfigHelpers)
+
+  # Configure '<PROJECT-NAME>Config.cmake'
+  # Use variables:
+  #   * targets_export_name
+  #   * PROJECT_NAME
+  configure_package_config_file(
+    "${PROJECT_NAME}Config-install.cmake.in"
+    "${QtTesting_EXPORT_INSTALL_FILE}"
+    INSTALL_DESTINATION "${QtTesting_INSTALL_CMAKE_DIR}"
+    NO_CHECK_REQUIRED_COMPONENTS_MACRO
+  )
+
+
+
   install( FILES ${QtTesting_DEVEL_HEADERS}
     DESTINATION ${QtTesting_INSTALL_INCLUDE_DIR}
   )
