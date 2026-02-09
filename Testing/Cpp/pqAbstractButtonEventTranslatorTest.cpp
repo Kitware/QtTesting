@@ -169,7 +169,11 @@ void pqAbstractButtonEventTranslatorTester::testToolButton_data()
         .arg(withMenu)
         .arg(longClick);
 
+#if QT_VERSION < QT_VERSION_CHECK(6, 0, 0)
     bool longActivate = withMenu && popup == QToolButton::DelayedPopup && longClick;
+#else
+    bool longActivate = false;
+#endif
     QString recordEmitted =
       QString("toolButton%1, %2, %3#")
         .arg(withDefaultAction && !longActivate ? "/action" : "")
