@@ -224,15 +224,31 @@ if (QTTESTING_BUILD_AS_VTK_MODULE)
     HEADERS_SUBDIR
       "vtkqttesting"
   )
-  set_target_properties(qttesting
-    PROPERTIES
-      DEFINE_SYMBOL QtTesting_EXPORTS)
-  add_library(ParaView::qttesting ALIAS qttesting)
-  target_include_directories(qttesting
+  vtk_module_set_property(ParaView::qttesting
+    PROPERTY  DEFINE_SYMBOL
+    VALUE     QtTesting_EXPORTS)
+  vtk_module_include(ParaView::qttesting
     PUBLIC
       "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>"
       "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>"
       "$<INSTALL_INTERFACE:${_vtk_build_HEADERS_DESTINATION}/vtkqttesting>")
+
+  vtk_module_definitions(ParaView::qttesting PRIVATE QT_NO_KEYWORDS)
+
+  # Set library name to include custom prefixes/suffixes.
+  vtk_module_set_property(ParaView::qttesting
+    PROPERTY  OUTPUT_NAME
+    VALUE     ${QT_TESTING_CUSTOM_LIBRARY_PREFIX}qttesting${QT_TESTING_CUSTOM_LIBRARY_SUFFIX})
+
+  vtk_module_link(ParaView::qttesting PRIVATE
+    ${qt_imported_targets}
+  )
+
+  IF(QT_TESTING_WITH_PYTHON)
+    vtk_module_link(ParaView::qttesting
+      VTK::Python
+    )
+  ENDIF()
 else ()
   add_library(qttesting
     ${QtTesting_SOURCES}
@@ -248,23 +264,23 @@ else ()
       $<INSTALL_INTERFACE:${QtTesting_INSTALL_INCLUDE_DIR}>
       $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
       "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>")
-endif ()
 
-target_compile_definitions(qttesting PRIVATE QT_NO_KEYWORDS)
+  target_compile_definitions(qttesting PRIVATE QT_NO_KEYWORDS)
 
-# Set library name to include custom prefixes/suffixes.
-set_property(TARGET qttesting
-  PROPERTY OUTPUT_NAME ${QT_TESTING_CUSTOM_LIBRARY_PREFIX}qttesting${QT_TESTING_CUSTOM_LIBRARY_SUFFIX})
+  # Set library name to include custom prefixes/suffixes.
+  set_property(TARGET qttesting
+    PROPERTY OUTPUT_NAME ${QT_TESTING_CUSTOM_LIBRARY_PREFIX}qttesting${QT_TESTING_CUSTOM_LIBRARY_SUFFIX})
 
-TARGET_LINK_LIBRARIES(qttesting PRIVATE
-  ${qt_imported_targets}
-)
-
-IF(QT_TESTING_WITH_PYTHON)
-  TARGET_LINK_LIBRARIES(qttesting
-    VTK::Python
+  TARGET_LINK_LIBRARIES(qttesting PRIVATE
+    ${qt_imported_targets}
   )
-ENDIF()
+
+  IF(QT_TESTING_WITH_PYTHON)
+    TARGET_LINK_LIBRARIES(qttesting
+      VTK::Python
+    )
+  ENDIF()
+endif ()
 
 SET(QTTESTING_BUILD_SHARED_LIBS ${BUILD_SHARED_LIBS})
 CONFIGURE_FILE(${QtTesting_SOURCE_DIR}/QtTestingConfigure.h.in
@@ -291,54 +307,54 @@ IF(BUILD_TESTING)
   add_subdirectory(Testing)
 ENDIF()
 
-export(TARGETS qttesting FILE ${QtTesting_BINARY_DIR}/QtTestingExports.cmake)
-
-# Set up the build export configuration
-set(QtTesting_EXPORT_FILE "${QtTesting_BINARY_DIR}/QtTestingConfig.cmake")
-configure_file(
-  "${QtTesting_SOURCE_DIR}/QtTestingConfig.cmake.in"
-  "${QtTesting_EXPORT_FILE}"
-  @ONLY
-)
-
-# Set up the install export
-IF(IS_ABSOLUTE QtTesting_INSTALL_INCLUDE_DIR)
-  set(QtTesting_INSTALL_INCLUDE_FULL_DIR "${QtTesting_INSTALL_INCLUDE_DIR}")
-ELSE()
-  set(QtTesting_INSTALL_INCLUDE_FULL_DIR "${CMAKE_INSTALL_PREFIX}/${QtTesting_INSTALL_INCLUDE_DIR}")
-  get_filename_component(QtTesting_INSTALL_INCLUDE_FULL_DIR "${QtTesting_INSTALL_INCLUDE_FULL_DIR}" ABSOLUTE)
-ENDIF()
-
-IF(IS_ABSOLUTE QtTesting_INSTALL_LIB_DIR)
-  set(QtTesting_INSTALL_LIB_FULL_DIR "${QtTesting_INSTALL_LIB_DIR}")
-ELSE()
-  set(QtTesting_INSTALL_LIB_FULL_DIR "${CMAKE_INSTALL_PREFIX}/${QtTesting_INSTALL_LIB_DIR}")
-  get_filename_component(QtTesting_INSTALL_LIB_FULL_DIR "${QtTesting_INSTALL_LIB_FULL_DIR}" ABSOLUTE)
-ENDIF()
-
-set(QtTesting_EXPORT_INSTALL_FILE "${QtTesting_BINARY_DIR}/CMakeFiles/QtTestingConfig.cmake")
-configure_file(
-  "${QtTesting_SOURCE_DIR}/QtTestingConfig-install.cmake.in"
-  "${QtTesting_EXPORT_INSTALL_FILE}"
-  @ONLY
-)
-
-include(CMakePackageConfigHelpers)
-
-# Configure '<PROJECT-NAME>Config.cmake'
-# Use variables:
-#   * targets_export_name
-#   * PROJECT_NAME
-configure_package_config_file(
-  "${PROJECT_NAME}Config-install.cmake.in"
-  "${QtTesting_EXPORT_INSTALL_FILE}"
-  INSTALL_DESTINATION "${QtTesting_INSTALL_CMAKE_DIR}"
-  NO_CHECK_REQUIRED_COMPONENTS_MACRO
-)
-
-
-
 IF(NOT QtTesting_INSTALL_NO_DEVELOPMENT)
+  export(TARGETS qttesting FILE ${QtTesting_BINARY_DIR}/QtTestingExports.cmake)
+
+  # Set up the build export configuration
+  set(QtTesting_EXPORT_FILE "${QtTesting_BINARY_DIR}/QtTestingConfig.cmake")
+  configure_file(
+    "${QtTesting_SOURCE_DIR}/QtTestingConfig.cmake.in"
+    "${QtTesting_EXPORT_FILE}"
+    @ONLY
+  )
+
+  # Set up the install export
+  IF(IS_ABSOLUTE QtTesting_INSTALL_INCLUDE_DIR)
+    set(QtTesting_INSTALL_INCLUDE_FULL_DIR "${QtTesting_INSTALL_INCLUDE_DIR}")
+  ELSE()
+    set(QtTesting_INSTALL_INCLUDE_FULL_DIR "${CMAKE_INSTALL_PREFIX}/${QtTesting_INSTALL_INCLUDE_DIR}")
+    get_filename_component(QtTesting_INSTALL_INCLUDE_FULL_DIR "${QtTesting_INSTALL_INCLUDE_FULL_DIR}" ABSOLUTE)
+  ENDIF()
+
+  IF(IS_ABSOLUTE QtTesting_INSTALL_LIB_DIR)
+    set(QtTesting_INSTALL_LIB_FULL_DIR "${QtTesting_INSTALL_LIB_DIR}")
+  ELSE()
+    set(QtTesting_INSTALL_LIB_FULL_DIR "${CMAKE_INSTALL_PREFIX}/${QtTesting_INSTALL_LIB_DIR}")
+    get_filename_component(QtTesting_INSTALL_LIB_FULL_DIR "${QtTesting_INSTALL_LIB_FULL_DIR}" ABSOLUTE)
+  ENDIF()
+
+  set(QtTesting_EXPORT_INSTALL_FILE "${QtTesting_BINARY_DIR}/CMakeFiles/QtTestingConfig.cmake")
+  configure_file(
+    "${QtTesting_SOURCE_DIR}/QtTestingConfig-install.cmake.in"
+    "${QtTesting_EXPORT_INSTALL_FILE}"
+    @ONLY
+  )
+
+  include(CMakePackageConfigHelpers)
+
+  # Configure '<PROJECT-NAME>Config.cmake'
+  # Use variables:
+  #   * targets_export_name
+  #   * PROJECT_NAME
+  configure_package_config_file(
+    "${PROJECT_NAME}Config-install.cmake.in"
+    "${QtTesting_EXPORT_INSTALL_FILE}"
+    INSTALL_DESTINATION "${QtTesting_INSTALL_CMAKE_DIR}"
+    NO_CHECK_REQUIRED_COMPONENTS_MACRO
+  )
+
+
+
   install( FILES ${QtTesting_DEVEL_HEADERS}
     DESTINATION ${QtTesting_INSTALL_INCLUDE_DIR}
   )
