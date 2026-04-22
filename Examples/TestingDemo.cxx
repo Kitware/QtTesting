@@ -120,7 +120,7 @@ protected:
       } */
     if (this->XMLStream->atEnd())
     {
-      qDebug() << "Invalid xml" << endl;
+      qDebug() << "Invalid xml" << Qt::endl;
     }
     return;
   }
