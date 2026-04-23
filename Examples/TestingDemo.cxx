@@ -182,7 +182,11 @@ void TestingDemo::record()
     QFileDialog::getSaveFileName(this, "Test File Name", QString(), "XML Files (*.xml)");
   if (!filename.isEmpty())
   {
+#if QT_VERSION < QT_VERSION_CHECK(6, 5, 0)
     QApplication::setActiveWindow(this);
+#else
+    QWidget::activateWindow();
+#endif
     this->TestUtility->recordTests(filename);
   }
 }
