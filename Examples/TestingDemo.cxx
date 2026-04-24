@@ -136,7 +136,7 @@ protected:
       QXmlStreamReader::TokenType token = this->XMLStream->readNext();
       if (token == QXmlStreamReader::StartElement)
       {
-        if (this->XMLStream->name() == "event")
+        if (this->XMLStream->name() == QStringLiteral("event"))
         {
           break;
         }
