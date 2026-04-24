@@ -20,7 +20,7 @@ build_linux:
   script:
     - mkdir -p build
     - cd build
-    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON ..
+    - cmake -DCMAKE_BUILD_TYPE=Release -DBUILD_TESTING=ON -DBUILD_EXAMPLES=ON ..
     - cmake --build . --parallel 2
   tags:
     - docker
