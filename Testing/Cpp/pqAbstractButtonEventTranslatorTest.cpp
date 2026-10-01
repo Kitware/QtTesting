@@ -61,7 +61,7 @@ void pqAbstractButtonEventTranslatorTester::init()
 #if QT_VERSION < QT_VERSION_CHECK(5, 3, 0)
   QTest::qWaitForWindowShown(this->ToolButton);
 #else
-  QTest::qWaitForWindowExposed(this->ToolButton);
+  std::ignore = QTest::qWaitForWindowExposed(this->ToolButton);
 #endif
 
   // Start to record events

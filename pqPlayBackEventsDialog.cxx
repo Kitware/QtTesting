@@ -318,7 +318,12 @@ void pqPlayBackEventsDialog::onStarted(const QString& filename)
 
   QFile file(filename);
   QFileInfo infoFile(file);
-  file.open(QIODevice::ReadOnly);
+  if (!file.open(QIODevice::ReadOnly))
+  {
+    qCritical() << "Could not open " << filename;
+    return;
+  }
+
   this->Implementation->Ui.logBrowser->append(QString("Start file : %1").arg(infoFile.fileName()));
   QTextStream stream(&file);
 #if QT_VERSION < 0x060000
