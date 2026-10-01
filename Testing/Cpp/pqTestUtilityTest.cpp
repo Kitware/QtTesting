@@ -96,8 +96,8 @@ void pqTestUtilityTester::testAddEventSource_data()
                         << qobject_cast<QObject*>(nullSource) << 0;
   QTest::newRow("same") << QString("py") << qobject_cast<QObject*>(dummySource1) << 1
                         << QString("py") << qobject_cast<QObject*>(dummySource1) << 1;
-  QTest::newRow("same") << QString("py") << qobject_cast<QObject*>(dummySource2) << 1
-                        << QString("py") << qobject_cast<QObject*>(dummySource3) << 1;
+  QTest::newRow("same2") << QString("py") << qobject_cast<QObject*>(dummySource2) << 1
+                         << QString("py") << qobject_cast<QObject*>(dummySource3) << 1;
   QTest::newRow("diff") << QString("py") << qobject_cast<QObject*>(dummySource4) << 1
                         << QString("xml") << qobject_cast<QObject*>(dummySource5) << 2;
 }
@@ -330,12 +330,12 @@ void pqTestUtilityTester::testConvertToDataDirectory_data()
                      << "/home/BenLg"
                      << "ROOTDATA"
                      << "/home/BenLg/data" << QString("/home/BenLg") << QString("${ROOT}/");
-  QTest::newRow("3") << "ROOT"
+  QTest::newRow("4") << "ROOT"
                      << "/home/BenLg"
                      << "ROOTDATA"
                      << "/home/BenLg/data" << QString("/home/BenLg/toto")
                      << QString("${ROOT}/toto");
-  QTest::newRow("4") << "ROOT"
+  QTest::newRow("5") << "ROOT"
                      << "/home/BenLg"
                      << "ROOTDATA"
                      << "/home/BenLg/data" << QString("/home/BenLg/data/toto")
@@ -343,17 +343,17 @@ void pqTestUtilityTester::testConvertToDataDirectory_data()
 
   // Same test as the previous one but we inverse the two dataDirectories
   // to be sure that our function chosse the right one.
-  QTest::newRow("5") << "ROOTDATA"
+  QTest::newRow("6") << "ROOTDATA"
                      << "/home/BenLg/data"
                      << "ROOT"
                      << "/home/BenLg" << QString("/home/BenLg/data/toto")
                      << QString("${ROOTDATA}/toto");
-  QTest::newRow("6") << "ROOT"
+  QTest::newRow("7") << "ROOT"
                      << "/home/BenLg"
                      << "ROOTDATA"
                      << "/home/BenLg/data" << QString("/usr/toto/home/BenLg/toto")
                      << QString("/usr/toto/home/BenLg/toto");
-  QTest::newRow("7") << "ROOT"
+  QTest::newRow("8") << "ROOT"
                      << "/home/BenLg"
                      << "ROOTDATA"
                      << "/home/BenLg/data" << QString("/usr/home/BenLg/data/toto")

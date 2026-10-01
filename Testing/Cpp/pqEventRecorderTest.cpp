@@ -163,7 +163,7 @@ void pqEventRecorderTester::testRecordEvents_data()
                      << qobject_cast<QObject*>(translator) << false << false << false;
   QTest::newRow("4") << qobject_cast<QObject*>(file) << qobject_cast<QObject*>(observer)
                      << qobject_cast<QObject*>(translator) << false << true << false;
-  QTest::newRow("4") << qobject_cast<QObject*>(file) << qobject_cast<QObject*>(observer)
+  QTest::newRow("5") << qobject_cast<QObject*>(file) << qobject_cast<QObject*>(observer)
                      << qobject_cast<QObject*>(translator) << true << true << true;
 }
 
