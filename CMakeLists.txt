@@ -1,6 +1,7 @@
 CMAKE_MINIMUM_REQUIRED(VERSION 3.12)
 
-PROJECT(QtTesting)
+PROJECT(QtTesting
+        VERSION 1.0.1)
 
 IF(NOT DEFINED QtTesting_QT_VERSION)
   SET(QtTesting_QT_VERSION "6" CACHE STRING "Expected Qt version")
@@ -266,6 +267,12 @@ else ()
       "$<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}>")
 
   target_compile_definitions(qttesting PRIVATE QT_NO_KEYWORDS)
+
+  # Version matters when building standalone 
+  set_target_properties(qttesting PROPERTIES
+    VERSION ${PROJECT_VERSION}
+    SOVERSION ${PROJECT_VERSION_MAJOR}
+  )
 
   # Set library name to include custom prefixes/suffixes.
   set_property(TARGET qttesting
